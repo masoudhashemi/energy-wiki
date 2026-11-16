@@ -29,13 +29,16 @@ Instead of numerical backpropagation over continuous coordinates, execution-time
 
 
 
+
 $$
 p(\mathbf{x} \mid \mathbf{a}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}, \qquad p(\mathbf{a} \mid \mathbf{x}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}
 $$
 
 
 
+
 * **Implicit Generation & Identification via SGLD (Eq. 2–3):**
+
 
 
 
@@ -45,7 +48,9 @@ $$
 
 
 
+
 approximated via $K$ steps of Stochastic Gradient Langevin Dynamics:
+
 
 
 
@@ -55,13 +60,16 @@ $$
 
 
 
+
 * **Relation Network Energy Architecture (Eq. 4):**
+
 
 
 
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2
 $$
+
 
 
 
@@ -149,6 +157,28 @@ erDiagram
     CONCEPT_w }|--o{ COMPOSITE_OR_GENERATED_DOC : "sums E(w_1) + E(w_2) to generate x_{N+1}*"
 ```
 
+### 3.4 Why There Is No One-Concept-Per-Document Assumption (Many-to-Many Membership & Intra-Document Entanglement)
+
+Because each concept $\mathbf{w}^{(m)}$ optimizes its own independent **sigmoid** attention vector $\sigma(\mathbf{a}^{(m)}) \in (0, 1)^N$ over the $N$ documents (rather than a mutually exclusive 1-of-$M$ softmax cluster assignment), a single document $x_i$ can belong to $0$**, **$1$**, or multiple concepts simultaneously**, and can also mix multiple unrelated topics internally:
+
+1. **Many-to-Many Document ↔ Concept Membership (`0, 1, or k` Concepts per Document):**
+   In the compiled wikis (Suites 2 & 3), all three cases occur naturally in `wiki_output/index.md` and `wiki_output/entities/*.md`:
+   * **`0` Concepts (Noise / Distractors, **$\sigma(a_i^{(m)}) < 0.5 \; \forall m$**):**
+     `clutter_postgres_autovacuum`, `clutter_k8s_ingress_tls`, and the 4 polysemous traps (`trap_hvac_building_energy`, `trap_agronomy_soil_sampling`, `trap_css_gradient_ui_bug`, `trap_hr_org_adaptation`) belong to **zero** concepts (`0` outgoing `[[wiki-links]]`).
+   * **`1` Concept (Specialized Documents):**
+     `ziebart_2008_maxent_irl` and `hinton_2002_cd` belong specifically to **Concept 2** (*Boltzmann Energy Learning & MCMC Sampling*), while `pryzant_2023_protegi` and `yuksekgonul_2024_textgrad` belong specifically to **Concept 3** (*Critic-Guided Textual Gradient Optimization*).
+   * **`2+` Concepts Simultaneously (Multi-Concept Bridge Documents):**
+     * [mordatch_2018_ebm.md](experiments/exp2_messy_18docs_symbolic/wiki_output/entities/mordatch_2018_ebm.md) (*Concept Learning with Energy-Based Models*) combines Boltzmann SGLD sampling, MAML-style inner-loop adaptation, and Santoro's Relation Network in one paper—achieving high attention ($\sigma(a_i) \ge 0.90$) across **all three concepts** and acting as a central bridge hub in the wiki graph.
+     * [finn_2017_maml.md](experiments/exp3_messy_18docs_live_llm/wiki_output/entities/finn_2017_maml.md), [grant_2017_meta_concepts.md](experiments/exp3_messy_18docs_live_llm/wiki_output/entities/grant_2017_meta_concepts.md), and [santoro_2017_relation_networks.md](experiments/exp3_messy_18docs_live_llm/wiki_output/entities/santoro_2017_relation_networks.md) each participate in **multiple concepts** simultaneously, accumulating distinct relational bridge bullets and `[[wiki-links]]` for each concept they participate in.
+
+2. **Multiple Topics *Inside* a Single Messy Document (Intra-Document Entanglement):**
+   A single document does not need to be about one coherent topic internally:
+   * In [entangled_devlog_wiki_compiler.md](experiments/exp3_messy_18docs_live_llm/wiki_output/entities/entangled_devlog_wiki_compiler.md) (*"DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients"*), the morning entry is about fixing a staging **Redis connection-pool timeout**, while the afternoon entry describes **gating pairwise `LINK_DEFICIT` textual gradients by **$\sigma(a_i)\sigma(a_j)$.
+   * In Suite 2, it is attended by **both** the *Inner-Loop/TextGrad* concept and the *Pairwise Relational* concept (`σ = 0.94`), and in Suite 3 (`gpt-6-luna`), the state compilation pass ($\nabla_{\mathbf{x}^1} E_\theta$) extracts only the afternoon textual-gradient insight into the wiki while explicitly discarding the morning Redis incident as operational noise.
+
+3. **Scaling to Long Multi-Topic Documents (Sub-Document / Section-Level Attention):**
+   If a single raw file is a long, monolithic document (e.g., a 40-page PDF or a weekly engineering digest covering 10 unrelated projects), entities $\mathbf{x}_i$ can be defined at the **section / paragraph / claim level** $x_{d, s}$ (section $s$ of document $d$) rather than the whole-file level, so $\sigma(a_{d, s}^{(m)})$ attends only to the specific sections of document $d$ that participate in concept $\mathbf{w}^{(m)}$.
+
 ---
 
 ## 4. Relational Energy Function for Knowledge Bases
@@ -164,9 +194,11 @@ For every entity pair $(i, j)$ gated by $\sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j
 
 
 
+
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = \Big( \theta_{\text{coh}} \mathcal{D}_{\text{coherence}}(\mathbf{x}, \mathbf{a}, \mathbf{w}) + \theta_{\text{cov}} \mathcal{D}_{\text{coverage}}(\mathbf{x}, \mathbf{a}, \mathbf{w}) + \theta_{\text{link}} \mathcal{D}_{\text{topology}}(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + \theta_{\text{syn}} \mathcal{D}_{\text{synthesis}}(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) \Big)^2
 $$
+
 
 
 
@@ -209,9 +241,11 @@ When demonstration clusters $X^{\text{demo}} = \{(\mathbf{x}, \mathbf{a})\}$ are
 
 
 
+
 $$
 \mathbf{w}^*_\theta(X^{\text{demo}}) = \arg\min_{\mathbf{w}} \mathbb{E}_{(\mathbf{x}, \mathbf{a}) \sim X^{\text{demo}}} \big[ E_\theta(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + E_\theta(\mathbf{x}^0, \mathbf{a}, \mathbf{w}_a) \big]
 $$
+
 
 
 
@@ -220,9 +254,11 @@ In realistic, messy Knowledge Bases (containing untagged research notes, entangl
 
 
 
+
 $$
 \min_{\{\mathbf{w}^{(m)}, \mathbf{a}^{(m)}\}_{m=1}^M} \sum_{m=1}^M E_\theta\big(\mathbf{x}^0, \mathbf{a}^{(m)}, \mathbf{w}^{(m)}\big)
 $$
+
 
 
 
@@ -236,14 +272,17 @@ Multiple concepts $\{\mathbf{w}^{(1)}, \dots, \mathbf{w}^{(M)}\}$ are composed b
 
 
 
+
 $$
 E_{\text{comp}}(\mathbf{x}, \mathbf{a}, \{\mathbf{w}^{(m)}\}) = \sum_{m=1}^M E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}^{(m)})
 $$
 
 
 
+
 ### 5.3 Meta-Level Parameter Optimization (Eq. 5–9 & Algorithm 1)
 To calibrate the Critic parameters/schema $\theta$, we minimize the joint meta-objective:
+
 
 
 
@@ -253,8 +292,10 @@ $$
 
 
 
+
 where:
 * **Contrastive Maximum Likelihood Loss (Eq. 7 & 15):**
+
 
 
 
@@ -264,14 +305,17 @@ $$
 
 
 
+
 with $[z]_+ = \log(1 + \exp(z))$.
 * **Sampler KL Loss (Eq. 8 / Algorithm 1):**
+
 
 
 
 $$
 \mathcal{L}^{\text{KL}}(\theta) = \bar{E}_\theta(\tilde{\mathbf{x}}(\theta), \mathbf{a}, \bar{\mathbf{w}}_x) + \bar{E}_\theta(\mathbf{x}^0, \tilde{\mathbf{a}}(\theta), \bar{\mathbf{w}}_a)
 $$
+
 
 
 
