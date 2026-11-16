@@ -9,6 +9,12 @@ This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.p
 * **[1811.02486v1.pdf](1811.02486v1.pdf)** — Original paper: *Concept Learning with Energy-Based Models* (Mordatch, 2018).
 * **[PROBLEM_AND_FORMULATION.md](PROBLEM_AND_FORMULATION.md)** — Complete problem definition, paper breakdown, conceptual mapping table, and mathematical formulation for $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$, $K$-step Textual SGLD, unsupervised joint $(\mathbf{w}, \mathbf{a})$ discovery on messy KBs, and meta-optimization ($\mathcal{L}_p^{\text{ML}} + \mathcal{L}_\pi^{\text{KL}}$).
 * **[EXPERIMENTS.md](EXPERIMENTS.md)** — Detailed design and empirical results across all 3 experiment folders and 6 benchmark experiments.
+* **[wiki_viewer.html](wiki_viewer.html)** — **Master Multi-Experiment Interactive Explorer** with a top-right dropdown to switch between all 3 Experiment Suites and 5 tabs:
+  1. **Knowledge Graph & SGLD Step Scrubber ($k = 0 \dots 10$)**
+  2. **Wiki Browser ($\mathbf{x}^0 \to \mathbf{x}^1$ Diff & clickable `[[wiki-links]]`)**
+  3. **Pairwise Relation Matrix $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$**
+  4. **Experiments Benchmark Dashboard (Exps 1–6)**
+  5. **Live LLM Call Log (`gpt-6-luna` JSON prompts & responses)**
 
 ### Self-Contained Experiment Folders (`experiments/`)
 

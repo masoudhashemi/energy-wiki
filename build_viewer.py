@@ -1137,7 +1137,12 @@ def main():
     if not suites_payload:
         raise RuntimeError("No experiment bundles found!")
 
-    print(f"[OK] Built per-suite interactive viewers across {len(suites_payload)} experiment folders.")
+    master_html = HTML_TEMPLATE.replace("__SUITES_JSON_PAYLOAD__", json.dumps(suites_payload))
+    viewer_path = os.path.join(base_dir, "wiki_viewer.html")
+    with open(viewer_path, "w", encoding="utf-8") as f:
+        f.write(master_html)
+
+    print(f"[OK] Built Master Multi-Experiment Viewer ({len(suites_payload)} suites, {len(master_html)} bytes) at: {viewer_path}")
 
 
 if __name__ == "__main__":
