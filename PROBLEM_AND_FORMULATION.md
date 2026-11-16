@@ -109,6 +109,46 @@ $$
 | `w = [wₐ, wₓ]` | Concept code vector | `ConceptCode`: Shared natural-language selection criteria `w_a`, synthesis criteria `w_x`, and `keywords`. |
 | `θ` | Parameters of `f_θ, g_θ` | `MetaSchemaParams`: Rubric weights and critic prompt governing `RelationalWikiEnergyModel`. |
 
+### 3.3 Ontology of Definitions & Relationships (PDFs, Papers, Sections, Concepts, Links & Wiki Pages)
+
+#### A. Definitions of Core Objects
+
+| Object / Term | Symbol | Definition in the System | Concrete Examples in Repo |
+| :--- | :--- | :--- | :--- |
+| **Raw Source File (PDF / Note / Log)** | Raw Input | An immutable source artifact dropped into `raw/` (a research paper PDF, Markdown note, lab notebook, engineering dev log, or incident postmortem). | `1811.02486v1.pdf`, `raw/mordatch_2018_ebm.md`, `raw/entangled_devlog_wiki_compiler.md` |
+| **KB Entity (Document or Section Node)** | `xᵢ⁰` | The fundamental unit of state in `x⁰ = [x₁⁰, ..., xₙ⁰]`. Can represent a whole paper/note (document-level granularity) or a specific section/claim `x_{d,s}⁰` inside a long PDF. | `KBEntity(entity_id="welling_teh_2011_sgld")`, `KBEntity(entity_id="contradiction_note_mcmc_mixing")` |
+| **Polysemous Trap / Clutter Node** | `x_trap⁰` | A raw KB entity that either shares surface vocabulary with a concept in an unrelated domain (homonym/false friend) or is isolated operational noise. | `trap_hvac_building_energy.md`, `trap_agronomy_soil_sampling.md`, `clutter_postgres_autovacuum.md` |
+| **Concept (Latent Abstraction)** | `w⁽ᵐ⁾ = [wₐ⁽ᵐ⁾, wₓ⁽ᵐ⁾]` | A reusable, composable abstraction defined by two interchangeable natural-language codes:<br>• **Argument Code (`wₐ`):** Criteria selecting *which* entities participate.<br>• **Action Code (`wₓ`):** Rules specifying *how* attended entities relate and synthesize. | `concept_1_relational_energy_concept_learning`, `concept_2_energy_based_learning_and_sampling`, `concept_3_textual_gradient_optimization` |
+| **Attention Mask / Gate** | `σ(aᵢ⁽ᵐ⁾) ∈ (0, 1)` | Continuous membership weight of entity `xᵢ` in concept `w⁽ᵐ⁾` (independent sigmoid per concept, **not** a mutually exclusive softmax across concepts). | `σ(aᵢ) = 0.97` (attended core member) vs. `σ(a_trap) = 0.04` (rejected distractor) |
+| **Pairwise Relation** | `g_θ(xᵢ, xⱼ, w⁽ᵐ⁾)` | Critic evaluation of the interaction between two entities `(xᵢ, xⱼ)` under concept `w⁽ᵐ⁾`, scoring conceptual synergy, missing link deficit, and inter-document contradictions. | Synergy (`finn_2016_gcl ↔ ziebart_2008_maxent_irl`), Contradiction (`hinton_2002_cd ↔ lab-note-42`), Frustration (`finn_2016_gcl ↔ trap_hvac`) |
+| **Compiled Entity Wiki Page** | `xᵢ¹` | The post-optimization Markdown file in `wiki_output/entities/*.md`, enriched with relational synthesis bullets and outgoing `[[wiki-links]]` to co-attended peers. | `wiki_output/entities/mordatch_2018_ebm.md` (`8` outgoing `[[wiki-links]]`) |
+| **Compiled Concept Wiki Page** | `c⁽ᵐ⁾ ∈ x¹` | The canonical Markdown synthesis article in `wiki_output/concepts/*.md` that unifies all attended entities `{xᵢ : σ(aᵢ⁽ᵐ⁾) ≥ 0.5}`, reconciles contradictions, and documents rejected traps. | `wiki_output/concepts/concept_2_energy_based_learning_and_sampling.md` |
+| **Composite / Bridge Concept** | `w_comp = w⁽¹⁾ + w⁽²⁾` | A higher-order concept formed by summing constituent energy functions `E_θ(x,a,w⁽¹⁾) + E_θ(x,a,w⁽²⁾)` to find intersection/bridge entities or generate new bridge documents `x_{N+1}^*`. | `concept_composite_sum.md`, `gen_bridge_boltzmann_textual_sgld.md` |
+| **Wiki Link / Backlink** | `[[Title]]` | Directed or bidirectional Markdown hyperlink created in `x¹` whenever `σ(aᵢ)σ(aⱼ) > τ` and `g_θ(xᵢ, xⱼ, w)` confirms a shared mechanism. | `[[Concept Learning with Energy-Based Models]] ↔ [[Guided Cost Learning: Deep Inverse Optimal Control]]` |
+
+#### B. Cardinality & Relational Rules Between Objects
+
+| Source Object | Relation | Target Object | Cardinality | Explanation & Example |
+| :--- | :--- | :--- | :---: | :--- |
+| **Raw PDF / Document** | decomposes into | **KB Entities (`xᵢ⁰`)** | `1 : 1` or `1 : S` | A short paper/note is `1` entity `xᵢ⁰`; a long multi-topic PDF or digest can be split into `S` section/claim entities `x_{d,1}⁰ ... x_{d,S}⁰`. |
+| **KB Entity (`xᵢ⁰`)** | participates in | **Concepts (`w⁽ᵐ⁾`)** | `N : M` (`0, 1, or k`) | **Many-to-Many:**<br>• `0` concepts: Clutter/Traps (`σ(aᵢ⁽ᵐ⁾) < 0.5 ∀m`)<br>• `1` concept: Specialized paper (`ziebart_2008_maxent_irl`)<br>• `k ≥ 2` concepts: Bridge paper (`mordatch_2018_ebm` participates in all 3 concepts). |
+| **Single Messy Entity (`xᵢ⁰`)** | contains | **Internal Topics / Noise** | `1 : K` | A single messy file (`entangled_devlog_wiki_compiler.md`) can mix irrelevant noise (Redis timeout) with a genuine concept mechanism (pairwise wiki-link gradients). |
+| **Concept (`w⁽ᵐ⁾`)** | attends to | **Active Entity Subgraph (`a*`)** | `1 : K` (`K ≪ N`) | Each concept selects a sparse subset of `K` coherent entities out of `N` total KB entities via `σ(aᵢ⁽ᵐ⁾) ≥ 0.5`. |
+| **Co-Attended Pair (`xᵢ, xⱼ`)** | induces | **Pairwise Relation (`g_θ`) & `[[wiki-link]]`** | `2 : 1` per concept | Every pair `(xᵢ, xⱼ)` with `σ(aᵢ)σ(aⱼ) ≥ 0.25` and low coherence deficit receives a bidirectional `[[wiki-link]]` in `x¹`. |
+| **Concept Pair (`w⁽¹⁾, w⁽²⁾`)** | composes into | **Composite Concept / New Doc (`x_{N+1}^*`)** | `2+ : 1` | Summing `E(w⁽¹⁾) + E(w⁽²⁾)` either identifies existing bridge hubs (`mordatch_2018_ebm`) or synthesizes a brand-new bridge document (`gen_bridge_boltzmann_textual_sgld.md`). |
+
+```mermaid
+erDiagram
+    RAW_PDF_OR_FILE ||--|{ KB_ENTITY_x0 : "parsed into (1:1 or 1:S sections)"
+    KB_ENTITY_x0 }o--o{ CONCEPT_w : "attended via gate sigma(a_i) in [0,1] (0, 1, or many)"
+    KB_ENTITY_x0 ||--o{ PAIRWISE_RELATION_g_theta : "evaluated in pairs (x_i, x_j)"
+    CONCEPT_w ||--|{ PAIRWISE_RELATION_g_theta : "conditions g_theta(x_i, x_j, w)"
+    CONCEPT_w ||--|| CONCEPT_WIKI_PAGE_x1 : "compiles into concepts/*.md"
+    KB_ENTITY_x0 ||--|| ENTITY_WIKI_PAGE_x1 : "compiles into entities/*.md"
+    PAIRWISE_RELATION_g_theta ||--o| WIKI_LINK : "wires [[wiki-link]] if coherent"
+    CONCEPT_w }|--o{ COMPOSITE_OR_GENERATED_DOC : "sums E(w_1) + E(w_2) to generate x_{N+1}*"
+```
+
 ---
 
 ## 4. Relational Energy Function for Knowledge Bases
