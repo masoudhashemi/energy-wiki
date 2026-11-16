@@ -20,7 +20,7 @@ Located in [raw/](./raw/) and ingested via `load_arbitrary_raw_folder(--raw-dir)
 * **[run_exp3_live_llm.py](./run_exp3_live_llm.py)** — Primary domain-agnostic Live LLM runner script (`load_arbitrary_raw_folder`, `discover_unknown_concepts_via_llm`, `run_llm_relational_sgld_for_concept`) using `litellm` and `.env` (`OPENAI_API_KEY`).
 * **[energy_wiki.py](../../energy_wiki.py)** — Data structures (`KBEntity`, `EventState`, `AttentionMask`, `ConceptCode`) and Markdown wiki exporter (`export_markdown_wiki`).
 * **[run_experiments.py](../../run_experiments.py)** — Benchmark evaluation suite (`exp1` through `exp6`).
-* **[build_viewer.py](../../build_viewer.py)** — Compiles both this folder's [wiki_viewer.html](./wiki_viewer.html) and the root Master Multi-Experiment Viewer.
+* **[build_viewer.py](../../build_viewer.py)** — Compiles this folder's [wiki_viewer.html](./wiki_viewer.html).
 
 ### Execution Commands
 ```powershell
