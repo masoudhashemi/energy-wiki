@@ -3,9 +3,11 @@
 **Type:** `Distributed Systems & Consensus Protocols (Section 5.4 Re-Enactment)` | **Structural Isomorphism Energy **$E_\theta$**:** `0.95`
 
 
+
 $$
 πθ(S|A,W) = exp(−Eθ(S,A,W))/Zθ(A,W),  Zθ = Σ_S exp(−Eθ(S,A,W));  q(S) = Σ_m ρ_m q_m(S),  Ẑ = (1/M)Σ_r exp(−Eθ(S_r,A,W))/q(S_r), S_r ∼ q;  P*(τ|S⁰) ∝ Q₀(τ|S⁰)exp(−βEθ(Sᴷ,A,W)),  Lᴷᴸ = KL(Qφ(τ|S⁰)||P*) = E_Qφ[βEθ(Sᴷ,A,W) + log(Qφ/Q₀)] + const;  Eθ = Σ_i s_i uθ(S_i,W) + λΣ_{i<j}h_ij softplus(−gθ(S_i,S_j,W))
 $$
+
 
 
 Let S denote a cluster-wide protocol state, A the active-node and policy context, and W the workload and network conditions. The protocol assigns each admissible state an energy Eθ(S,A,W), which can combine local validity costs with pairwise compatibility costs. Its normalized cluster-state distribution is πθ(S|A,W) = exp(−Eθ(S,A,W))/Zθ(A,W), where Zθ(A,W) sums the weights of all admissible cluster states. This global normalizer accounts for the competition among possible states; local node scores alone do not provide the normalized cluster-level probability.

@@ -8,9 +8,11 @@ A composite concept can be represented by adding the energies of its component c
 
 
 
+
 $$
 E_{\mathrm{sum}}(x,a;w_1,w_2)=E_\theta(x,a,w_1)+E_\theta(x,a,w_2).
 $$
+
 
 
 
@@ -30,9 +32,11 @@ E_{\mathrm{sum}}(x,a;w_1,w_2)=E_\theta(x,a,w_1)+E_\theta(x,a,w_2),
 p_{\mathrm{sum}}(x\mid a,w_1,w_2)=\frac{\exp[-E_{\mathrm{sum}}(x,a;w_1,w_2)]}{Z_{\mathrm{sum}}(a,w_1,w_2)}.
 
 
+
 $$
 The corresponding state gradient is
 $$
+
 
 
 \nabla_x E_{\mathrm{sum}}=\nabla_x E_\theta(x,a,w_1)+\nabla_x E_\theta(x,a,w_2).
@@ -50,9 +54,11 @@ For state generation, a gradient descent step reduces the summed energy. A stoch
 
 
 
+
 $$
 x^{k+1}=x^k-\frac{\alpha_k}{2}\nabla_{x^k}E_{\mathrm{sum}}+\sqrt{\alpha_k}\,\xi_k,
 $$
+
 
 
 

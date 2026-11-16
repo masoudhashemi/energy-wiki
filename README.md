@@ -9,13 +9,16 @@ This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.p
 1. **Relational Energy Function (Eq. 4):**
 
 
+
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2
 $$
 
 
+
 2. **Three Unified Execution-Time Operations via **$K$**-Step Textual SGLD:**
    * **Concept Inference (Eq. 8):**
+
 
 
 $$
@@ -23,7 +26,9 @@ $$
 $$
 
 
+
    * **Entity Identification / Attention Discovery (Eq. 2b):**
+
 
 
 $$
@@ -31,7 +36,9 @@ $$
 $$
 
 
+
    * **Wiki Page & Link Generation (Eq. 2a):**
+
 
 
 $$
@@ -39,12 +46,15 @@ $$
 $$
 
 
+
 3. **Meta-Level Schema Optimization (Eq. 9 & Algorithm 1):**
+
 
 
 $$
 \min_\theta \; \mathcal{L}_{p(\theta)}^{\text{ML}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big) + \mathcal{L}_{\pi(\theta)}^{\text{KL}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big)
 $$
+
 
 
 ---

@@ -20,9 +20,11 @@ From the 18-document KB in [./raw/](./raw/), we take two distinct conceptual clu
    Starting from an uncalibrated 2-sentence stub $x_{N+1}^{(0)}$, run iterative Textual SGLD ($k = 0 \to 3 \to 10$) to synthesize a brand-new research document minimizing the additive composite energy:
 
 
+
 $$
 E_{\text{comp}}(x_{N+1}) = E_\theta([\mathbf{x}, x_{N+1}], \mathbf{a}_1, \mathbf{w}_1) + E_\theta([\mathbf{x}, x_{N+1}], \mathbf{a}_2, \mathbf{w}_2)
 $$
+
 
 
 2. **Task 2 — Adversarial Hard-Negative / Polysemous Trap Generation (**$\tilde{x}_{\text{trap}}$**) & Discrimination:**

@@ -3,9 +3,11 @@
 **Generated via **$K=10$** Live `gpt-6-luna` Textual SGLD** | **Initial Energy (**$k=0$**):** `10.0` $\rightarrow$ **Intermediate (**$k=3$**):** `4.7` $\rightarrow$ **Converged (**$k=10$**):** `0.65`
 
 
+
 $$
 pθ(x|a,w)=exp(−Eθ(x,a,w))/Zθ(a,w), Zθ=Σx exp(−Eθ); s_i=σ(a_i), h_ij=s_i s_j, Eθ=Σ_i s_i uθ(x_i,w)+λΣ_{i<j}h_ij softplus(−gθ(x_i,x_j,w)); q(x)=Σ_m ρ_m q_m(x), Ẑ=(1/M)Σ_r exp(−Eθ(x_r,a,w))/q(x_r), x_r∼q; ℓ(x)=−Eθ(x,a,w)−log Ẑ−log q(x), L^ML=E_data[softplus(−ℓ(x))]+E_q[softplus(ℓ(x))]; P*(τ|x⁰)∝Q₀(τ|x⁰)exp(−βEθ(xᴷ,a,w)), L^KL=KL(Qφ(τ|x⁰)||P*)=E_Qφ[βEθ(xᴷ,a,w)+log(Qφ(τ|x⁰)/Q₀(τ|x⁰))]+const; zᵏ⁺¹=zᵏ−(α/2)∇_zE_comp+ωᵏ, xᵏ⁺¹=ProjectText(zᵏ⁺¹)
 $$
+
 
 
 ## Discrete energy model and pairwise aggregation

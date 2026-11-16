@@ -4,9 +4,11 @@
 **Unary Keyword Energy:** `0.25` (Low — fools Unary RAG!) | **Pairwise Relational Energy:** `4.7` (High — rejected by Relation Network!)
 
 
+
 $$
 P(s) = exp[−βG(s)]/Z,  Z = Σ_s exp[−βG(s)];  ΔG_bind = −RT ln(K_d,free/K_d,bound)
 $$
+
 
 
 Allosteric enzymes occupy conformational ensembles whose populations follow a Boltzmann distribution; the partition function Z sums the statistical weights of the accessible folded states. Ligand binding shifts that ensemble by stabilizing conformations with different active-site geometry. In a sequence-resolved analysis, the textual gradient denotes the N-to-C progression of residue composition in the primary-sequence register, especially the changing density of charged residues that can alter local folding and electrostatic contacts. It is a biochemical description of sequence composition, not a derivative used to train a model.
