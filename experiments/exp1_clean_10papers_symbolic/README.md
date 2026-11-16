@@ -46,9 +46,11 @@ Implemented in [energy_wiki.py](../../energy_wiki.py) and invoked by [run_exp1.p
 
 1. **Relational Energy Function (Eq. 4):**
 
+
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w}), \, \mathbf{w} \right)^2
 $$
+
 
    where $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ evaluates normalized mechanism stem overlap and contextual bag-of-words cosine similarity between papers $i$ and $j$, plus whether bidirectional `[[wiki-links]]` exist in $\mathbf{x}^1$.
 2. **Three **$K=10$** Textual SGLD Loops:**

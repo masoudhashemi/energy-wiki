@@ -46,12 +46,15 @@ Following Section 5.2 (Figure 5 & Appendix Table, p. 11), we evaluate both conte
 1. **Identification Error — Attention Cross-Entropy (`attn_bce`) ↓:**
 
 
+
 $$
 \text{BCE}(\mathbf{a}^K, \mathbf{a}^{\text{gold}}) = -\frac{1}{N} \sum_{i=1}^N \Big[ a_i^{\text{gold}} \log \sigma(a_i^K) + (1 - a_i^{\text{gold}}) \log\big(1 - \sigma(a_i^K)\big) \Big]
 $$
 
 
+
 2. **Generation Error — Wiki Topology & Synthesis Error (`gen_error`) ↓:**
+
 
 
 $$
@@ -59,12 +62,15 @@ $$
 $$
 
 
+
 3. **Residual Relational Energy (`final_energy`) ↓:**
+
 
 
 $$
 E_\theta(\mathbf{x}^{1,K}, \mathbf{a}^K, \mathbf{w}^*) \in \mathbb{R}^+
 $$
+
 
 
 ---

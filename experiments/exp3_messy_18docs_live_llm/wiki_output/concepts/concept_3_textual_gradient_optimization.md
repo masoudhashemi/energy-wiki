@@ -13,9 +13,11 @@ Let $x^k$ be the artifact at iteration $k$, and let $E_\theta(x^k)$ denote its c
 
 
 
+
 $$
 x^{k+1} = \operatorname{Edit}(x^k, g^k), \qquad k=1,\ldots,K.
 $$
+
 
 
 

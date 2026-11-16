@@ -53,8 +53,9 @@ $$
 
 * **[1811.02486v1.pdf](1811.02486v1.pdf)** — Original paper: *Concept Learning with Energy-Based Models* (Mordatch, 2018).
 * **[PROBLEM_AND_FORMULATION.md](PROBLEM_AND_FORMULATION.md)** — Complete problem definition, paper breakdown, conceptual mapping table, and mathematical formulation for $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$, $K$-step Textual SGLD, unsupervised joint `(w, a)` discovery on messy KBs, and meta-optimization.
-* **[EXPERIMENTS.md](EXPERIMENTS.md)** — Detailed design and empirical results across all 3 experiment folders and 6 benchmark experiments.
-* **[wiki_viewer.html](wiki_viewer.html)** — **Master Multi-Experiment Interactive Explorer** with a top-right dropdown to switch between all 3 Experiment Suites and 5 tabs:
+* **[EXPERIMENTS.md](EXPERIMENTS.md)** — Detailed design and empirical results across the experiment folders and benchmark experiments.
+* **[GENERATIVE_ENERGY_SYNTHESIS.md](GENERATIVE_ENERGY_SYNTHESIS.md)** — Mathematical formulation and experimental evaluation of **5 generative & evaluative ways to use learned energy functions** $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ (synthesizing missing bridge documents, compositional data generation, adversarial hard-negative synthesis, and cross-domain concept re-enactment).
+* **[wiki_viewer.html](wiki_viewer.html)** — **Master Multi-Experiment Interactive Explorer** with a top-right dropdown to switch between Experiment Suites and 5 tabs:
   1. **Knowledge Graph & SGLD Step Scrubber** (`k = 0 ... 10`)
   2. **Wiki Browser** (`x⁰ → x¹` Diff & clickable `[[wiki-links]]`)
   3. **Pairwise Relation Matrix** $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$
@@ -87,6 +88,16 @@ Each experiment folder contains its own `raw/` input corpus, `wiki_output/` comp
        * [concept_2_energy_based_learning_and_sampling.md](experiments/exp3_messy_18docs_live_llm/wiki_output/concepts/concept_2_energy_based_learning_and_sampling.md)
        * [concept_3_textual_gradient_optimization.md](experiments/exp3_messy_18docs_live_llm/wiki_output/concepts/concept_3_textual_gradient_optimization.md)
        * [concept_composite_sum.md](experiments/exp3_messy_18docs_live_llm/wiki_output/concepts/concept_composite_sum.md)
+
+4. **[experiments/exp4_generative_data_synthesis_live_llm/](experiments/exp4_generative_data_synthesis_live_llm/)**
+   * **Task:** Uses the learned relational energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ as a **Generative Model** via live `gpt-6-luna` Textual SGLD ([run_exp4_generative_luna.py](experiments/exp4_generative_data_synthesis_live_llm/run_exp4_generative_luna.py) — 8 live LLM calls, 25,911 tokens).
+   * **Outputs & Documentation:**
+     * Report: [experiments/exp4_generative_data_synthesis_live_llm/README.md](experiments/exp4_generative_data_synthesis_live_llm/README.md)
+     * Telemetry & Call Log: [generative_results.json](experiments/exp4_generative_data_synthesis_live_llm/wiki_output/generative_results.json) • [llm_calls_log.json](experiments/exp4_generative_data_synthesis_live_llm/wiki_output/llm_calls_log.json)
+     * Generated Synthetic Documents (`wiki_output/generated_docs/`):
+       * [gen_bridge_boltzmann_textual_sgld.md](experiments/exp4_generative_data_synthesis_live_llm/wiki_output/generated_docs/gen_bridge_boltzmann_textual_sgld.md) *(Task 1: Converged Bridge Paper, $E_{\text{comp}}: 10.00 \to 4.70 \to 0.65$)*
+       * [gen_trap_biochem_allostery.md](experiments/exp4_generative_data_synthesis_live_llm/wiki_output/generated_docs/gen_trap_biochem_allostery.md) *(Task 2: Adversarial Biochem Hard-Negative Trap, Unary $E=0.25$ vs. Pairwise $E=4.70, E_{\text{comp}}=9.20$)*
+       * [gen_transfer_distributed_consensus.md](experiments/exp4_generative_data_synthesis_live_llm/wiki_output/generated_docs/gen_transfer_distributed_consensus.md) *(Task 3: Cross-Domain Distributed Consensus Re-Enactment, Isomorphism $E=0.95$)*
 
 ---
 

@@ -28,12 +28,15 @@ Instead of numerical backpropagation over continuous coordinates, execution-time
 * **Boltzmann Posteriors (Eq. 1):**
 
 
+
 $$
 p(\mathbf{x} \mid \mathbf{a}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}, \qquad p(\mathbf{a} \mid \mathbf{x}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}
 $$
 
 
+
 * **Implicit Generation & Identification via SGLD (Eq. 2–3):**
+
 
 
 $$
@@ -41,7 +44,9 @@ $$
 $$
 
 
+
 approximated via $K$ steps of Stochastic Gradient Langevin Dynamics:
+
 
 
 $$
@@ -49,12 +54,15 @@ $$
 $$
 
 
+
 * **Relation Network Energy Architecture (Eq. 4):**
+
 
 
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2
 $$
+
 
 
 ### 2.2 LLM Wiki Architecture (Karpathy Pattern)
@@ -115,9 +123,11 @@ For every entity pair $(i, j)$ gated by $\sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j
 ### Step 2: Global Aggregation $f_\theta(\cdot, \mathbf{w})$
 
 
+
 $$
 E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = \Big( \theta_{\text{coh}} \mathcal{D}_{\text{coherence}}(\mathbf{x}, \mathbf{a}, \mathbf{w}) + \theta_{\text{cov}} \mathcal{D}_{\text{coverage}}(\mathbf{x}, \mathbf{a}, \mathbf{w}) + \theta_{\text{link}} \mathcal{D}_{\text{topology}}(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + \theta_{\text{syn}} \mathcal{D}_{\text{synthesis}}(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) \Big)^2
 $$
+
 
 
 Alongside scalar energy $E_\theta \ge 0$, the evaluator emits three structured textual gradients:
@@ -158,18 +168,22 @@ flowchart LR
 When demonstration clusters $X^{\text{demo}} = \{(\mathbf{x}, \mathbf{a})\}$ are given, concept codes are inferred via Equation (8):
 
 
+
 $$
 \mathbf{w}^*_\theta(X^{\text{demo}}) = \arg\min_{\mathbf{w}} \mathbb{E}_{(\mathbf{x}, \mathbf{a}) \sim X^{\text{demo}}} \big[ E_\theta(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + E_\theta(\mathbf{x}^0, \mathbf{a}, \mathbf{w}_a) \big]
 $$
+
 
 
 **Unsupervised Discovery When Concepts Are Unknown (Messy Real-World KBs):**
 In realistic, messy Knowledge Bases (containing untagged research notes, entangled engineering logs, contradictory lab notes, polysemous surface-keyword traps like *HVAC thermal energy* or *soil sampling*, and ops clutter like *Postgres/Kubernetes*), **neither the concepts **$\mathbf{w}$** nor the attention masks **$\mathbf{a}$** are known in advance**. Following Page 2 of Mordatch (2018) (*"parsing experiences into an arrangement of concepts"*), we solve the joint minimization over $(\{\mathbf{w}^{(m)}\}, \{\mathbf{a}^{(m)}\})$ via **Alternating Live-LLM Textual SGLD**:
 
 
+
 $$
 \min_{\{\mathbf{w}^{(m)}, \mathbf{a}^{(m)}\}_{m=1}^M} \sum_{m=1}^M E_\theta\big(\mathbf{x}^0, \mathbf{a}^{(m)}, \mathbf{w}^{(m)}\big)
 $$
+
 
 
 1. **Step **$k=0$** (Unsupervised Seed Proposal):** An LLM scans the raw, untagged corpus $\mathbf{x}^0$ and proposes initial vague concept hypotheses $\mathbf{w}^{(m), 0}$ and surface-keyword attention logits $\mathbf{a}^{(m), 0}$.
@@ -181,13 +195,16 @@ $$
 Multiple concepts $\{\mathbf{w}^{(1)}, \dots, \mathbf{w}^{(M)}\}$ are composed by summing their energies (and concatenating their textual gradients):
 
 
+
 $$
 E_{\text{comp}}(\mathbf{x}, \mathbf{a}, \{\mathbf{w}^{(m)}\}) = \sum_{m=1}^M E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}^{(m)})
 $$
 
 
+
 ### 5.3 Meta-Level Parameter Optimization (Eq. 5–9 & Algorithm 1)
 To calibrate the Critic parameters/schema $\theta$, we minimize the joint meta-objective:
+
 
 
 $$
@@ -195,8 +212,10 @@ $$
 $$
 
 
+
 where:
 * **Contrastive Maximum Likelihood Loss (Eq. 7 & 15):**
+
 
 
 $$
@@ -204,13 +223,16 @@ $$
 $$
 
 
+
 with $[z]_+ = \log(1 + \exp(z))$.
 * **Sampler KL Loss (Eq. 8 / Algorithm 1):**
+
 
 
 $$
 \mathcal{L}^{\text{KL}}(\theta) = \bar{E}_\theta(\tilde{\mathbf{x}}(\theta), \mathbf{a}, \bar{\mathbf{w}}_x) + \bar{E}_\theta(\mathbf{x}^0, \tilde{\mathbf{a}}(\theta), \bar{\mathbf{w}}_a)
 $$
+
 
 
 ensuring the $K$-step Textual SGLD trajectory lands in low-energy wiki configurations.
