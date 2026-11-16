@@ -1,0 +1,17 @@
+# Environment variables & secrets (NEVER commit!)
+.env
+.env.*
+!.env.example
+
+# Virtual environments & uv cache
+.venv/
+venv/
+.uv-cache/
+
+# Python bytecode & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/

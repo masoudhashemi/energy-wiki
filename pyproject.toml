@@ -1,0 +1,7 @@
+[project]
+name = "energy-wiki"
+version = "0.1.0"
+description = "Energy-Based LLM Wiki with Textual Gradients (adapting Mordatch 2018)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
