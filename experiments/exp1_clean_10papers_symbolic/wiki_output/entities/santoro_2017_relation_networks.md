@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `RN(O) = f_phi( sum_{i,j} g_theta(o_i, o_j, q) )`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Pairwise Relational & Compositional Architectures]] (`0.96`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Pairwise Relational & Compositional Architectures]] (`0.96`)
 
 ## Compiled Content & Relational Bridges
 Computes pairwise relational interactions g_theta(x_i, x_j, w) across all entity pairs (i, j) gated by attention masks and aggregates them via f_phi. Captures multi-entity compositional, spatial, and graph topology relations where independent unary entity encoders fail.

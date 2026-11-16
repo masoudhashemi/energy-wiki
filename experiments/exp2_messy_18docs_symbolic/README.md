@@ -49,9 +49,9 @@ uv run --no-sync python experiments/exp2_messy_18docs_symbolic/run_exp2.py
 Implemented in [energy_wiki.py](../../energy_wiki.py) and benchmarked in [run_exp2.py](./run_exp2.py):
 
 1. **Zero Oracle Tags Used:** `RelationalWikiEnergyModel` ignores `entity.tags` completely and operates strictly on raw text (`title`, `content`, `key_equation`).
-2. **Surface-Keyword Initialization at $k=0$:**
-   At $k=0$, initial attention logits $\mathbf{a}^0$ are seeded by surface-keyword overlap with $\mathbf{w}$. Consequently, polysemous trap documents (`trap_hvac_building_energy` and `trap_agronomy_soil_sampling`) start with **positive false-positive attention ($\sigma(a_i^0) \approx 0.59$)**!
-3. **Pairwise Contextual Frustration in $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$:**
+2. **Surface-Keyword Initialization at **$k=0$**:**
+   At $k=0$, initial attention logits $\mathbf{a}^0$ are seeded by surface-keyword overlap with $\mathbf{w}$. Consequently, polysemous trap documents (`trap_hvac_building_energy` and `trap_agronomy_soil_sampling`) start with **positive false-positive attention (**$\sigma(a_i^0) \approx 0.59$**)**!
+3. **Pairwise Contextual Frustration in **$g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$**:**
    For every co-attended pair $(i, j)$, $g_\theta$ computes both shared mechanism stems and full contextual bag-of-words cosine similarity $\cos(\text{BOW}_i, \text{BOW}_j)$.
    * When a polysemous trap (e.g., HVAC ductwork) is paired with genuine mathematical papers (e.g., Welling & Teh SGLD or Mordatch EBM), $\cos(\text{BOW}_i, \text{BOW}_j) < 0.11$, triggering high **pairwise frustration** (`coherence_deficit > 0.85`).
    * In the SGLD attention gradient $\nabla_{a_i} E_\theta$, accumulated pairwise frustration $\sum_{j \ne i} \sigma(a_j)\text{frust}(i, j)$ overrules the surface keyword match and emits `REJECT_POLYSEMOUS_TRAP`, driving $\sigma(a_{\text{trap}}^k)$ down from `0.59` ($k=0$) to `< 0.08` ($k=10$).
@@ -79,7 +79,7 @@ Implemented in [energy_wiki.py](../../energy_wiki.py) and benchmarked in [run_ex
 ### A. Relation Network vs. Unary RAG (`No_RN_Unary`) on Polysemous Traps
 | Architecture | Attention BCE $\downarrow$ | False-Positive Traps Attended $\downarrow$ | Generation Error $\downarrow$ | Bidirectional `[[wiki-links]]` Wired $\uparrow$ |
 | :--- | :---: | :---: | :---: | :---: |
-| **`Relation_Network` (Pairwise $g_\theta$)** | **`0.0539`** | **`0 traps`** | **`0.0000`** | **30 links** |
+| **`Relation_Network` (Pairwise **$g_\theta$**)** | **`0.0539`** | **`0 traps`** | **`0.0000`** | **30 links** |
 | **`No_RN_Unary` (Pointwise RAG)** | `0.3507` | **`2 traps` (`HVAC` & `Soil`)** | `0.6500` | **0 links** |
 
 ### B. Non-Monotonic Polysemous Trap Rejection Trajectory (Exp 6, Mirroring Fig. 7 Top-Right)
@@ -87,7 +87,7 @@ Implemented in [energy_wiki.py](../../energy_wiki.py) and benchmarked in [run_ex
 | :--- | :---: | :---: | :---: | :---: | :--- |
 | **`RN_true_sgld_paper` (`welling_teh_2011_sgld`)** | `0.595` | `0.610` | `0.817` | **`0.938`** | Promoted (True Member) |
 | **`RN_contradiction_lab_note` (`lab-note-42`)** | `0.599` | `0.771` | `0.892` | **`0.949`** | Promoted & Reconciled |
-| **`RN_trap_hvac_energy` (Relation Network)** | `0.583` | `0.273` | `0.130` | **`0.079`** | **Trap Rejected by Pairwise $g_\theta$!** |
-| **`RN_trap_soil_sampling` (Relation Network)** | `0.592` | `0.245` | `0.105` | **`0.060`** | **Trap Rejected by Pairwise $g_\theta$!** |
+| **`RN_trap_hvac_energy` (Relation Network)** | `0.583` | `0.273` | `0.130` | **`0.079`** | **Trap Rejected by Pairwise **$g_\theta$**!** |
+| **`RN_trap_soil_sampling` (Relation Network)** | `0.592` | `0.245` | `0.105` | **`0.060`** | **Trap Rejected by Pairwise **$g_\theta$**!** |
 | **`Unary_NoRN_trap_hvac_energy` (Unary RAG)** | `0.596` | `0.787` | `0.888` | **`0.933`** | **False Positive (Fooled by Keywords!)** |
 | **`Unary_NoRN_trap_soil_sampling` (Unary RAG)** | `0.601` | `0.789` | `0.889` | **`0.933`** | **False Positive (Fooled by Keywords!)** |

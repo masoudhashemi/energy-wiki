@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.94`), [[Composite E(w₁)+E(w₂): Energy-based concept acquisition × Boltzmann energy learning with p]] (`0.95`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.94`), [[Composite E(w₁)+E(w₂): Energy-based concept acquisition × Boltzmann energy learning with p]] (`0.95`)
 
 ## Compiled Content & Relational Bridges
 Formulates few-shot Bayesian concept acquisition from positive demonstration examples X^demo as execution-time inner-loop gradient adaptation in MAML. Inferring concept code w* minimizes energy over positive demonstrations while meta-learned prior structure in theta prevents collapse.

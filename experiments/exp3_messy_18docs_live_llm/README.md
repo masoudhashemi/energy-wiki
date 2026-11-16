@@ -2,7 +2,7 @@
 
 This folder (`experiments/exp3_messy_18docs_live_llm/`) contains **Experiment Suite 3**, which runs the **domain-agnostic Live LLM Energy-Based Wiki Compiler** ([run_exp3_live_llm.py](./run_exp3_live_llm.py)) using **`gpt-6-luna`** via `litellm` and `.env`.
 
-Crucially, **neither the concepts $\mathbf{w}$ nor the attention masks $\mathbf{a}$ are known in advance**, and **all system prompts ($\theta$) are strictly domain-agnostic** (containing zero references to AI/ML, document counts, or specific distractors).
+Crucially, **neither the concepts **$\mathbf{w}$** nor the attention masks **$\mathbf{a}$** are known in advance**, and **all system prompts (**$\theta$**) are strictly domain-agnostic** (containing zero references to AI/ML, document counts, or specific distractors).
 
 ---
 
@@ -39,12 +39,12 @@ Implemented in [run_exp3_live_llm.py](./run_exp3_live_llm.py):
 
 1. **Phase 1 — Unsupervised Joint Discovery of Unknown Concepts (`discover_unknown_concepts_via_llm`, Call #1):**
    * Solving $\arg\min_{\{\mathbf{w}^{(m)}, \mathbf{a}^{(m)}\}} \sum_m E_\theta(\mathbf{x}^0, \mathbf{a}^{(m)}, \mathbf{w}^{(m)})$, `gpt-6-luna` scans the raw corpus and proposes initial $k=0$ surface hypotheses $\mathbf{w}^{(m), 0}$, refines them into sharp $k=K$ concept specifications $\mathbf{w}^{(m), *} = [\mathbf{w}_a^*, \mathbf{w}_x^*]$, identifies core member documents (`core_entity_ids`), flags polysemous false-friends (`trap_entity_ids`), and isolates singleton ops clutter (`unassigned_clutter_ids`).
-2. **Phase 2 — Live LLM Pairwise Relational Critic $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ & Textual Gradients $\nabla_{\mathbf{w}} E_\theta, \nabla_{\mathbf{a}} E_\theta$ (Calls #2, #4, #6, #8):**
+2. **Phase 2 — Live LLM Pairwise Relational Critic **$g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$** & Textual Gradients **$\nabla_{\mathbf{w}} E_\theta, \nabla_{\mathbf{a}} E_\theta$** (Calls #2, #4, #6, #8):**
    * For each discovered concept (plus the additive composite concept $E(\mathbf{w}_1) + E(\mathbf{w}_2)$), `gpt-6-luna` evaluates pairwise interactions $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ across candidate documents:
      * Produces 3 progressive concept-code refinement gradients ($\nabla_{\mathbf{w}}^{\text{text}} E_\theta$).
      * Produces per-document attention critiques ($\nabla_{\mathbf{a}}^{\text{text}} E_\theta$) showing how polysemous traps start with positive surface attraction at $k=0$ ($\sigma(a_i^0) \in [0.55, 0.65]$) and are suppressed by pairwise domain frustration to $\sigma(a_i^{10}) \le 0.08$ at $k=10$.
      * Outputs structured pairwise diagnoses (`coherence_deficit`, `has_contradiction`, `shared_mechanisms`, `critique`).
-3. **Phase 3 — Live LLM Abstractive Wiki Page Compilation & Contradiction Reconciliation $\nabla_{\mathbf{x}^1} E_\theta$ (Calls #3, #5, #7, #9):**
+3. **Phase 3 — Live LLM Abstractive Wiki Page Compilation & Contradiction Reconciliation **$\nabla_{\mathbf{x}^1} E_\theta$** (Calls #3, #5, #7, #9):**
    * Executing $\mathbf{x}^{1*} = \arg\min_{\mathbf{x}^1} E_\theta(\mathbf{x}^1, \mathbf{a}^*, \mathbf{w}_x^*)$, `gpt-6-luna` emits 5 concrete textual gradient edit directives (`grad_x`) and writes comprehensive Markdown concept synthesis articles (`wiki_output/concepts/*.md`) and entity relational bridge notes (`wiki_output/entities/*.md`).
 
 ---

@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Boltzmann energy learning with partition-function estimation and MCMC sampling]] (`0.95`), [[Composite E(w₁)+E(w₂): Energy-based concept acquisition × Boltzmann energy learning with p]] (`0.91`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Boltzmann energy learning with partition-function estimation and MCMC sampling]] (`0.95`), [[Composite E(w₁)+E(w₂): Energy-based concept acquisition × Boltzmann energy learning with p]] (`0.91`)
 
 ## Compiled Content & Relational Bridges
 Models demonstrated trajectories x as samples from a Boltzmann distribution p(x|w) = exp(-E(x,w))/Z(w) parameterized by path energy E(x,w) and partition function Z(w). Multiple constraints or concepts compose additively by summing their constituent energy functions.

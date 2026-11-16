@@ -4,39 +4,55 @@
 
 A composite concept can be represented by adding the energies of its component concepts over the same candidate state and attention mask:
 
-\[
+
+
+
+$$
 E_{\mathrm{sum}}(x,a;w_1,w_2)=E_\theta(x,a,w_1)+E_\theta(x,a,w_2).
-\]
+$$
+
+
+
 
 The candidate state is favored when it is jointly compatible with both concepts: lowering either term alone is insufficient if the other remains large. At execution time, concept acquisition uses gradients of this summed objective with respect to the state being generated, while Boltzmann learning supplies the probabilistic interpretation, sampling machinery, and training signals for energy functions. The bridge is therefore both algebraic (additive energies) and procedural (gradient-based state generation and distribution learning).
 
 ## Unified Formulation
 
-Let \(x\) denote an entity state or trajectory, \(a\) an attention mask selecting the relevant entities or relations, and \(w_i\) the code for concept \(i\). Define
+Let $x$ denote an entity state or trajectory, $a$ an attention mask selecting the relevant entities or relations, and $w_i$ the code for concept $i$. Define
 
-\[
+
+
+$$
 E_{\mathrm{sum}}(x,a;w_1,w_2)=E_\theta(x,a,w_1)+E_\theta(x,a,w_2),
 \qquad
 p_{\mathrm{sum}}(x\mid a,w_1,w_2)=\frac{\exp[-E_{\mathrm{sum}}(x,a;w_1,w_2)]}{Z_{\mathrm{sum}}(a,w_1,w_2)}.
-\]
 
+$$
 The corresponding state gradient is
+$$
 
-\[
 \nabla_x E_{\mathrm{sum}}=\nabla_x E_\theta(x,a,w_1)+\nabla_x E_\theta(x,a,w_2).
-\]
+$$
 
-Thus, with attention and concept codes held fixed, both concepts contribute to each state update. In the concept-acquisition setting, the entity state is optimized at execution time; in a Boltzmann learning setting, the same energy defines an unnormalized density whose normalization is supplied by the partition function. For \(p\propto\exp(-E)\), lower energy corresponds to greater unnormalized probability.
 
-The partition function for the sum is the normalization of the combined energy. In general, it is not valid to replace it with the product of the two component partition functions: that simplification requires suitable independence or factorization assumptions. Likewise, an additive energy induces a product of unnormalized factors, \(\exp(-E_1)\exp(-E_2)\), but the normalized joint distribution still has its own partition function.
+
+Thus, with attention and concept codes held fixed, both concepts contribute to each state update. In the concept-acquisition setting, the entity state is optimized at execution time; in a Boltzmann learning setting, the same energy defines an unnormalized density whose normalization is supplied by the partition function. For $p\propto\exp(-E)$, lower energy corresponds to greater unnormalized probability.
+
+The partition function for the sum is the normalization of the combined energy. In general, it is not valid to replace it with the product of the two component partition functions: that simplification requires suitable independence or factorization assumptions. Likewise, an additive energy induces a product of unnormalized factors, $\exp(-E_1)\exp(-E_2)$, but the normalized joint distribution still has its own partition function.
 
 For state generation, a gradient descent step reduces the summed energy. A stochastic-gradient Langevin update can instead take the form
 
-\[
-x^{k+1}=x^k-\frac{\alpha_k}{2}\nabla_{x^k}E_{\mathrm{sum}}+\sqrt{\alpha_k}\,\xi_k,
-\]
 
-where \(\xi_k\) is calibrated Gaussian noise; equivalent conventions absorb the factor of \(1/2\) into the step size. Noise supports distributional exploration rather than merely finding a single minimum. The exact sampling interpretation depends on the step-size and long-run conditions, so a short finite rollout should not automatically be treated as an equilibrium sample.
+
+
+$$
+x^{k+1}=x^k-\frac{\alpha_k}{2}\nabla_{x^k}E_{\mathrm{sum}}+\sqrt{\alpha_k}\,\xi_k,
+$$
+
+
+
+
+where $\xi_k$ is calibrated Gaussian noise; equivalent conventions absorb the factor of $1/2$ into the step size. Noise supports distributional exploration rather than merely finding a single minimum. The exact sampling interpretation depends on the step-size and long-run conditions, so a short finite rollout should not automatically be treated as an equilibrium sample.
 
 Training and execution have related but distinct objectives. Maximum-likelihood or contrastive training estimates the effect of the partition function through negative samples. Execution-time acquisition optimizes or samples states under the learned energy. In models that explicitly train a finite inner-loop sampler, a rollout-dependent KL objective can additionally shape the energy gradients so that a limited number of sampling steps produce useful states. This auxiliary sampler objective supplements, rather than changes the definition of, the composite energy.
 
@@ -64,7 +80,7 @@ Finally, positive-example concept acquisition and Boltzmann energy learning oper
 
 ## Distractor Rejection Analysis
 
-The rejected documents share isolated words such as *gradient*, *energy*, *partition*, *sampling*, or *attention*, but they do not share the relevant relational structure. The accepted subgraph connects concept-conditioned energies to Boltzmann densities, partition-function estimation, negative sampling, SGLD state updates, and additive composition. A candidate that merely mentions a gradient or a partition without relating it to \(\exp(-E)/Z\), energy-based learning, or the execution-time inference mechanism has high lexical overlap but low pairwise relational support.
+The rejected documents share isolated words such as *gradient*, *energy*, *partition*, *sampling*, or *attention*, but they do not share the relevant relational structure. The accepted subgraph connects concept-conditioned energies to Boltzmann densities, partition-function estimation, negative sampling, SGLD state updates, and additive composition. A candidate that merely mentions a gradient or a partition without relating it to $\exp(-E)/Z$, energy-based learning, or the execution-time inference mechanism has high lexical overlap but low pairwise relational support.
 
 In particular, agricultural soil partitioning concerns spatial sampling and moisture profiles, not a Boltzmann partition function or concept-energy normalization. HVAC energy consumption concerns physical power use and sensor sampling, not an energy function defining a probability density. CSS linear-gradient and attention-focus behavior are rendering and interface mechanisms, not gradients of an energy with respect to a candidate state or attention mask. The Redis/wiki-compiler devlog contains compilation vocabulary but does not supply a research mechanism that bridges concept acquisition and Boltzmann learning. The generic MAML paper is a closer distractor because it shares meta-learning and inner-loop adaptation vocabulary; it is not the specific positive-example concept-acquisition account or a source for partition-function-based energy composition. Pairwise relational energy therefore rejects these items based on missing mechanistic links, not merely on topic labels.
 

@@ -45,9 +45,13 @@ uv run --no-sync python experiments/exp1_clean_10papers_symbolic/run_exp1.py
 Implemented in [energy_wiki.py](../../energy_wiki.py) and invoked by [run_exp1.py](./run_exp1.py):
 
 1. **Relational Energy Function (Eq. 4):**
-   $$E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w}), \, \mathbf{w} \right)^2$$
+
+$$
+E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w}), \, \mathbf{w} \right)^2
+$$
+
    where $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ evaluates normalized mechanism stem overlap and contextual bag-of-words cosine similarity between papers $i$ and $j$, plus whether bidirectional `[[wiki-links]]` exist in $\mathbf{x}^1$.
-2. **Three $K=10$ Textual SGLD Loops:**
+2. **Three **$K=10$** Textual SGLD Loops:**
    * **Concept Inference (`infer_concept_code`, Eq. 8):** Extracts shared mechanisms across attended demonstration papers via $\nabla_{\mathbf{w}}^{\text{text}} E_\theta$ to populate $\mathbf{w}_a$ and $\mathbf{w}_x$.
    * **Entity Identification (`optimize_attention_with_history`, Eq. 3b):** Updates continuous attention logits $\mathbf{a}_i^k = \mathbf{a}_i^{k-1} - \frac{\alpha}{2}\nabla_{a_i} E_\theta + \omega^k$ over $K=10$ steps.
    * **Wiki State Compilation (`optimize_wiki_state_with_history`, Eq. 3a):** Executes discrete textual gradient directives $\nabla_{\mathbf{x}^1}^{\text{text}} E_\theta$ (`CREATE_CONCEPT_PAGE`, `UPDATE_CONCEPT_LINKS`, `LINK_DEFICIT: Connect [[A]] <-> [[B]]`) up to step budget $\lfloor 3\alpha \rfloor$ per iteration until $E_\theta \to 0$.
@@ -81,5 +85,5 @@ Implemented in [energy_wiki.py](../../energy_wiki.py) and invoked by [run_exp1.p
 3. **Cross-Context Transfer & Code Interchangeability (Exp 3 & Exp 4):**
    * Calibrating $E_\theta$ on generation transfers zero-shot to identification (`0.051` attention BCE vs. `0.471` untrained).
    * Swapping $\mathbf{w}_a$ into $\mathbf{w}_x$ yields `0.000` generation error.
-4. **Sampler KL Objective $\mathcal{L}_\pi^{\text{KL}}$ Ablation (Exp 5):**
+4. **Sampler KL Objective **$\mathcal{L}_\pi^{\text{KL}}$** Ablation (Exp 5):**
    * Training with $\mathcal{L}_p^{\text{ML}} + \mathcal{L}_\pi^{\text{KL}}$ reduces $K=10$ sampled energy to `0.0421` (matching gold `0.0126`), whereas $\mathcal{L}_p^{\text{ML}}$ alone leaves $K=10$ samples at `0.7409`.

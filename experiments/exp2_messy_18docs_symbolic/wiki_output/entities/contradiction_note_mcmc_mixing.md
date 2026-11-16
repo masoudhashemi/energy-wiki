@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `KL(pi_K || p_Boltzmann) >> 0 when trained with L^ML only`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Boltzmann Energy, Partition Function & Langevin Sampling]] (`0.95`), [[Composite: Boltzmann Sampling + Inner-Loop Meta-Adaptation]] (`0.55`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Boltzmann Energy, Partition Function & Langevin Sampling]] (`0.95`), [[Composite: Boltzmann Sampling + Inner-Loop Meta-Adaptation]] (`0.55`)
 
 ## Compiled Content & Relational Bridges
 CONTROVERSY / CONTRADICTION NOTE: Classical contrastive divergence (Hinton 2002) assumes K-step truncated Langevin MCMC chains mix sufficiently without differentiating through the sampler. However, our experiments contradict uncalibrated short-run MCMC: when training the energy function E_theta with L^ML alone, K=10 Langevin steps fail to reach low-energy modes of the Boltzmann distribution exp(-E_theta)/Z (sampled energy stays > 0.74). Differentiating through the K-step SGLD rollout via the sampler KL objective L^KL is mandatory to shape the gradient field grad_x E_theta.

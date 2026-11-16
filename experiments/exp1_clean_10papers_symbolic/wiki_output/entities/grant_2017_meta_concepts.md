@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `w*_theta(X^demo) = argmin_w E_{x~X^demo}[E_theta(x, w)]`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.64`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.64`)
 
 ## Compiled Content & Relational Bridges
 Formulates few-shot Bayesian concept acquisition from positive demonstration examples X^demo as execution-time inner-loop gradient adaptation in MAML. Inferring concept code w* minimizes energy over positive demonstrations while meta-learned prior structure in theta prevents collapse.

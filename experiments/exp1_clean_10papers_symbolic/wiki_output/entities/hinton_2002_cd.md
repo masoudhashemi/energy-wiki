@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `Delta theta proportional to grad_theta E(x^0) - grad_theta E(x^K)`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Boltzmann Energy & Partition Sampling]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.93`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Boltzmann Energy & Partition Sampling]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.93`)
 
 ## Compiled Content & Relational Bridges
 Approximates intractable log-likelihood gradients of the partition function Z in Boltzmann and energy-based models by running a short K-step Markov chain Monte Carlo (MCMC) or Langevin sampler to draw negative samples x^K. Contrasts positive data energy E(x^0) against negative sample energy E(x^K).

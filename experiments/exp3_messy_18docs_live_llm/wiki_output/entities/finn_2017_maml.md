@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.89`), [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.91`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.89`), [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.91`)
 
 ## Compiled Content & Relational Bridges
 Trains meta-parameters theta via end-to-end backpropagation through an execution-time inner-loop gradient descent adaptation procedure. Given few-shot demonstration examples X^demo, K inner-loop gradient steps infer task-adapted parameters w*(X^demo), and the outer meta-objective optimizes theta so adapted parameters generalize on X^train.

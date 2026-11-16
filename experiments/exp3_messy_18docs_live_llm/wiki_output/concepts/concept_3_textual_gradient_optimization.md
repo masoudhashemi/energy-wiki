@@ -8,13 +8,19 @@ The central contribution is to make the optimization signal usable for discrete 
 
 ## Unified Formulation
 
-Let \(x^k\) be the artifact at iteration \(k\), and let \(E_\theta(x^k)\) denote its critic-assessed loss or energy under rubric or critic context \(\theta\). A critic produces a textual gradient, \(g^k = \operatorname{Critic}_\theta(x^k)\), that explains a direction of improvement. An editor or update procedure applies that direction:
+Let $x^k$ be the artifact at iteration $k$, and let $E_\theta(x^k)$ denote its critic-assessed loss or energy under rubric or critic context $\theta$. A critic produces a textual gradient, $g^k = \operatorname{Critic}_\theta(x^k)$, that explains a direction of improvement. An editor or update procedure applies that direction:
 
-\[
- x^{k+1} = \operatorname{Edit}(x^k, g^k), \qquad k=1,\ldots,K.
-\]
 
-This is a functional analogy to gradient descent: the feedback is intended to reduce the assessed energy, but it is expressed as natural-language instructions and applied to a discrete artifact. It should not be confused with computing \(\nabla_x E\) numerically. The critic diagnoses; the update procedure interprets and implements the diagnosis; subsequent evaluation checks the revised artifact.
+
+
+$$
+x^{k+1} = \operatorname{Edit}(x^k, g^k), \qquad k=1,\ldots,K.
+$$
+
+
+
+
+This is a functional analogy to gradient descent: the feedback is intended to reduce the assessed energy, but it is expressed as natural-language instructions and applied to a discrete artifact. It should not be confused with computing $\nabla_x E$ numerically. The critic diagnoses; the update procedure interprets and implements the diagnosis; subsequent evaluation checks the revised artifact.
 
 [[ProTeGi: Prompt Optimization with Textual Gradients]] gives a prompt-focused instance. It uses an LLM critic to diagnose failures on demonstration minibatches and converts those diagnoses into semantic edits to natural-language instructions. [[TextGrad: Automatic Differentiation via Text]] frames the idea more generally: textual gradients can be propagated as natural-language explanations for editing discrete variables, including prompts, code, and wiki pages, over iterative refinement steps.
 
@@ -24,7 +30,7 @@ The shared mechanism is therefore **evaluation → textual diagnosis → artifac
 
 ### From individual edits to relations between pages
 
-A unary critique evaluates one artifact or entity at a time. That can improve a page’s wording or completeness while leaving a collection-level defect untouched: two relevant pages may not refer to one another, or their relationship may be absent from the compiled account. The wiki-compilation note [[DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients]] extends the textual-update loop by adding pairwise relation critiques. For entities \(x_i\) and \(x_j\), it describes a relational critic \(g_\theta(x_i,x_j,w)\), gated by the attention product \(\sigma(a_i)\sigma(a_j)\). When both entities are relevant, the critic can emit a textual instruction such as `LINK_DEFICIT` to add explicit, potentially bidirectional `[[wiki-links]]`.
+A unary critique evaluates one artifact or entity at a time. That can improve a page’s wording or completeness while leaving a collection-level defect untouched: two relevant pages may not refer to one another, or their relationship may be absent from the compiled account. The wiki-compilation note [[DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients]] extends the textual-update loop by adding pairwise relation critiques. For entities $x_i$ and $x_j$, it describes a relational critic $g_\theta(x_i,x_j,w)$, gated by the attention product $\sigma(a_i)\sigma(a_j)$. When both entities are relevant, the critic can emit a textual instruction such as `LINK_DEFICIT` to add explicit, potentially bidirectional `[[wiki-links]]`.
 
 This supplies a collection-level update direction: the target is not only the quality of each page, but also whether the compiled pages express the important relations between them. The attention-product gate provides a relevance condition for considering the pair; it does not itself generate the prose edit. The critic’s textual diagnosis supplies that edit direction, and the page editor applies it.
 

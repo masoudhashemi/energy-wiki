@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.96`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.96`)
 
 ## Compiled Content & Relational Bridges
 Performs execution-time inner-loop adaptation of natural language instructions using nonparametric textual gradients. An LLM critic diagnoses failure minibatches on demonstration examples and emits natural-language edit critiques that guide iterative semantic gradient descent.

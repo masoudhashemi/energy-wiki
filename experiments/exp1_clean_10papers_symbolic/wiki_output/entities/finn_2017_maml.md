@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `min_theta L(theta - alpha grad_theta L_demo(theta))`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.56`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.96`), [[Composite: Energy Sampling + Inner-Loop Meta-Adaptation]] (`0.56`)
 
 ## Compiled Content & Relational Bridges
 Trains meta-parameters theta via end-to-end backpropagation through an execution-time inner-loop gradient descent adaptation procedure. Given few-shot demonstration examples X^demo, K inner-loop gradient steps infer task-adapted parameters w*(X^demo), and the outer meta-objective optimizes theta so adapted parameters generalize on X^train.

@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.92`), [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.90`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Energy-based concept acquisition through pairwise relational reasoning]] (`0.92`), [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.90`)
 
 ## Compiled Content & Relational Bridges
 Computes pairwise relational interactions g_theta(x_i, x_j, w) across all entity pairs (i, j) gated by attention masks and aggregates them via f_phi. Captures multi-entity compositional, spatial, and graph topology relations where independent unary entity encoders fail.

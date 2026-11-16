@@ -1,20 +1,65 @@
 # Energy-Based LLM Wiki with Textual Gradients
 
-This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.pdf)** (Igor Mordatch, OpenAI, 2018) to autonomously discover concepts $\mathbf{w}$, identify connected document subgraphs $\mathbf{a}$, and compile interlinked **LLM Wikis** ($\mathbf{x}^1$) over messy, multi-topic Knowledge Bases ($\mathbf{x}^0$) using **Textual Gradient Descent** (ProTeGi / TextGrad).
+This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.pdf)** (Igor Mordatch, OpenAI, 2018) to autonomously discover concepts `w`, identify connected document subgraphs `a`, and compile interlinked **LLM Wikis** (`x¹`) over messy, multi-topic Knowledge Bases (`x⁰`) using **Textual Gradient Descent** (ProTeGi / TextGrad).
+
+---
+
+## Core Mathematical Formulation
+
+1. **Relational Energy Function (Eq. 4):**
+
+
+$$
+E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2
+$$
+
+
+2. **Three Unified Execution-Time Operations via **$K$**-Step Textual SGLD:**
+   * **Concept Inference (Eq. 8):**
+
+
+$$
+\mathbf{w}^*_\theta(X^{\text{demo}}) = \arg\min_{\mathbf{w}} \mathbb{E}_{(\mathbf{x}, \mathbf{a}) \sim X^{\text{demo}}} \big[ E_\theta(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + E_\theta(\mathbf{x}^0, \mathbf{a}, \mathbf{w}_a) \big]
+$$
+
+
+   * **Entity Identification / Attention Discovery (Eq. 2b):**
+
+
+$$
+\mathbf{a}^*(\mathbf{x}^0) = \arg\min_{\mathbf{a}} E_\theta(\mathbf{x}^0, \mathbf{a}, \mathbf{w}_a)
+$$
+
+
+   * **Wiki Page & Link Generation (Eq. 2a):**
+
+
+$$
+\mathbf{x}^{1*}(\mathbf{a}) = \arg\min_{\mathbf{x}^1} E_\theta(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x)
+$$
+
+
+3. **Meta-Level Schema Optimization (Eq. 9 & Algorithm 1):**
+
+
+$$
+\min_\theta \; \mathcal{L}_{p(\theta)}^{\text{ML}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big) + \mathcal{L}_{\pi(\theta)}^{\text{KL}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big)
+$$
+
 
 ---
 
 ## Project & Experiment Folder Structure
 
 * **[1811.02486v1.pdf](1811.02486v1.pdf)** — Original paper: *Concept Learning with Energy-Based Models* (Mordatch, 2018).
-* **[PROBLEM_AND_FORMULATION.md](PROBLEM_AND_FORMULATION.md)** — Complete problem definition, paper breakdown, conceptual mapping table, and mathematical formulation for $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$, $K$-step Textual SGLD, unsupervised joint $(\mathbf{w}, \mathbf{a})$ discovery on messy KBs, and meta-optimization ($\mathcal{L}_p^{\text{ML}} + \mathcal{L}_\pi^{\text{KL}}$).
+* **[PROBLEM_AND_FORMULATION.md](PROBLEM_AND_FORMULATION.md)** — Complete problem definition, paper breakdown, conceptual mapping table, and mathematical formulation for $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$, $K$-step Textual SGLD, unsupervised joint `(w, a)` discovery on messy KBs, and meta-optimization.
 * **[EXPERIMENTS.md](EXPERIMENTS.md)** — Detailed design and empirical results across all 3 experiment folders and 6 benchmark experiments.
 * **[wiki_viewer.html](wiki_viewer.html)** — **Master Multi-Experiment Interactive Explorer** with a top-right dropdown to switch between all 3 Experiment Suites and 5 tabs:
-  1. **Knowledge Graph & SGLD Step Scrubber ($k = 0 \dots 10$)**
-  2. **Wiki Browser ($\mathbf{x}^0 \to \mathbf{x}^1$ Diff & clickable `[[wiki-links]]`)**
-  3. **Pairwise Relation Matrix $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$**
-  4. **Experiments Benchmark Dashboard (Exps 1–6)**
-  5. **Live LLM Call Log (`gpt-6-luna` JSON prompts & responses)**
+  1. **Knowledge Graph & SGLD Step Scrubber** (`k = 0 ... 10`)
+  2. **Wiki Browser** (`x⁰ → x¹` Diff & clickable `[[wiki-links]]`)
+  3. **Pairwise Relation Matrix** $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$
+  4. **Experiments Benchmark Dashboard** (Exps 1–6)
+  5. **Live LLM Call Log** (`gpt-6-luna` JSON prompts & responses)
 
 ### Self-Contained Experiment Folders (`experiments/`)
 
@@ -31,7 +76,7 @@ Each experiment folder contains its own `raw/` input corpus, `wiki_output/` comp
    * **Outputs:** [wiki_viewer.html](experiments/exp2_messy_18docs_symbolic/wiki_viewer.html), [index.md](experiments/exp2_messy_18docs_symbolic/wiki_output/index.md), [wiki_bundle.json](experiments/exp2_messy_18docs_symbolic/wiki_output/wiki_bundle.json).
 
 3. **[experiments/exp3_messy_18docs_live_llm/](experiments/exp3_messy_18docs_live_llm/)**
-   * **Corpus:** Same 18 messy, untagged multi-topic documents (`raw/*.md`), assuming **concepts $\mathbf{w}$ are UNKNOWN in advance**.
+   * **Corpus:** Same 18 messy, untagged multi-topic documents (`raw/*.md`), assuming **concepts `w` are UNKNOWN in advance**.
    * **Engine:** **Live `gpt-6-luna` via LiteLLM** ([run_exp3_live_llm.py](experiments/exp3_messy_18docs_live_llm/run_exp3_live_llm.py) — 9 live LLM calls, 39,727 tokens) performing unsupervised concept discovery ($\nabla_{\mathbf{w}} E_\theta$), pairwise relational trap rejection ($g_\theta, \nabla_{\mathbf{a}} E_\theta$), and abstractive Markdown wiki compilation ($\nabla_{\mathbf{x}^1} E_\theta$).
    * **Outputs:**
      * Viewer: [wiki_viewer.html](experiments/exp3_messy_18docs_live_llm/wiki_viewer.html)

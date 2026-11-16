@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `p(x | w) = (1 / Z(w)) exp(-E(x, w))`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Boltzmann Energy, Partition Function & Langevin Sampling]] (`0.95`), [[Composite: Boltzmann Sampling + Inner-Loop Meta-Adaptation]] (`0.50`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Boltzmann Energy, Partition Function & Langevin Sampling]] (`0.95`), [[Composite: Boltzmann Sampling + Inner-Loop Meta-Adaptation]] (`0.50`)
 
 ## Compiled Content & Relational Bridges
 Models demonstrated trajectories x as samples from a Boltzmann distribution p(x|w) = exp(-E(x,w))/Z(w) parameterized by path energy E(x,w) and partition function Z(w). Multiple constraints or concepts compose additively by summing their constituent energy functions.

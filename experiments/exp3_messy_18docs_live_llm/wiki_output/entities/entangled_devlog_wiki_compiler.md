@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `dev_log`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.97`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.97`)
 
 ## Compiled Content & Relational Bridges
 Morning standup: fixed Redis connection pool timeout on staging node-04 by bumping max_clients. Afternoon research note on LLM Wiki compilation: when running inner-loop textual gradient descent (TextGrad / ProTeGi adaptation) to compile wiki pages, unary critiques miss cross-document links. By gating pairwise relation critiques g_theta(x_i, x_j, w) with attention product sigma(a_i)sigma(a_j), the critic emits explicit LINK_DEFICIT textual gradients that wire bidirectional [[wiki-links]] between co-attended entities during K-step execution-time adaptation.

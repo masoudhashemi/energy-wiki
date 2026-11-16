@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `research_note`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.97`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Critic-guided optimization of natural-language artifacts via textual gradients]] (`0.97`)
 
 ## Compiled Content & Relational Bridges
 Generalizes backpropagation and inner-loop gradient descent adaptation to discrete natural-language variables v (prompts, code, or wiki pages). An LLM Critic evaluates a loss or energy rubric and backpropagates natural-language textual gradients grad^{text}_v E explaining how to edit v^{k-1} at execution time across K iterative refinement steps.

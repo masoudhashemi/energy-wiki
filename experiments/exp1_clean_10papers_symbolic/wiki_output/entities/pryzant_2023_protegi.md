@@ -4,7 +4,7 @@
 
 **Formula / Snippet:** `g = Critic_LLM(errors),  w^k = Edit_LLM(w^{k-1}, g)`
 
-**Participating Concepts (Converged Attention $\sigma(a_i^K)$):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.94`)
+**Participating Concepts (Converged Attention **$\sigma(a_i^K)$**):** [[Execution-Time Inner-Loop & Textual Gradients]] (`0.94`)
 
 ## Compiled Content & Relational Bridges
 Performs execution-time inner-loop adaptation of natural language instructions using nonparametric textual gradients. An LLM critic diagnoses failure minibatches on demonstration examples and emits natural-language edit critiques that guide iterative semantic gradient descent.

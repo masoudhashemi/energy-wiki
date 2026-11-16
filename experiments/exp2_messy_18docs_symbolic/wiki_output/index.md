@@ -4,26 +4,26 @@ Compiled via $K$-step Textual SGLD over Relational Energy $E_\theta(\mathbf{x}, 
 
 ## 1. Learned & Inferred Concepts ($\mathbf{w} = [\mathbf{w}_a, \mathbf{w}_x]$)
 ### [[Boltzmann Energy, Partition Function & Langevin Sampling]] (`concept_ebm_sampling`)
-- **Argument Code ($\mathbf{w}_a$):** Identify KB notes grounded in [energy, boltzmann, langevin, partition_function, gradient, sampling, trajectory] whose contextual formulations co-depend on shared probabilistic or optimization mechanisms (rejecting polysemous noise).
-- **Action Code ($\mathbf{w}_x$):** Compile a canonical wiki synthesis around [energy, boltzmann, langevin, partition_function, gradient, sampling, trajectory], wiring bidirectional [[wiki-links]] and reconciling contradictions across attended notes.
+- **Argument Code (**$\mathbf{w}_a$**):** Identify KB notes grounded in [energy, boltzmann, langevin, partition_function, gradient, sampling, trajectory] whose contextual formulations co-depend on shared probabilistic or optimization mechanisms (rejecting polysemous noise).
+- **Action Code (**$\mathbf{w}_x$**):** Compile a canonical wiki synthesis around [energy, boltzmann, langevin, partition_function, gradient, sampling, trajectory], wiring bidirectional [[wiki-links]] and reconciling contradictions across attended notes.
 - **Discovered Mechanisms:** `energy`, `boltzmann`, `langevin`, `partition_function`, `gradient`, `sampling`, `trajectory`
 - **Attended Entities ($\mathbf{a}^*$):** [[Concept Learning with Energy-Based Models]] (`0.96`), [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]] (`0.96`), [[Guided Cost Learning: Deep Inverse Optimal Control]] (`0.95`), [[Training Products of Experts by Minimizing Contrastive Divergence]] (`0.96`), [[Maximum Entropy Inverse Reinforcement Learning]] (`0.95`), [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]] (`0.95`)
 
 ### [[Execution-Time Inner-Loop Adaptation & Textual Gradients]] (`concept_inner_loop_textgrad`)
-- **Argument Code ($\mathbf{w}_a$):** Identify KB notes grounded in [gradient, inner_loop, adaptation] whose contextual formulations co-depend on shared probabilistic or optimization mechanisms (rejecting polysemous noise).
-- **Action Code ($\mathbf{w}_x$):** Compile a canonical wiki synthesis around [gradient, inner_loop, adaptation], wiring bidirectional [[wiki-links]] and reconciling contradictions across attended notes.
+- **Argument Code (**$\mathbf{w}_a$**):** Identify KB notes grounded in [gradient, inner_loop, adaptation] whose contextual formulations co-depend on shared probabilistic or optimization mechanisms (rejecting polysemous noise).
+- **Action Code (**$\mathbf{w}_x$**):** Compile a canonical wiki synthesis around [gradient, inner_loop, adaptation], wiring bidirectional [[wiki-links]] and reconciling contradictions across attended notes.
 - **Discovered Mechanisms:** `gradient`, `inner_loop`, `adaptation`
 - **Attended Entities ($\mathbf{a}^*$):** [[Model-Agnostic Meta-Learning for Fast Adaptation (MAML)]] (`0.64`), [[TextGrad: Automatic Differentiation via Text]] (`0.64`), [[ProTeGi: Prompt Optimization with Textual Gradients]] (`0.66`)
 
 ### [[Pairwise Relational & Attention-Gated Architectures]] (`concept_relational_reasoning`)
-- **Argument Code ($\mathbf{w}_a$):** Identify notes modeling pairwise entity interactions g_theta(x_i, x_j, w) gated by attention sigma(a_i)sigma(a_j).
-- **Action Code ($\mathbf{w}_x$):** Synthesize pairwise relation networks, entangled dev logs, and entity-gated energy models via [[wiki-links]].
+- **Argument Code (**$\mathbf{w}_a$**):** Identify notes modeling pairwise entity interactions g_theta(x_i, x_j, w) gated by attention sigma(a_i)sigma(a_j).
+- **Action Code (**$\mathbf{w}_x$**):** Synthesize pairwise relation networks, entangled dev logs, and entity-gated energy models via [[wiki-links]].
 - **Discovered Mechanisms:** `relational`, `pairwise`, `attention`, `compositional`, `gradient`
 - **Attended Entities ($\mathbf{a}^*$):** [[Concept Learning with Energy-Based Models]] (`0.97`), [[A Simple Neural Network Module for Relational Reasoning]] (`0.95`), [[DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients]] (`0.96`)
 
 ### [[Composite: Boltzmann Sampling + Inner-Loop Meta-Adaptation]] (`concept_composite_ebm_meta`)
-- **Argument Code ($\mathbf{w}_a$):** Composite Sum E(w_1) + E(w_2): (Boltzmann Energy, Partition Function & Langevin Sampling) + (Execution-Time Inner-Loop Adaptation & Textual Gradients)
-- **Action Code ($\mathbf{w}_x$):** Bridge Boltzmann partition sampling with inner-loop meta-learning and textual gradient updates.
+- **Argument Code (**$\mathbf{w}_a$**):** Composite Sum E(w_1) + E(w_2): (Boltzmann Energy, Partition Function & Langevin Sampling) + (Execution-Time Inner-Loop Adaptation & Textual Gradients)
+- **Action Code (**$\mathbf{w}_x$**):** Bridge Boltzmann partition sampling with inner-loop meta-learning and textual gradient updates.
 - **Discovered Mechanisms:** `energy`, `boltzmann`, `langevin`, `partition_function`, `gradient`, `sampling`, `trajectory`, `inner_loop`, `adaptation`
 - **Attended Entities ($\mathbf{a}^*$):** [[Concept Learning with Energy-Based Models]] (`0.66`), [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]] (`0.65`), [[Guided Cost Learning: Deep Inverse Optimal Control]] (`0.54`), [[Training Products of Experts by Minimizing Contrastive Divergence]] (`0.58`), [[Maximum Entropy Inverse Reinforcement Learning]] (`0.50`), [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]] (`0.55`)
 
