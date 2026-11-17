@@ -2,8 +2,6 @@
 
 > **Blog Post & Interactive Walkthrough:** **[https://masoudhashemi.github.io/energy-wiki/](https://masoudhashemi.github.io/energy-wiki/)** ([`docs/index.html`](docs/index.html))
 
-**Conditional synthesis experiment:** [Suite 5](experiments/exp5_measured_live_loop/README.md) extends Exp4 with actual document revisions: the corpus, two concepts and their membership masks stay fixed, and only the generated document changes. The same critic evaluates each fixed concept–mask pair separately; their energies are summed. One corrected ten-revision run is complete: [report and saved evidence](experiments/exp5_measured_live_loop/runs/conditional_prepared/REPORT.md). The earlier joint-update pilot is superseded and is not evidence about this formulation.
-
 This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.pdf)** (Igor Mordatch, OpenAI, 2018) to autonomously discover concepts `w`, identify connected document subgraphs `a`, and compile interlinked **LLM Wikis** (`x¹`) over messy, multi-topic Knowledge Bases (`x⁰`) using **Textual Gradient Descent** (ProTeGi / TextGrad).
 
 ---
