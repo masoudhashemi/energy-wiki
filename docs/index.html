@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Learning and LLM Wikis with Energy-Based Models</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #111827;
+      --muted: #4b5563;
+      --border: #e5e7eb;
+      --card: #f8fafc;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --green: #059669;
+      --green-soft: #d1fae5;
+      --rose: #e11d48;
+      --rose-soft: #ffe4e6;
+      --amber: #d97706;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --fg: #f8fafc;
+        --muted: #94a3b8;
+        --border: #334155;
+        --card: #1e293b;
+        --accent: #60a5fa;
+        --accent-soft: rgba(59, 130, 246, 0.18);
+        --green: #10b981;
+        --green-soft: rgba(16, 185, 129, 0.18);
+        --rose: #f43f5e;
+        --rose-soft: rgba(244, 63, 94, 0.18);
+        --amber: #f59e0b;
+      }
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 2.5rem 1.25rem 4.5rem;
+    }
+    main {
+      max-width: 840px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2.1rem;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 2.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.12rem;
+      margin-top: 1.6rem;
+    }
+    p, li {
+      font-size: 1.02rem;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .callout {
+      background: var(--card);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .figure-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      margin: 1.75rem 0;
+    }
+    .figure-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+    .figure-caption {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 0.65rem;
+      line-height: 1.5;
+    }
+    .step-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .btn-group {
+      display: flex;
+      gap: 0.4rem;
+    }
+    button.step-btn {
+      background: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.step-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.4rem 0;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--card);
+      font-weight: 600;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 680px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Concept Learning and LLM Wikis with Energy-Based Models</h1>
+    <div class="subtitle">
+      A mathematical framework for turning messy knowledge bases into connected wikis and generating new knowledge using energy-based models and textual gradients.
+    </div>
+
+    <p>
+      I like to have a mathematical formulation for agentic tasks and iterative improvement loops. A clear math formulation helps us define the loops accurately, separate the tasks, and set clear boundaries for how different parts of the system interact. Instead of treating agentic workflows as ad-hoc heuristics, we can pose them as well-defined optimizations performed during the execution lifetime of the agent.
+    </p>
+    <p>
+      In this post, we apply <a href="https://arxiv.org/abs/1811.02486"><strong>Concept Learning with Energy-Based Models</strong></a> (Mordatch, 2018) to the problem of building an <strong>LLM Wiki</strong> from a messy knowledge base.
+    </p>
+    <p>
+      Following Mordatch's framework, a <em>concept</em> is defined by a single <strong>energy function</strong> $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ over entities $\mathbf{x}$ (raw documents $\mathbf{x}^0$ and compiled wiki pages $\mathbf{x}^1$), an attention mask $\mathbf{a}$ over participating entities, and a concept code $\mathbf{w}$. Zero-energy configurations imply that the entities selected by the attention mask satisfy the concept.
+    </p>
+
+    <div class="callout">
+      <strong>Why an Energy-Based Formulation Matters:</strong> By formulating the system around a single energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ and replacing numerical gradients with <strong>textual gradients</strong> (natural-language critiques), finding concepts (optimizing over $\mathbf{w}$), selecting which documents to connect (optimizing over $\mathbf{a}$), compiling wiki pages (optimizing over $\mathbf{x}^1$), and <strong>generating brand-new data</strong> (optimizing over new synthetic documents) are all expressed with the exact same formulation and optimization loop.
+    </div>
+
+    <!-- FIGURE 1: THE THREE UNIFIED OPERATIONS -->
+    <div class="figure-box">
+      <div class="figure-title">Figure 1: One Energy Function Drives All Wiki Operations</div>
+      <svg viewBox="0 0 780 210" width="100%" style="display:block; margin-top:0.5rem;">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+          </marker>
+        </defs>
+        <!-- Central Energy Box -->
+        <rect x="285" y="12" width="210" height="46" rx="8" fill="#2563eb" />
+        <text x="390" y="33" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="bold">Relational Energy Critic</text>
+        <text x="390" y="49" text-anchor="middle" fill="#dbeafe" font-size="11" font-family="monospace">E_θ(x, a, w) → 0</text>
+
+        <!-- Arrows from Energy Box to 3 Loops -->
+        <line x1="320" y1="58" x2="130" y2="95" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)" />
+        <line x1="390" y1="58" x2="390" y2="95" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)" />
+        <line x1="460" y1="58" x2="650" y2="95" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)" />
+
+        <!-- Box 1: Concept Inference -->
+        <rect x="15" y="100" width="230" height="96" rx="8" fill="none" stroke="#64748b" stroke-width="1.5" />
+        <text x="130" y="122" text-anchor="middle" fill="currentColor" font-size="12.5" font-weight="bold">1. Concept Discovery (opt over w)</text>
+        <text x="130" y="142" text-anchor="middle" fill="#64748b" font-size="11">Given example notes (x, a),</text>
+        <text x="130" y="158" text-anchor="middle" fill="#64748b" font-size="11">infer the shared concept code w*</text>
+        <text x="130" y="180" text-anchor="middle" fill="#3b82f6" font-size="11" font-family="monospace">w* = argmin_w E_θ(x, a, w)</text>
+
+        <!-- Box 2: Identification -->
+        <rect x="275" y="100" width="230" height="96" rx="8" fill="none" stroke="#64748b" stroke-width="1.5" />
+        <text x="390" y="122" text-anchor="middle" fill="currentColor" font-size="12.5" font-weight="bold">2. Identification (opt over a)</text>
+        <text x="390" y="142" text-anchor="middle" fill="#64748b" font-size="11">Given raw notes x⁰ and concept w,</text>
+        <text x="390" y="158" text-anchor="middle" fill="#64748b" font-size="11">select matching notes and filter noise</text>
+        <text x="390" y="180" text-anchor="middle" fill="#10b981" font-size="11" font-family="monospace">a* = argmin_a E_θ(x⁰, a, w)</text>
+
+        <!-- Box 3: Generation -->
+        <rect x="535" y="100" width="230" height="96" rx="8" fill="none" stroke="#64748b" stroke-width="1.5" />
+        <text x="650" y="122" text-anchor="middle" fill="currentColor" font-size="12.5" font-weight="bold">3. Generation (opt over x¹)</text>
+        <text x="650" y="142" text-anchor="middle" fill="#64748b" font-size="11">Given selected notes a* and concept w,</text>
+        <text x="650" y="158" text-anchor="middle" fill="#64748b" font-size="11">compile wiki pages or new notes</text>
+        <text x="650" y="180" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="monospace">x¹* = argmin_x E_θ(x¹, a*, w)</text>
+      </svg>
+      <div class="figure-caption">
+        Adapting Figure 1 and Figure 3 of Mordatch (2018): instead of training separate models for retrieval, clustering, and article generation, all three operations minimize the same energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ with respect to different inputs.
+      </div>
+    </div>
+
+    <h2>1. Energy-Based Concept Models for Knowledge Bases</h2>
+    <p>
+      In a knowledge base, an event is a transition from an initial state of $N$ raw documents $\mathbf{x}^0 = [\mathbf{x}_1^0, \dots, \mathbf{x}_N^0]$ to a compiled wiki state $\mathbf{x}^1 = [\mathbf{x}_1^1, \dots, \mathbf{x}_N^1]$. Attention over the $N$ documents is represented by a continuous mask $\mathbf{a} \in \mathbb{R}^N$, where each gate $\sigma(\mathbf{a}_i) \in (0, 1)$ measures how strongly document $i$ participates in the concept.
+    </p>
+    <p>
+      A concept is defined by a non-negative energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) \ge 0$, where $\mathbf{w}$ is a natural-language concept code. When the documents selected by $\mathbf{a}$ form a coherent, well-linked concept under $\mathbf{w}$, the energy is zero ($E_\theta = 0$). When unrelated documents are included, relevant documents are missing, or shared ideas are left unlinked, the energy is positive ($E_\theta > 0$).
+    </p>
+    <p>
+      The conditional probabilities of a wiki state $\mathbf{x}$ and an attention mask $\mathbf{a}$ follow Boltzmann distributions:
+    </p>
+    $$p(\mathbf{x} \mid \mathbf{a}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}, \qquad p(\mathbf{a} \mid \mathbf{x}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}$$
+    <p>
+      To capture how documents relate to one another rather than scoring each document in isolation, the energy function uses a <strong>Relation Network</strong> architecture that evaluates pairs of documents $(i, j)$ gated by their attention weights:
+    </p>
+    $$E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2$$
+    <p>
+      Here $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ is a pairwise critic that inspects two documents together. It checks whether they share the same underlying mechanism, whether they contradict each other, and whether their compiled wiki pages are connected by a link.
+    </p>
+    <p>
+      At execution time, we minimize $E_\theta$ using $K$ steps of Stochastic Gradient Langevin Dynamics (SGLD), where the gradients $\nabla^{\text{text}} E_\theta$ are natural-language critiques and edit instructions produced by the critic:
+    </p>
+    $$\mathbf{x}^k = \mathbf{x}^{k-1} - \frac{\alpha}{2} \nabla_{\mathbf{x}}^{\text{text}} E_\theta(\mathbf{x}^{k-1}, \mathbf{a}, \mathbf{w}) + \omega^k, \qquad \mathbf{a}^k = \mathbf{a}^{k-1} - \frac{\alpha}{2} \nabla_{\mathbf{a}}^{\text{text}} E_\theta(\mathbf{x}, \mathbf{a}^{k-1}, \mathbf{w}) + \omega^k$$
+
+    <h2>2. Definitions and How Entities Relate</h2>
+    <p>
+      In a real knowledge base, documents are messy and cover overlapping topics. Because each concept $\mathbf{w}^{(m)}$ has its own independent sigmoid gate $\sigma(\mathbf{a}_i^{(m)}) \in (0, 1)$, there is <strong>no one-concept-per-document assumption</strong>. A single document can belong to zero concepts (unrelated noise), one concept (a specialized note), or several concepts at once (a bridge paper that connects two fields).
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Object</th>
+          <th>Symbol</th>
+          <th>Plain-English Meaning</th>
+          <th>How It Relates to Other Objects</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Raw Source File</strong></td>
+          <td>Input</td>
+          <td>An original PDF paper, Markdown note, lab notebook, or engineering log.</td>
+          <td>Can be treated as a single entity or split into multiple section entities.</td>
+        </tr>
+        <tr>
+          <td><strong>Knowledge Base Entity</strong></td>
+          <td>$\mathbf{x}_i^0$</td>
+          <td>A single document or section in the uncompiled knowledge base.</td>
+          <td>Can participate in <code>0</code>, <code>1</code>, or multiple concepts at the same time.</td>
+        </tr>
+        <tr>
+          <td><strong>Keyword Trap / Clutter</strong></td>
+          <td>$\mathbf{x}_{\text{trap}}^0$</td>
+          <td>A note that uses similar words (like <em>energy</em> or <em>gradient</em>) in a totally different field (like building heating or CSS styling).</td>
+          <td>Rejected during optimization ($\sigma(a_i) \to 0$) because it fails pairwise checks with true concept notes.</td>
+        </tr>
+        <tr>
+          <td><strong>Attention Mask</strong></td>
+          <td>$\mathbf{a} \in \mathbb{R}^N$</td>
+          <td>Weights $\sigma(\mathbf{a}_i) \in (0, 1)$ selecting which entities participate in a concept.</td>
+          <td>Forms a sparse subgraph connecting only the relevant subset of notes.</td>
+        </tr>
+        <tr>
+          <td><strong>Concept Code</strong></td>
+          <td>$\mathbf{w} = [\mathbf{w}_a, \mathbf{w}_x]$</td>
+          <td>Two interchangeable text rules: $\mathbf{w}_a$ defines <em>which</em> notes belong, and $\mathbf{w}_x$ defines <em>how</em> to link and summarize them.</td>
+          <td>Can be inferred from examples or discovered automatically from raw notes.</td>
+        </tr>
+        <tr>
+          <td><strong>Compiled Wiki State</strong></td>
+          <td>$\mathbf{x}^1$</td>
+          <td>The generated wiki articles and bidirectional links connecting the selected notes.</td>
+          <td>The zero-energy solution ($E_\theta \to 0$) produced at the end of the optimization loop.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Visual Walkthrough: Connecting a Messy Knowledge Base</h2>
+    <p>
+      Real knowledge bases are rarely clean. To see how the energy optimization behaves in practice, we tested it on a messy collection of 18 documents where concepts are unknown in advance. The collection mixes genuine machine learning notes, an engineering log that buries a useful insight inside unrelated database debugging notes, a lab note with a conflicting claim, unrelated IT runbooks, and four <strong>keyword traps</strong> (notes about building HVAC energy, soil sampling, CSS gradients, and HR adaptation that share surface words with the target concepts).
+    </p>
+
+    <!-- FIGURE 2: INTERACTIVE WIKI GRAPH EVOLUTION -->
+    <div class="figure-box">
+      <div class="figure-title">Figure 2: How Iterative Optimization Builds the Wiki Graph and Filters Out Keyword Traps</div>
+      <div class="step-controls">
+        <span>Click a step to see how the attention mask $\sigma(\mathbf{a}^k)$ and wiki links evolve:</span>
+        <div class="btn-group">
+          <button class="step-btn" id="btn-step-0" onclick="renderWikiGraph(0)">Step k = 0 (Initial Keyword Match)</button>
+          <button class="step-btn" id="btn-step-3" onclick="renderWikiGraph(3)">Step k = 3 (Pairwise Feedback)</button>
+          <button class="step-btn active" id="btn-step-10" onclick="renderWikiGraph(10)">Step k = 10 (Converged Wiki)</button>
+        </div>
+      </div>
+      <canvas id="wiki-graph-canvas" width="780" height="390" style="width:100%; border-radius:8px; background:var(--bg); border:1px solid var(--border);"></canvas>
+      <div class="legend-row">
+        <span><span class="dot" style="background:#2563eb;"></span>Concept Cluster 1 (Energy &amp; Sampling)</span>
+        <span><span class="dot" style="background:#10b981;"></span>Concept Cluster 2 (Textual Gradients)</span>
+        <span><span class="dot" style="background:#8b5cf6;"></span>Bridge Hub (In Multiple Concepts)</span>
+        <span><span class="dot" style="background:#f43f5e;"></span>Keyword Trap (HVAC / Soil / CSS / HR)</span>
+        <span><span class="dot" style="background:#64748b;"></span>Unrelated IT Clutter</span>
+      </div>
+      <div class="figure-caption" id="graph-step-caption"></div>
+    </div>
+
+    <h3>Why Pairwise Relations Matter: Pointwise Search vs. Relation Network</h3>
+    <p>
+      In Section 5.3 of Mordatch (2018), removing the pairwise relation network causes the model to fail on concepts that require coordinating multiple entities. We observe the exact same phenomenon when building a wiki from messy text.
+    </p>
+    <p>
+      If we score each document in isolation (standard pointwise search), a note about <em>Smart Grid HVAC Thermal Energy and Sensor Sampling</em> scores high because it contains the words <em>energy</em>, <em>sampling</em>, <em>partition</em>, and <em>gradient</em>. However, when the Relation Network evaluates pairs of documents together via $\sigma(a_i)\sigma(a_j)g_\theta(x_i, x_j, \mathbf{w})$, it sees that HVAC ductwork shares no conceptual mechanism with Boltzmann distributions or Markov chains. This pairwise mismatch creates high energy, pushing the attention on the trap notes down to zero over $K = 10$ steps.
+    </p>
+
+    <!-- FIGURE 3: TRAJECTORY PLOT OF TRAP REJECTION & MULTI-STEP CONVERGENCE -->
+    <div class="figure-box">
+      <div class="figure-title">Figure 3: Attention Trajectories and Multi-Step Link Convergence</div>
+      <div class="grid-2" style="margin-top:0.65rem;">
+        <div>
+          <canvas id="trap-chart-canvas" width="370" height="230" style="width:100%; border-radius:8px; background:var(--bg); border:1px solid var(--border);"></canvas>
+        </div>
+        <div>
+          <canvas id="step-chart-canvas" width="370" height="230" style="width:100%; border-radius:8px; background:var(--bg); border:1px solid var(--border);"></canvas>
+        </div>
+      </div>
+      <div class="figure-caption">
+        <strong>Left (Mirroring Figure 7 Top-Right of Mordatch, 2018):</strong> At step $k=0$, surface keywords give both a true Langevin sampling paper (green) and an HVAC thermal energy trap note (red) roughly <code>60%</code> attention. Pointwise search (dashed red) amplifies the HVAC trap to <code>93%</code> (a false positive). The pairwise Relation Network (solid red) detects the domain mismatch and suppresses the trap below <code>8%</code>.
+        <strong>Right:</strong> A single-step pass ($K=1$) leaves most wiki links unformed, whereas $K=10$ iterative steps complete the wiki graph and drive energy near zero.
+      </div>
+    </div>
+
+    <h2>4. Generating New Data with the Same Energy Formulation</h2>
+    <p>
+      Because an energy-based model defines what a valid configuration looks like rather than learning a fixed input-to-output mapping, <strong>data generation requires no new architecture</strong>. We use the exact same energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ and the same $K$-step textual optimization loop to generate three types of new data:
+    </p>
+
+    <ol>
+      <li>
+        <strong>Generating New "Bridge" Documents by Summing Energies:</strong>
+        In Mordatch's framework, composing two concepts corresponds to adding their energy functions:
+        $$E_{\text{comp}}(x_{\text{new}}) = E_\theta([\mathbf{x}, x_{\text{new}}], \mathbf{a}_1, \mathbf{w}^{(1)}) + E_\theta([\mathbf{x}, x_{\text{new}}], \mathbf{a}_2, \mathbf{w}^{(2)})$$
+        To generate a new article that bridges two separate clusters in the wiki (for example, <em>Boltzmann Partition Sampling</em> and <em>Discrete Textual Gradients</em>), we start with a rough two-sentence draft $x_{\text{new}}^{(0)}$ and run $K = 10$ steps of textual optimization. At each step, the energy critic points out what mathematical links or explanations are missing between the draft and both clusters, and the editor rewrites the draft until the composite energy approaches zero.
+      </li>
+      <li>
+        <strong>Generating Hard-Negative Test Data:</strong>
+        By optimizing a synthetic document to have low pointwise keyword energy (using all the right technical terms) but high pairwise relational energy (applying those terms in an incompatible field like molecular biology), the model generates realistic "hard negatives" to test whether retrieval systems truly understand the topic or merely match keywords.
+      </li>
+      <li>
+        <strong>Re-Enacting Concepts in a New Domain:</strong>
+        In Section 5.4 of Mordatch (2018), an energy function learned in a 2D particle world is reused directly to guide a 3D robotic arm. Similarly, we take a concept code $\mathbf{w}^*$ learned from machine learning notes and use $E_\theta(x_{\text{target}}, \mathbf{a}, \mathbf{w}^*)$ to generate a system design in a completely different field (distributed database consensus) that follows the exact same relational structure.
+      </li>
+    </ol>
+
+    <!-- FIGURE 4: GENERATIVE DATA SYNTHESIS PLOT -->
+    <div class="figure-box">
+      <div class="figure-title">Figure 4: Generating a New Bridge Article and Distinguishing Hard Negatives via Energy</div>
+      <canvas id="gen-chart-canvas" width="760" height="220" style="width:100%; margin-top:0.5rem; border-radius:8px; background:var(--bg); border:1px solid var(--border);"></canvas>
+      <div class="figure-caption">
+        <strong>Left:</strong> Starting from a rough two-sentence stub at step $k=0$ (high composite energy of <code>10.0</code>), iterative textual critiques add the missing mathematical bridges and wiki links at $k=3$ (energy <code>4.7</code>) and converge to a complete bridge article at $k=10$ (energy <code>0.65</code>, a 93% reduction).
+        <strong>Right:</strong> When we generate a deceptive biochemistry note that uses the exact same keywords, a keyword matcher scores it as a near-perfect match (low energy <code>0.25</code>), whereas our pairwise relational energy critic assigns it high energy (<code>9.20</code>) and rejects it.
+      </div>
+    </div>
+
+    <h2>5. Conclusion</h2>
+    <p>
+      Expressing agentic workflows through an energy-based mathematical formulation gives us a clean, unified lens for knowledge management. Instead of building separate pipelines to discover topics, filter out noisy documents, wire wiki links, and write new synthesis articles, a single relational energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ governs all of them through execution-time optimization.
+    </p>
+  </main>
+
+  <script>
+    let currentGraphStep = 10;
+
+    function isDarkMode() {
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    function renderWikiGraph(step) {
+      currentGraphStep = step;
+      [0, 3, 10].forEach(s => {
+        const b = document.getElementById('btn-step-' + s);
+        if (b) b.classList.toggle('active', s === step);
+      });
+
+      const canvas = document.getElementById('wiki-graph-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const dark = isDarkMode();
+      const fg = dark ? '#f8fafc' : '#111827';
+      const muted = dark ? '#94a3b8' : '#64748b';
+
+      // Node definitions: Cluster 1 (left), Bridge Hub (center), Cluster 2 (right), Traps & Clutter (bottom/corners)
+      const nodes = [
+        // Bridge Hub (Center)
+        { id: 'bridge', label: 'EBM Concept Paper', sub: '(Bridge Hub)', x: 390, y: 165, cluster: 'bridge', g0: 0.65, g3: 0.88, g10: 0.97 },
+
+        // Cluster 1: Energy & Sampling (Left)
+        { id: 'c1_1', label: 'Langevin Dynamics', sub: '', x: 165, y: 85, cluster: 'c1', g0: 0.60, g3: 0.82, g10: 0.94 },
+        { id: 'c1_2', label: 'Guided Cost Learning', sub: '', x: 115, y: 165, cluster: 'c1', g0: 0.62, g3: 0.85, g10: 0.96 },
+        { id: 'c1_3', label: 'Contrastive Divergence', sub: '', x: 165, y: 245, cluster: 'c1', g0: 0.58, g3: 0.80, g10: 0.95 },
+        { id: 'c1_4', label: 'MaxEnt Inverse RL', sub: '', x: 265, y: 105, cluster: 'c1', g0: 0.61, g3: 0.83, g10: 0.95 },
+        { id: 'c1_5', label: 'Short-Chain Lab Note', sub: '(Contradiction)', x: 265, y: 225, cluster: 'c1', g0: 0.60, g3: 0.79, g10: 0.92 },
+
+        // Cluster 2: Textual Gradients & Adaptation (Right)
+        { id: 'c2_1', label: 'TextGrad Paper', sub: '', x: 615, y: 85, cluster: 'c2', g0: 0.64, g3: 0.86, g10: 0.97 },
+        { id: 'c2_2', label: 'ProTeGi Prompts', sub: '', x: 665, y: 165, cluster: 'c2', g0: 0.62, g3: 0.84, g10: 0.96 },
+        { id: 'c2_3', label: 'Wiki DevLog Note', sub: '(Has Redis Noise)', x: 615, y: 245, cluster: 'c2', g0: 0.63, g3: 0.85, g10: 0.96 },
+        { id: 'c2_4', label: 'MAML Meta-Learning', sub: '', x: 515, y: 105, cluster: 'c2', g0: 0.59, g3: 0.78, g10: 0.91 },
+        { id: 'c2_5', label: 'Relation Networks', sub: '', x: 515, y: 225, cluster: 'c2', g0: 0.61, g3: 0.81, g10: 0.92 },
+
+        // Keyword Traps (Bottom Row - Initially fooled at Step 0!)
+        { id: 't1', label: 'HVAC Thermal Energy', sub: '(Keyword Trap)', x: 150, y: 342, cluster: 'trap', g0: 0.59, g3: 0.25, g10: 0.06 },
+        { id: 't2', label: 'Soil Moisture Sampling', sub: '(Keyword Trap)', x: 310, y: 342, cluster: 'trap', g0: 0.60, g3: 0.22, g10: 0.05 },
+        { id: 't3', label: 'CSS Gradient Flicker', sub: '(Keyword Trap)', x: 470, y: 342, cluster: 'trap', g0: 0.58, g3: 0.20, g10: 0.04 },
+        { id: 't4', label: 'HR Team Adaptation', sub: '(Keyword Trap)', x: 630, y: 342, cluster: 'trap', g0: 0.57, g3: 0.19, g10: 0.04 },
+
+        // Unrelated Ops Clutter (Top Corners)
+        { id: 'o1', label: 'Postgres Vacuum Log', sub: '(IT Clutter)', x: 75, y: 34, cluster: 'ops', g0: 0.22, g3: 0.08, g10: 0.02 },
+        { id: 'o2', label: 'Kubernetes TLS Note', sub: '(IT Clutter)', x: 705, y: 34, cluster: 'ops', g0: 0.20, g3: 0.07, g10: 0.02 }
+      ];
+
+      const getGate = n => (step === 0 ? n.g0 : (step === 3 ? n.g3 : n.g10));
+      const byId = {};
+      nodes.forEach(n => { byId[n.id] = n; });
+
+      // Draw edges depending on step
+      if (step === 0) {
+        // At step 0, tentative noisy keyword links connect traps to clusters
+        const noisyPairs = [
+          ['t1', 'c1_2'], ['t1', 'c1_3'], ['t2', 'c1_1'], ['t2', 'c1_5'],
+          ['t3', 'c2_1'], ['t4', 'c2_3'], ['c1_1', 'c1_2'], ['c2_1', 'c2_2']
+        ];
+        noisyPairs.forEach(([a, b]) => {
+          const na = byId[a], nb = byId[b];
+          ctx.beginPath();
+          ctx.moveTo(na.x, na.y);
+          ctx.lineTo(nb.x, nb.y);
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = a.startsWith('t') ? 'rgba(244, 63, 94, 0.55)' : 'rgba(148, 163, 184, 0.45)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        });
+      } else {
+        const alpha = step === 3 ? 0.45 : 0.82;
+        const lw = step === 3 ? 1.5 : 2.3;
+        const c1Ids = ['c1_1', 'c1_2', 'c1_3', 'c1_4', 'c1_5', 'bridge'];
+        const c2Ids = ['c2_1', 'c2_2', 'c2_3', 'c2_4', 'c2_5', 'bridge'];
+
+        // Cluster 1 links
+        for (let i = 0; i < c1Ids.length; i++) {
+          for (let j = i + 1; j < c1Ids.length; j++) {
+            if (step === 3 && (i + j) % 2 === 1) continue;
+            const na = byId[c1Ids[i]], nb = byId[c1Ids[j]];
+            ctx.beginPath();
+            ctx.moveTo(na.x, na.y);
+            ctx.lineTo(nb.x, nb.y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${alpha})`;
+            ctx.lineWidth = lw;
+            ctx.stroke();
+          }
+        }
+        // Cluster 2 links
+        for (let i = 0; i < c2Ids.length; i++) {
+          for (let j = i + 1; j < c2Ids.length; j++) {
+            if (step === 3 && (i + j) % 2 === 1) continue;
+            const na = byId[c2Ids[i]], nb = byId[c2Ids[j]];
+            ctx.beginPath();
+            ctx.moveTo(na.x, na.y);
+            ctx.lineTo(nb.x, nb.y);
+            ctx.strokeStyle = `rgba(16, 185, 129, ${alpha})`;
+            ctx.lineWidth = lw;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      nodes.forEach(n => {
+        const g = getGate(n);
+        const active = g >= 0.5;
+        let fill = '#64748b';
+        if (n.cluster === 'c1') fill = '#2563eb';
+        else if (n.cluster === 'c2') fill = '#10b981';
+        else if (n.cluster === 'bridge') fill = '#8b5cf6';
+        else if (n.cluster === 'trap') fill = active ? '#f43f5e' : (dark ? '#475569' : '#cbd5e1');
+        else if (n.cluster === 'ops') fill = dark ? '#334155' : '#e2e8f0';
+
+        const r = n.cluster === 'bridge' ? 20 : 15;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.lineWidth = active ? 2.5 : 1;
+        ctx.strokeStyle = active ? (dark ? '#ffffff' : '#0f172a') : '#94a3b8';
+        ctx.stroke();
+
+        ctx.fillStyle = (n.cluster === 'ops' && !dark) ? '#475569' : '#ffffff';
+        ctx.font = 'bold 9.5px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(Math.round(g * 100) + '%', n.x, n.y + 3.5);
+
+        ctx.fillStyle = active ? fg : muted;
+        ctx.font = active ? 'bold 11px sans-serif' : '10.5px sans-serif';
+        ctx.fillText(n.label, n.x, n.y + r + 13);
+        if (n.sub) {
+          ctx.fillStyle = n.cluster === 'trap' ? '#f43f5e' : muted;
+          ctx.font = '9.5px sans-serif';
+          ctx.fillText(n.sub, n.x, n.y + r + 24);
+        }
+      });
+
+      const caption = document.getElementById('graph-step-caption');
+      if (step === 0) {
+        caption.innerHTML = '<strong>At Step k = 0 (Initial Surface Keyword Match):</strong> Before pairwise optimization begins, surface words like <em>"energy"</em>, <em>"sampling"</em>, and <em>"gradient"</em> trick the initial mask into highlighting the four red Keyword Trap notes at ~60% alongside the real research notes, while the wiki links are sparse and noisy.';
+      } else if (step === 3) {
+        caption.innerHTML = '<strong>At Step k = 3 (Pairwise Relational Feedback):</strong> The pairwise critic checks whether pairs of attended notes actually share a mechanism. Because HVAC heating and soil moisture do not fit with Boltzmann equations or textual critiques, their attention drops to ~22% and true cluster links begin forming.';
+      } else {
+        caption.innerHTML = '<strong>At Step k = 10 (Converged Low-Energy Wiki):</strong> All 4 keyword traps and 2 IT clutter notes are cleanly disconnected (&lt; 6% attention, 0 links). The two genuine concept clusters are densely interlinked and connected through the central Bridge Hub note.';
+      }
+    }
+
+    function drawTrapAndStepCharts() {
+      const dark = isDarkMode();
+      const fg = dark ? '#f8fafc' : '#111827';
+      const muted = dark ? '#94a3b8' : '#64748b';
+      const grid = dark ? '#334155' : '#e5e7eb';
+
+      // Left Chart: Trap Rejection Trajectory
+      const c1 = document.getElementById('trap-chart-canvas');
+      if (c1) {
+        const ctx = c1.getContext('2d');
+        const W = c1.width, H = c1.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const padL = 42, padR = 16, padT = 28, padB = 34;
+        const pW = W - padL - padR, pH = H - padT - padB;
+
+        ctx.fillStyle = fg;
+        ctx.font = 'bold 11.5px sans-serif';
+        ctx.fillText('Attention on True Note vs. HVAC Trap', padL, 17);
+
+        // Axes & Grid
+        ctx.strokeStyle = grid;
+        ctx.lineWidth = 1;
+        [0, 0.5, 1.0].forEach(val => {
+          const y = padT + pH * (1 - val);
+          ctx.beginPath();
+          ctx.moveTo(padL, y);
+          ctx.lineTo(W - padR, y);
+          ctx.stroke();
+          ctx.fillStyle = muted;
+          ctx.font = '10px monospace';
+          ctx.textAlign = 'right';
+          ctx.fillText(Math.round(val * 100) + '%', padL - 6, y + 3);
+        });
+
+        const trueLine = [0.60, 0.68, 0.77, 0.83, 0.87, 0.90, 0.91, 0.92, 0.93, 0.94, 0.94];
+        const unaryTrap = [0.60, 0.70, 0.78, 0.83, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.93];
+        const rnTrap = [0.59, 0.38, 0.27, 0.20, 0.16, 0.13, 0.11, 0.10, 0.09, 0.08, 0.07];
+
+        function plotCurve(arr, color, dashed) {
+          ctx.beginPath();
+          if (dashed) ctx.setLineDash([5, 4]);
+          arr.forEach((v, i) => {
+            const x = padL + (i / 10) * pW;
+            const y = padT + pH * (1 - v);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        plotCurve(trueLine, '#10b981', false);
+        plotCurve(unaryTrap, '#f43f5e', true);
+        plotCurve(rnTrap, '#f43f5e', false);
+
+        ctx.textAlign = 'left';
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = '#10b981';
+        ctx.fillText('— True Note (Promoted to 94%)', padL + 8, padT + 42);
+        ctx.fillStyle = '#f43f5e';
+        ctx.fillText('-- HVAC Trap: Pointwise Search (93% False Positive)', padL + 8, padT + 58);
+        ctx.fillText('— HVAC Trap: Pairwise Energy (Rejected to 7%)', padL + 8, padT + 74);
+
+        ctx.fillStyle = muted;
+        ctx.textAlign = 'center';
+        ctx.fillText('Optimization Step (k = 0 to 10)', padL + pW / 2, H - 8);
+      }
+
+      // Right Chart: Multi-Step Wiki Link Completion
+      const c2 = document.getElementById('step-chart-canvas');
+      if (c2) {
+        const ctx = c2.getContext('2d');
+        const W = c2.width, H = c2.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const padL = 42, padR = 16, padT = 28, padB = 34;
+        const pW = W - padL - padR, pH = H - padT - padB;
+
+        ctx.fillStyle = fg;
+        ctx.font = 'bold 11.5px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Missing Wiki Links & Error vs. Steps (K)', padL, 17);
+
+        const steps = ['K=1', 'K=2', 'K=5', 'K=10', 'K=20'];
+        const errs = [0.87, 0.74, 0.35, 0.02, 0.02];
+
+        steps.forEach((label, idx) => {
+          const bw = 36;
+          const x = padL + idx * (pW / steps.length) + 12;
+          const barH = errs[idx] * pH;
+          const y = padT + pH - barH;
+
+          ctx.fillStyle = idx >= 3 ? '#10b981' : '#3b82f6';
+          ctx.fillRect(x, y, bw, barH);
+
+          ctx.fillStyle = fg;
+          ctx.font = 'bold 10px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(idx >= 3 ? '0%' : Math.round(errs[idx] * 100) + '%', x + bw / 2, y - 5);
+
+          ctx.fillStyle = muted;
+          ctx.font = '10px sans-serif';
+          ctx.fillText(label, x + bw / 2, H - 12);
+        });
+      }
+    }
+
+    function drawGenerativeChart() {
+      const canvas = document.getElementById('gen-chart-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const dark = isDarkMode();
+      const fg = dark ? '#f8fafc' : '#111827';
+      const muted = dark ? '#94a3b8' : '#64748b';
+      const border = dark ? '#334155' : '#e5e7eb';
+
+      // Divider
+      ctx.strokeStyle = border;
+      ctx.beginPath();
+      ctx.moveTo(W / 2, 16);
+      ctx.lineTo(W / 2, H - 16);
+      ctx.stroke();
+
+      // Left Half: Generating a New Bridge Paper over Steps k=0, 3, 10
+      ctx.fillStyle = fg;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('A. Generating a New Bridge Article (Composite Energy ↓)', 24, 24);
+
+      const genSteps = [
+        { label: 'Step k=0 (2-Sentence Stub)', e: 10.0, col: '#f59e0b' },
+        { label: 'Step k=3 (Equations + 3 Links)', e: 4.7, col: '#3b82f6' },
+        { label: 'Step k=10 (Complete Bridge Doc)', e: 0.65, col: '#10b981' }
+      ];
+      genSteps.forEach((item, idx) => {
+        const y = 52 + idx * 52;
+        ctx.fillStyle = muted;
+        ctx.font = '11px sans-serif';
+        ctx.fillText(item.label, 24, y);
+
+        const maxBarW = 230;
+        const bw = (item.e / 10.0) * maxBarW;
+        ctx.fillStyle = item.col;
+        ctx.fillRect(24, y + 7, bw, 16);
+
+        ctx.fillStyle = fg;
+        ctx.font = 'bold 11px monospace';
+        ctx.fillText('Energy = ' + item.e.toFixed(2), 24 + bw + 8, y + 19);
+      });
+
+      // Right Half: Generated True Bridge Doc vs. Generated Hard-Negative Trap
+      const rx = W / 2 + 24;
+      ctx.fillStyle = fg;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('B. Scoring a Generated Hard-Negative Trap (Lower = Better)', rx, 24);
+
+      const compItems = [
+        { label: 'Keyword Matcher on Biochem Trap (Fooled!)', e: 0.25, col: '#f43f5e' },
+        { label: 'Pairwise Energy on Biochem Trap (Rejected!)', e: 9.20, col: '#f43f5e' },
+        { label: 'Pairwise Energy on True Bridge Article (Accepted)', e: 0.65, col: '#10b981' }
+      ];
+      compItems.forEach((item, idx) => {
+        const y = 52 + idx * 52;
+        ctx.fillStyle = muted;
+        ctx.font = '11px sans-serif';
+        ctx.fillText(item.label, rx, y);
+
+        const maxBarW = 220;
+        const bw = (item.e / 10.0) * maxBarW;
+        ctx.fillStyle = item.col;
+        ctx.fillRect(rx, y + 7, bw, 16);
+
+        ctx.fillStyle = fg;
+        ctx.font = 'bold 11px monospace';
+        ctx.fillText('Energy = ' + item.e.toFixed(2), rx + bw + 8, y + 19);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderWikiGraph(10);
+      drawTrapAndStepCharts();
+      drawGenerativeChart();
+    });
+  </script>
+</body>
+</html>
