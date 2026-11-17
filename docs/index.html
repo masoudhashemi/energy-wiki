@@ -416,14 +416,14 @@
       <div class="figure-title">Figure 4: Generating a New Bridge Article and Distinguishing Hard Negatives via Energy</div>
       <canvas id="gen-chart-canvas" width="760" height="220" style="width:100%; margin-top:0.5rem; border-radius:8px; background:var(--bg); border:1px solid var(--border);"></canvas>
       <div class="figure-caption">
-        <strong>Left:</strong> Starting from a rough two-sentence stub at step $k=0$ (high composite energy of <code>10.0</code>), iterative textual critiques add the missing mathematical bridges and wiki links at $k=3$ (energy <code>4.7</code>) and converge to a complete bridge article at $k=10$ (energy <code>0.65</code>, a 93% reduction).
-        <strong>Right:</strong> When we generate a deceptive biochemistry note that uses the exact same keywords, a keyword matcher scores it as a near-perfect match (low energy <code>0.25</code>), whereas our pairwise relational energy critic assigns it high energy (<code>9.20</code>) and rejects it.
+        <strong>Left:</strong> Starting from a rough two-sentence stub at step $k=0$ (high composite energy of <code>9.80</code>), iterative textual critiques add the missing conceptual bridges and wiki links at $k=3$ (energy <code>4.40</code>) and converge to a well-linked bridge note at $k=10$ (energy <code>1.90</code>, an 81% reduction).
+        <strong>Right:</strong> When we generate a deceptive biochemistry note that uses the exact same keywords, a keyword matcher scores it as a near-perfect match (low energy <code>0.20</code>), whereas our pairwise relational energy critic assigns it high energy (<code>9.40</code>) and rejects it.
       </div>
     </div>
 
     <h3>Step-by-Step Example: How a New Bridge Article Evolves ($k = 0 \to 3 \to 10$)</h3>
     <p>
-      Suppose our wiki has two separate concept clusters that have not yet been unified: Cluster 1 covers <em>Boltzmann Energy Models and Short-Run Langevin Sampling</em>, and Cluster 2 covers <em>Discrete Textual Gradient Optimization</em>. We want the model to generate a brand-new article $x_{\text{new}}$ that bridges both clusters by minimizing their summed energy $E_{\text{comp}}(x_{\text{new}}) = E_\theta(\cdot, \mathbf{w}^{(1)}) + E_\theta(\cdot, \mathbf{w}^{(2)})$.
+      Suppose our wiki has two separate concept clusters that have not yet been unified: Cluster 1 covers <em>Energy-Based Models and Stochastic Sampling</em>, and Cluster 2 covers <em>Iterative Text and Prompt Optimization via Natural-Language Critiques</em>. We want the model to generate a brand-new note $x_{\text{new}}$ that bridges both clusters by minimizing their summed energy $E_{\text{comp}}(x_{\text{new}}) = E_\theta(\cdot, \mathbf{w}^{(1)}) + E_\theta(\cdot, \mathbf{w}^{(2)})$.
     </p>
 
     <div class="figure-box">
@@ -431,22 +431,19 @@
       <div class="step-controls">
         <span>Select an optimization step to inspect the evolving draft $x_{\text{new}}^{(k)}$ and critic feedback $\nabla_x^{\text{text}} E_{\text{comp}}$:</span>
         <div class="btn-group">
-          <button class="step-btn active" id="btn-gen-0" onclick="showGenExample(0)">Step k = 0 (Initial Seed, E = 10.00)</button>
-          <button class="step-btn" id="btn-gen-3" onclick="showGenExample(3)">Step k = 3 (Intermediate, E = 4.70)</button>
-          <button class="step-btn" id="btn-gen-10" onclick="showGenExample(10)">Step k = 10 (Converged, E = 0.65)</button>
+          <button class="step-btn active" id="btn-gen-0" onclick="showGenExample(0)">Step k = 0 (Initial Seed, E = 9.80)</button>
+          <button class="step-btn" id="btn-gen-3" onclick="showGenExample(3)">Step k = 3 (Intermediate, E = 4.40)</button>
+          <button class="step-btn" id="btn-gen-10" onclick="showGenExample(10)">Step k = 10 (Converged, E = 1.90)</button>
         </div>
       </div>
 
       <!-- Step k = 0 Panel -->
       <div id="gen-panel-0">
         <p style="margin-top:0.25rem; font-size:0.94rem;">
-          <strong>1. Real Generated Draft at Step $k = 0$</strong> (Total Energy $E_{\text{comp}} = 10.00$ | $E_{w_1} = 2.80, E_{w_2} = 2.70, E_{\text{links}} = 2.50, E_{\text{contra}} = 2.00$ | Wiki Links Wired: <code>0</code>)
+          <strong>1. Real Generated Draft at Step $k = 0$</strong> (Total Energy $E_{\text{comp}} = 9.80$ | $E_{w_1} = 2.80, E_{w_2} = 2.70, E_{\text{links}} = 2.50, E_{\text{contra}} = 1.80$ | Wiki Links Wired: <code>0</code>)
         </p>
         <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:1rem 1.15rem; font-size:0.92rem;">
           <div style="font-weight:700; font-size:1.02rem; margin-bottom:0.4rem;">Draft Note: Combining Energy Models and Textual Gradients</div>
-          <div style="font-family:monospace; font-size:0.84rem; color:var(--accent); background:var(--card); padding:0.45rem 0.65rem; border-radius:6px; margin-bottom:0.65rem; overflow-x:auto;">
-            Key Equation: x_new = update(x_old, critique)
-          </div>
           <div style="color:var(--fg); line-height:1.6;">
             Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states, and LLM critics can write critiques to improve a draft.
           </div>
@@ -454,13 +451,12 @@
         <div style="margin-top:0.75rem; background:var(--rose-soft); border-left:4px solid var(--rose); padding:0.85rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
           <strong>Critic Summary ($\nabla_x^{\text{text}} E_{\text{comp}}$ at $k = 0$):</strong>
           <p style="margin:0.35rem 0 0.5rem; font-size:0.9rem;">
-            The draft contains a few relevant surface terms, but it does not define a Boltzmann distribution, partition-function estimation, Langevin sampling, or a discrete pairwise-gated textual-gradient procedure. Pairwise coherence with both clusters is therefore very low: the draft has no exact wiki-links and leaves the $K=10$ mixing failure and KL shaping contradiction unaddressed.
+            The draft states a promising high-level analogy between low-energy states and critic-improved documents. It does not yet explain stochastic sampling, textual edits, or how the two mechanisms work together, and it contains no explicit wiki-links.
           </p>
           <strong>Exact Textual Gradient Directives ($\nabla_x^{\text{text}} E_{\text{comp}}$):</strong>
           <ul style="margin:0.35rem 0 0 1.2rem; padding:0;">
-            <li>Replace the vague update equation with a precise objective and sampling account: define $p(x\mid w)=\exp(-E_\theta(x,w))/Z(w)$, explain how $Z$ or its gradient is approximated using importance or contrastive samples, and state the short-run Langevin update with its noise term.</li>
-            <li>Specify the discrete textual-gradient loop: define the critic's rubric and pairwise relation $g_\theta(x_i,x_j,w)$, explain how attention masks gate links (for example, $\sigma(a_i)\sigma(a_j)$), and show how the resulting critique edits the document.</li>
-            <li>Add a section addressing Lab Notebook #42: explain why $K=10$ chains can remain poorly mixed, how an $\mathcal{L}^{\text{KL}}$ sampler-shaping term calibrates the sampler before using its critiques, and bridge the discussion with exact <code>[[Document Title]]</code> links to at least five relevant documents from both clusters.</li>
+            <li>After the sentence about low-energy states, add a brief explanation that an energy function scores candidate states and that Boltzmann-based sampling explores candidates rather than only selecting the current best one; connect this to <strong>[[Maximum Entropy Inverse Reinforcement Learning]]</strong> and <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>.</li>
+            <li>After the sentence about LLM critics, explain that a critique can propose a discrete edit to a prompt or document, and that trying diverse edits can reduce getting stuck near the initial draft; connect this to <strong>[[TextGrad: Automatic Differentiation via Text]]</strong>, <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>, and <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.</li>
           </ul>
         </div>
       </div>
@@ -468,45 +464,23 @@
       <!-- Step k = 3 Panel -->
       <div id="gen-panel-3" style="display:none;">
         <p style="margin-top:0.25rem; font-size:0.94rem;">
-          <strong>2. Real Generated Draft at Step $k = 3$</strong> (Total Energy $E_{\text{comp}} = 4.70$ | $E_{w_1} = 0.70, E_{w_2} = 1.00, E_{\text{links}} = 1.80, E_{\text{contra}} = 1.20$ | Wiki Links Wired: <code>3</code>)
+          <strong>2. Real Generated Draft at Step $k = 3$</strong> (Total Energy $E_{\text{comp}} = 4.40$ | $E_{w_1} = 0.80, E_{w_2} = 0.80, E_{\text{links}} = 1.60, E_{\text{contra}} = 1.20$ | Wiki Links Wired: <code>5</code>)
         </p>
         <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:1rem 1.15rem; font-size:0.92rem;">
-          <div style="font-weight:700; font-size:1.02rem; margin-bottom:0.4rem;">Energy-Based Text Optimization with Pairwise-Gated Textual Gradients</div>
-          <div style="font-family:monospace; font-size:0.84rem; color:var(--accent); background:var(--card); padding:0.45rem 0.65rem; border-radius:6px; margin-bottom:0.65rem; overflow-x:auto;">
-            Key Equation: p_θ(x|w) = exp[-E_θ(x,w)] / Z_θ(w),  Z_θ(w) = ∫ exp[-E_θ(x,w)] dx;  x_{t+1} = x_t - (η/2)∇_x E_θ(x_t,w) + √η ξ_t,  ξ_t ~ N(0,I);  q_{ij} = σ(a_i)σ(a_j)g_θ(x_i,x_j,w)
-          </div>
+          <div style="font-weight:700; font-size:1.02rem; margin-bottom:0.4rem;">Draft Note: Combining Energy Models and Textual Gradients</div>
           <div style="color:var(--fg); line-height:1.6;">
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Energy objective and sampling</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              Let $x$ be a document and $w$ its task or rubric. An energy model assigns lower energy to documents that better satisfy the rubric, defining the Boltzmann distribution $p_\theta(x\mid w) = \exp[-E_\theta(x,w)]/Z_\theta(w)$, where $Z_\theta(w) = \int \exp[-E_\theta(x,w)]\,dx$ is the partition function. In practice, $Z_\theta(w)$ is difficult to compute. One possible approximation is importance sampling, $Z_\theta(w) \approx \frac{1}{M}\sum_m \exp[-E_\theta(x_m,w)]/r(x_m)$, for samples $x_m$ drawn from proposal $r$. This estimate can be noisy when the proposal poorly covers likely documents; how to obtain a reliable estimate, or its gradient, remains open in this draft.
-            </p>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              A continuous relaxation can be sampled with a short-run Langevin update:
-              <code>x_{t+1} = x_t - (η/2) ∇_x E_θ(x_t,w) + √η ξ_t,  ξ_t ~ N(0,I)</code>.
-              For text, this update is an idealization: gradients must ultimately be translated into edits to discrete tokens or spans. The energy-model and sampling background is connected to <strong>[[Concept Learning with Energy-Based Models]]</strong> and <strong>[[Bayesian Learning via Stochastic Gradient Langevin Dynamics]]</strong>.
-            </p>
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Pairwise-gated textual gradients</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              A critic scores a draft against a rubric covering such properties as factual support, clarity, and coherence. Split the draft into spans $x_i$. A relation network computes $g_\theta(x_i,x_j,w)$, estimating whether spans $i$ and $j$ support, contradict, or need to be linked. Attention masks $a_i$ and $a_j$ gate each proposed relation:
-              <code>q_ij = σ(a_i) σ(a_j) g_θ(x_i,x_j,w)</code>.
-              Thus a relation contributes strongly only when both spans are attended to. The critic uses the rubric and gated relations to return localized textual gradients: for example, "qualify the claim in span $i$ because it conflicts with span $j$." The editor applies those instructions to obtain a revised document, which can then be rescored. This textual-gradient loop is related to <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>.
-            </p>
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Short-run chains and an unresolved calibration issue</h4>
-            <p style="margin:0; font-size:0.92rem;">
-              Lab Notebook #42 reports that $K=10$ Langevin steps can leave chains poorly mixed: they may remain near their initial drafts and fail to explore alternatives. A possible mitigation is an $\mathcal{L}^{\text{KL}}$ sampler-shaping term that calibrates the sampler toward a target distribution before its critiques are used for editing. However, this draft does not resolve the tension between that shaping objective and the claim that short-run samples provide useful, representative critiques. The appropriate calibration target and the effect of shaping on useful diversity need further analysis.
-            </p>
+            Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states. An energy function scores candidate states, and Boltzmann-based sampling explores candidates rather than only selecting the current best one, connecting this approach to <strong>[[Maximum Entropy Inverse Reinforcement Learning]]</strong> and <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>. LLM critics can write critiques to improve a draft. A critique can propose a discrete edit to a prompt or document, and trying diverse edits can reduce the chance of getting stuck near the initial draft, as explored in <strong>[[TextGrad: Automatic Differentiation via Text]]</strong>, <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>, and <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.
           </div>
         </div>
         <div style="margin-top:0.75rem; background:var(--accent-soft); border-left:4px solid var(--accent); padding:0.85rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
           <strong>Critic Summary ($\nabla_x^{\text{text}} E_{\text{comp}}$ at $k = 3$):</strong>
           <p style="margin:0.35rem 0 0.5rem; font-size:0.9rem;">
-            The draft gives a sound Boltzmann formulation, importance-sampling estimate, continuous Langevin update, and a clear pairwise attention-gating idea, but leaves the discrete textual update and energy aggregation underspecified. Its main relational deficits are sparse cross-cluster citations and an unresolved account of how KL shaping calibrates poorly mixed $K=10$ samples for useful textual critiques.
+            The draft gives a readable initial bridge: it describes low-energy states, stochastic candidate exploration, and critique-driven discrete edits, with links from both clusters. Its main gaps are that it does not explain how the two optimization processes relate or differ, and it links only five documents without enough specific synthesis; the short-run-chain caveat is also asserted rather than explained.
           </p>
           <strong>Exact Textual Gradient Directives ($\nabla_x^{\text{text}} E_{\text{comp}}$):</strong>
           <ul style="margin:0.35rem 0 0 1.2rem; padding:0;">
-            <li>Add the explicit energy aggregation that turns attention-gated pair relations into $E_\theta$, and connect it to <strong>[[Concept Learning with Energy-Based Models]]</strong> and <strong>[[A Simple Neural Network Module for Relational Reasoning]]</strong>.</li>
-            <li>Specify the discrete critic-to-editor update as a concrete textual-gradient procedure, and explain how it extends the localized edits in <strong>[[TextGrad: Automatic Differentiation via Text]]</strong> and <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>.</li>
-            <li>Describe how $\mathcal{L}^{\text{KL}}$ shapes short-run samples toward a stated target before critique, how this affects diversity, and link the discussion to <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>, <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong>, and <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.</li>
+            <li>After the sentence about low energy and Boltzmann sampling, add one focused explanation that an energy function ranks candidate states while MCMC sampling explores alternatives; connect this distinction to <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong> and <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>.</li>
+            <li>After the sentence about LLM critiques, clarify that a critic diagnoses a specific failure and proposes a discrete edit that is then evaluated, as in <strong>[[TextGrad: Automatic Differentiation via Text]]</strong> and <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>. Add a brief caveat that varied edits can help avoid local stagnation, but do not equate discrete edit diversity with well-mixed Langevin chains; relate that limitation to <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.</li>
           </ul>
         </div>
       </div>
@@ -514,48 +488,18 @@
       <!-- Step k = 10 Panel -->
       <div id="gen-panel-10" style="display:none;">
         <p style="margin-top:0.25rem; font-size:0.94rem;">
-          <strong>3. Real Converged Article at Step $k = 10$</strong> (Total Energy $E_{\text{comp}} = 0.65$ | $E_{w_1} = 0.25, E_{w_2} = 0.20, E_{\text{links}} = 0.00, E_{\text{contra}} = 0.20$ | Wiki Links Wired: <code>8</code>)
+          <strong>3. Real Converged Article at Step $k = 10$</strong> (Total Energy $E_{\text{comp}} = 1.90$ | $E_{w_1} = 0.40, E_{w_2} = 0.50, E_{\text{links}} = 0.20, E_{\text{contra}} = 0.80$ | Wiki Links Wired: <code>6</code>)
         </p>
         <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:1rem 1.15rem; font-size:0.92rem;">
-          <div style="font-weight:700; font-size:1.02rem; margin-bottom:0.4rem;">Discrete Textual SGLD with Pairwise Energy, Importance-Weighted Contrastive Learning, and KL-Shaped K=10 Rollouts</div>
-          <div style="font-family:monospace; font-size:0.84rem; color:var(--green); background:var(--card); padding:0.45rem 0.65rem; border-radius:6px; margin-bottom:0.65rem; overflow-x:auto;">
-            Key Equation: pθ(x|a,w)=exp(−Eθ(x,a,w))/Zθ(a,w), Zθ=Σx exp(−Eθ); s_i=σ(a_i), h_ij=s_i s_j, Eθ=Σ_i s_i uθ(x_i,w)+λΣ_{i&lt;j}h_ij softplus(−gθ(x_i,x_j,w)); q(x)=Σ_m ρ_m q_m(x), Ẑ=(1/M)Σ_r exp(−Eθ(x_r,a,w))/q(x_r), x_r∼q; ℓ(x)=−Eθ(x,a,w)−log Ẑ−log q(x), L^ML=E_data[softplus(−ℓ(x))]+E_q[softplus(ℓ(x))]; P*(τ|x⁰)∝Q₀(τ|x⁰)exp(−βEθ(xᴷ,a,w)), L^KL=KL(Qφ(τ|x⁰)||P*)=E_Qφ[βEθ(xᴷ,a,w)+log(Qφ(τ|x⁰)/Q₀(τ|x⁰))]+const; zᵏ⁺¹=zᵏ−(α/2)∇_zE_comp+ωᵏ, xᵏ⁺¹=ProjectText(zᵏ⁺¹)
-          </div>
+          <div style="font-weight:700; font-size:1.02rem; margin-bottom:0.4rem;">Draft Note: Combining Energy Models and Textual Gradients</div>
           <div style="color:var(--fg); line-height:1.6;">
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Discrete energy model and pairwise aggregation</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              Let $x$ be a token sequence, $a$ a rubric or attention vector over its spans, and $w$ the task context. Since text is discrete, the partition function is a sum over sequences (or over a finite candidate space), not an integral: $p_\theta(x\mid a,w)=\exp(-E_\theta(x,a,w))/Z_\theta(a,w)$, with $Z_\theta(a,w)=\sum_x \exp(-E_\theta(x,a,w))$. Lower energy means a better rubric fit. This is the normalized Boltzmann model used in <strong>[[Concept Learning with Energy-Based Models]]</strong>.
-            </p>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              For span $i$, let $u_\theta(x_i,w)$ be its unary energy, $s_i=\sigma(a_i)$ its attention gate, and let $g_\theta(x_i,x_j,w)$ be a compatibility logit, where larger values mean more compatible spans. Define $h_{ij}=s_i s_j$ and the pair penalty $c_{ij}=\text{softplus}(-g_\theta(x_i,x_j,w))$. The explicit aggregate is $E_\theta(x,a,w)=\sum_i s_i u_\theta(x_i,w)+\lambda\sum_{i&lt;j}h_{ij} c_{ij}$. Thus attended spans contribute unary costs, while a pair contributes in proportion to both gates and incurs a high cost when its compatibility logit is low. This gated pairwise construction makes the relational aggregation explicit and connects energy-based composition to <strong>[[A Simple Neural Network Module for Relational Reasoning]]</strong>. The energy can be augmented with rubric-specific terms, but its components and weights should be reported so the critic can identify which terms drive a proposed edit.
-            </p>
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Mixture importance sampling and softplus contrastive loss</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              Use a proposal mixture $q(x)=\sum_m \rho_m q_m(x)$, where $\rho_m\ge 0$ and $\sum_m\rho_m=1$. The mixture should cover plausible drafts and have support wherever the target has support. For samples $x_r$ drawn from $q$, the importance estimate is $\hat{Z}_\theta=\frac{1}{M}\sum_r \exp(-E_\theta(x_r,a,w))/q(x_r)$. The corresponding normalized-model score is approximated by $\ell_\theta(x)=\log[p_\theta(x\mid a,w)/q(x)]\approx -E_\theta(x,a,w)-\log \hat{Z}_\theta(a,w)-\log q(x)$.
-            </p>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              To obtain the softplus objective, classify examples as either data or proposal draws with equal class priors. The logit for the data class against the proposal class is $\ell_\theta(x)$. Binary logistic negative log-likelihood is $\text{softplus}(-\ell_\theta(x))$ for a data example and $\text{softplus}(\ell_\theta(x))$ for a proposal example. Hence $\mathcal{L}^{\text{ML}}=\mathbb{E}_{x\sim p_{\text{data}}}[\text{softplus}(-\ell_\theta(x))]+\mathbb{E}_{x\sim q}[\text{softplus}(\ell_\theta(x))]$. This is an importance-corrected noise-contrastive objective with an importance-sampled, plug-in estimate of the partition function; it is approximate at finite $M$. In particular, estimate $Z$ with the full mixture density $q(x)$, not merely the component that happened to generate a sample. Monitor effective sample size and proposal coverage, since a poor mixture makes both $\hat{Z}$ and the resulting contrastive gradients unreliable. The contrastive perspective is related to <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>; importance-weighted proposals and energy-guided sampling also connect to <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong>.
-            </p>
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">From a critic's textual gradient to a discrete edit</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              A token sequence has no ordinary Euclidean gradient. Use a differentiable relaxed representation $z=\phi(x)$ for scoring and sampler training, and treat the resulting direction as guidance rather than as an exact gradient on strings. At each iteration: (1) score the current draft and spans under the rubric; (2) return localized instructions, such as qualify span $i$ because it conflicts with span $j$, or replace a phrase with a supported alternative; (3) have an editor propose a finite set of token or span edits; (4) estimate each proposal's energy change $\Delta E$ and rank or sample edits, for example with probability proportional to $\exp(-\Delta E/T)$, while retaining a nonzero exploration probability; and (5) apply a selected edit, rescore, and keep an audit trail of the instruction, edit, and energy change.
-            </p>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              In the relaxed sampler, the update is $z^{k+1}=z^k-(\alpha/2)\nabla_z E_{\text{comp}}(z^k,a,w)+\omega^k$, followed by projection or decoding to a valid text $x^{k+1}=\text{ProjectText}(z^{k+1})$. Here $\omega^k$ is the exploration perturbation; the projected discrete process is an approximation, not exact Langevin dynamics on token strings. Gradients through stochastic edit rollouts can be estimated with a differentiable relaxation such as a soft token distribution, or with a score-function estimator for sampled edits. This procedure makes the textual-gradient step concrete while extending the localized edit loop of <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong> and the feedback-as-differentiation framing of <strong>[[TextGrad: Automatic Differentiation via Text]]</strong>.
-            </p>
-            <h4 style="margin:0.6rem 0 0.3rem; font-size:0.96rem;">Resolving the short-chain K=10 failure with rollout KL shaping</h4>
-            <p style="margin:0 0 0.65rem; font-size:0.92rem;">
-              Lab Notebook #42's failure mode is that ten unshaped transitions can remain close to their initial drafts, so critiques from those samples underrepresent useful alternatives. Shape the sampler before using its outputs for critique. Let $\tau=(x^0,e_0,x^1,\dots,e_{K-1},x^K)$ be an edit rollout drawn from differentiable sampler $Q_\phi(\tau\mid x^0)$, and define a broad reference edit policy $Q_0$. Choose the stated target path distribution $P^*(\tau\mid x^0)$ proportional to $Q_0(\tau\mid x^0)\exp(-\beta E_\theta(x^K,a,w))$; $\beta$ controls energy guidance. Minimize $\mathcal{L}^{\text{KL}}=\text{KL}(Q_\phi\parallel P^*)$. Up to a constant independent of $\phi$, this is $\mathbb{E}_{\tau\sim Q_\phi}[\beta E_\theta(x^K,a,w)+\log(Q_\phi(\tau\mid x^0)/Q_0(\tau\mid x^0))]$. The energy term steers terminal drafts toward rubric-compatible low-energy regions; the log-ratio term regularizes the edit policy relative to the reference. Differentiate through relaxed edit probabilities, or use a policy-gradient estimator for discrete edits.
-            </p>
-            <p style="margin:0; font-size:0.92rem;">
-              Operationally, train or update $Q_\phi$ against this target, draw $K=10$ rollouts from the shaped sampler, then send their terminal drafts to the critic and apply the localized edit procedure above. This directly addresses the diagnosed short-chain problem by steering the finite-horizon rollout rather than assuming ten ordinary Langevin steps have mixed. A broad $Q_0$ and moderate $\beta$ preserve more variation; an overly concentrated target or an overly strong energy term can collapse diversity. Track distinct edits, coverage, energy, and effective sample size, and adjust $\beta$ or mix shaped rollouts with reference-policy rollouts if coverage falls. KL shaping improves the specified finite-horizon sampling objective; it does not guarantee exact equilibrium samples or eliminate mode loss. This sampler-and-energy viewpoint is connected to <strong>[[Bayesian Learning via Stochastic Gradient Langevin Dynamics]]</strong>, <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong>, and <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.
-            </p>
+            Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states. An energy function scores candidate states, and Boltzmann-based sampling explores candidates rather than only selecting the current best one, connecting this approach to <strong>[[Maximum Entropy Inverse Reinforcement Learning]]</strong>. More specifically, the energy function ranks candidate states, while MCMC sampling explores alternatives; this distinction connects to <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong> and <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>. LLM critics can write critiques to improve a draft. A critic can diagnose a specific failure, propose a discrete edit, and then evaluate that edit, as in <strong>[[TextGrad: Automatic Differentiation via Text]]</strong> and <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>. Varied edits can help avoid local stagnation, but discrete edit diversity does not imply well-mixed Langevin chains; short-run chains can remain poorly mixed without KL shaping, as discussed in <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>.
           </div>
         </div>
         <div style="margin-top:0.75rem; background:var(--green-soft); border-left:4px solid var(--green); padding:0.85rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
-          <strong>Critic Summary at Convergence ($E_{\text{comp}} = 0.65$, down 93.5% from 10.00):</strong>
+          <strong>Critic Summary at Step $k = 10$ ($E_{\text{comp}} = 1.90$, down 81% from 9.80):</strong>
           <p style="margin:0.35rem 0 0; font-size:0.9rem;">
-            The draft has low energy against both clusters: it gives a detailed Boltzmann and importance-sampling account, explicit attention-gated pairwise costs, actionable discrete edit mechanics, and a direct KL-shaped response to the $K=10$ mixing failure, with strong exact-link coverage across all 8 cross-cluster documents ($E_{\text{links}} = 0.00$).
+            The draft clearly distinguishes energy-based scoring and stochastic sampling from critique-driven discrete edits, and it includes six exact wiki-links spanning both clusters.
           </p>
         </div>
       </div>
@@ -853,9 +797,9 @@
       ctx.fillText('A. Generating a New Bridge Article (Composite Energy ↓)', 24, 24);
 
       const genSteps = [
-        { label: 'Step k=0 (2-Sentence Stub)', e: 10.0, col: '#f59e0b' },
-        { label: 'Step k=3 (Equations + 3 Links)', e: 4.7, col: '#3b82f6' },
-        { label: 'Step k=10 (Complete Bridge Doc)', e: 0.65, col: '#10b981' }
+        { label: 'Step k=0 (2-Sentence Stub)', e: 9.80, col: '#f59e0b' },
+        { label: 'Step k=3 (Intermediate + 5 Links)', e: 4.40, col: '#3b82f6' },
+        { label: 'Step k=10 (Converged Bridge Note)', e: 1.90, col: '#10b981' }
       ];
       genSteps.forEach((item, idx) => {
         const y = 52 + idx * 52;
@@ -880,9 +824,9 @@
       ctx.fillText('B. Scoring a Generated Hard-Negative Trap (Lower = Better)', rx, 24);
 
       const compItems = [
-        { label: 'Keyword Matcher on Biochem Trap (Fooled!)', e: 0.25, col: '#f43f5e' },
-        { label: 'Pairwise Energy on Biochem Trap (Rejected!)', e: 9.20, col: '#f43f5e' },
-        { label: 'Pairwise Energy on True Bridge Article (Accepted)', e: 0.65, col: '#10b981' }
+        { label: 'Keyword Matcher on Biochem Trap (Fooled!)', e: 0.20, col: '#f43f5e' },
+        { label: 'Pairwise Energy on Biochem Trap (Rejected!)', e: 9.40, col: '#f43f5e' },
+        { label: 'Pairwise Energy on True Bridge Note (Accepted)', e: 1.90, col: '#10b981' }
       ];
       compItems.forEach((item, idx) => {
         const y = 52 + idx * 52;

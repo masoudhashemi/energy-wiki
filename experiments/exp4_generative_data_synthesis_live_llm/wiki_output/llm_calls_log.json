@@ -1,182 +1,178 @@
 [
   {
     "call_index": 1,
-    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=0 (Initial Uncalibrated Seed Draft)",
+    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=0 (Initial Seed Draft)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 9.14,
-    "total_tokens": 2498,
-    "user_prompt_preview": "SGLD Iteration: k=0 (Initial Uncalibrated Seed Draft)\n\nCluster 1 (w_1 \u2014 Boltzmann Energy, Partition Function Z & Short-Run Langevin MCMC):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_the...",
+    "elapsed_sec": 7.13,
+    "total_tokens": 1987,
+    "user_prompt_preview": "Evaluation Step: k=0 (Initial Seed Draft)\n\nCluster 1 Documents (Energy-Based Models & Sampling):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_theta(x, a, w) over entity state trajectories...",
     "response": {
       "e_w1_boltzmann_mcmc_deficit": 2.8,
       "e_w2_textual_gradient_deficit": 2.7,
       "e_link_topology_deficit": 2.5,
-      "e_contradiction_calibration_deficit": 2.0,
-      "unary_keyword_energy": 0.6,
+      "e_contradiction_calibration_deficit": 1.8,
+      "unary_keyword_energy": 0.8,
       "pairwise_relational_energy": 4.8,
       "grad_x_directives": [
-        "Replace the vague update equation with a precise objective and sampling account: define p(x|w)=exp(-E_theta(x,w))/Z(w), explain how Z or its gradient is approximated using importance or contrastive samples, and state the short-run Langevin update with its noise term.",
-        "Specify the discrete textual-gradient loop: define the critic's rubric and pairwise relation g_theta(x_i,x_j,w), explain how attention masks gate links (for example, sigma(a_i)sigma(a_j)), and show how the resulting critique edits the document.",
-        "Add a section addressing Lab Notebook #42: explain why K=10 chains can remain poorly mixed, how an L^KL sampler-shaping term calibrates the sampler before using its critiques, and bridge the discussion with exact [[Document Title]] links to at least five relevant documents from both clusters."
+        "After the sentence about low-energy states, add a brief explanation that an energy function scores candidate states and that Boltzmann-based sampling explores candidates rather than only selecting the current best one; connect this to [[Maximum Entropy Inverse Reinforcement Learning]] and [[Training Products of Experts by Minimizing Contrastive Divergence]].",
+        "After the sentence about LLM critics, explain that a critique can propose a discrete edit to a prompt or document, and that trying diverse edits can reduce getting stuck near the initial draft; connect this to [[TextGrad: Automatic Differentiation via Text]], [[ProTeGi: Prompt Optimization with Textual Gradients]], and [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]."
       ],
-      "critic_summary": "The draft contains a few relevant surface terms, but it does not define a Boltzmann distribution, partition-function estimation, Langevin sampling, or a discrete pairwise-gated textual-gradient procedure. Pairwise coherence with both clusters is therefore very low: the draft has no exact wiki-links and leaves the K=10 mixing failure and KL shaping contradiction unaddressed.",
-      "total_composite_energy": 10.0
+      "critic_summary": "The draft states a promising high-level analogy between low-energy states and critic-improved documents. It does not yet explain stochastic sampling, textual edits, or how the two mechanisms work together, and it contains no explicit wiki-links.",
+      "total_composite_energy": 9.8
     }
   },
   {
     "call_index": 2,
-    "purpose": "Textual SGLD Generator Update x_{N+1} (k=0 -> k=3 (Incorporate Boltzmann Partition Formulation & Pairwise Gating))",
+    "purpose": "Textual SGLD Generator Update x_{N+1} (k=0 -> k=3 (First Textual SGLD Update))",
     "model": "gpt-6-luna",
-    "elapsed_sec": 13.46,
-    "total_tokens": 2063,
-    "user_prompt_preview": "SGLD Update Step: k=0 -> k=3 (Incorporate Boltzmann Partition Formulation & Pairwise Gating)\nTarget Refinement Tier: Intermediate draft (k=3): Introduce the Boltzmann distribution exp(-E_theta)/Z and pairwise relation network gating sigma(a_i)sigma(a_j)g_theta, link 3 papers using [[Exact Title]], b...",
+    "elapsed_sec": 5.1,
+    "total_tokens": 1045,
+    "user_prompt_preview": "Revision Step: k=0 -> k=3 (First Textual SGLD Update)\n\nCurrent Draft Title: Draft Note: Combining Energy Models and Textual Gradients\nCurrent Draft Content:\nRough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low e...",
     "response": {
-      "title": "Energy-Based Text Optimization with Pairwise-Gated Textual Gradients",
-      "key_equation": "p_\u03b8(x|w) = exp[-E_\u03b8(x,w)] / Z_\u03b8(w),  Z_\u03b8(w) = \u222b exp[-E_\u03b8(x,w)] dx;  x_{t+1} = x_t - (\u03b7/2)\u2207_x E_\u03b8(x_t,w) + \u221a\u03b7 \u03be_t,  \u03be_t ~ N(0,I);  q_{ij} = \u03c3(a_i)\u03c3(a_j)g_\u03b8(x_i,x_j,w)",
-      "content": "## Energy objective and sampling\n\nLet x be a document and w its task or rubric. An energy model assigns lower energy to documents that better satisfy the rubric, defining the Boltzmann distribution p_\u03b8(x|w) = exp[-E_\u03b8(x,w)]/Z_\u03b8(w), where Z_\u03b8(w) = \u222b exp[-E_\u03b8(x,w)] dx is the partition function. In practice, Z_\u03b8(w) is difficult to compute. One possible approximation is importance sampling, Z_\u03b8(w) \u2248 (1/M)\u2211_m exp[-E_\u03b8(x_m,w)]/r(x_m), for samples x_m drawn from proposal r. This estimate can be noisy when the proposal poorly covers likely documents; how to obtain a reliable estimate, or its gradient, remains open in this draft.\n\nA continuous relaxation can be sampled with a short-run Langevin update:\n\n```text\nx_{t+1} = x_t - (\u03b7/2) \u2207_x E_\u03b8(x_t,w) + \u221a\u03b7 \u03be_t,   \u03be_t ~ N(0,I)\n```\n\nFor text, this update is an idealization: gradients must ultimately be translated into edits to discrete tokens or spans. The energy-model and sampling background is connected to [[Concept Learning with Energy-Based Models]] and [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]].\n\n## Pairwise-gated textual gradients\n\nA critic scores a draft against a rubric covering such properties as factual support, clarity, and coherence. Split the draft into spans x_i. A relation network computes g_\u03b8(x_i,x_j,w), estimating whether spans i and j support, contradict, or need to be linked. Attention masks a_i and a_j gate each proposed relation:\n\n```text\nq_ij = \u03c3(a_i) \u03c3(a_j) g_\u03b8(x_i,x_j,w)\n```\n\nThus a relation contributes strongly only when both spans are attended to. The critic uses the rubric and gated relations to return localized textual gradients: for example, \u201cqualify the claim in span i because it conflicts with span j.\u201d The editor applies those instructions to obtain a revised document, which can then be rescored. This textual-gradient loop is related to [[ProTeGi: Prompt Optimization with Textual Gradients]].\n\n## Short-run chains and an unresolved calibration issue\n\nLab Notebook #42 reports that K=10 Langevin steps can leave chains poorly mixed: they may remain near their initial drafts and fail to explore alternatives. A possible mitigation is an L^KL sampler-shaping term that calibrates the sampler toward a target distribution before its critiques are used for editing. However, this draft does not resolve the tension between that shaping objective and the claim that short-run samples provide useful, representative critiques. The appropriate calibration target and the effect of shaping on useful diversity need further analysis.",
+      "title": "Draft Note: Combining Energy Models and Textual Gradients",
+      "content": "Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states. An energy function scores candidate states, and Boltzmann-based sampling explores candidates rather than only selecting the current best one, connecting this approach to [[Maximum Entropy Inverse Reinforcement Learning]] and [[Training Products of Experts by Minimizing Contrastive Divergence]]. LLM critics can write critiques to improve a draft. A critique can propose a discrete edit to a prompt or document, and trying diverse edits can reduce the chance of getting stuck near the initial draft, as explored in [[TextGrad: Automatic Differentiation via Text]], [[ProTeGi: Prompt Optimization with Textual Gradients]], and [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]].",
       "wiki_links": [
-        "Concept Learning with Energy-Based Models",
-        "Bayesian Learning via Stochastic Gradient Langevin Dynamics",
-        "ProTeGi: Prompt Optimization with Textual Gradients"
-      ]
+        "Maximum Entropy Inverse Reinforcement Learning",
+        "Training Products of Experts by Minimizing Contrastive Divergence",
+        "TextGrad: Automatic Differentiation via Text",
+        "ProTeGi: Prompt Optimization with Textual Gradients",
+        "Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping"
+      ],
+      "key_equation": ""
     }
   },
   {
     "call_index": 3,
-    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=3 (Intermediate SGLD Draft)",
+    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=3 (Intermediate Draft)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 9.58,
-    "total_tokens": 3357,
-    "user_prompt_preview": "SGLD Iteration: k=3 (Intermediate SGLD Draft)\n\nCluster 1 (w_1 \u2014 Boltzmann Energy, Partition Function Z & Short-Run Langevin MCMC):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_theta(x, a,...",
+    "elapsed_sec": 11.48,
+    "total_tokens": 2513,
+    "user_prompt_preview": "Evaluation Step: k=3 (Intermediate Draft)\n\nCluster 1 Documents (Energy-Based Models & Sampling):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_theta(x, a, w) over entity state trajectories...",
     "response": {
-      "e_w1_boltzmann_mcmc_deficit": 0.7,
-      "e_w2_textual_gradient_deficit": 1.0,
-      "e_link_topology_deficit": 1.8,
+      "e_w1_boltzmann_mcmc_deficit": 0.8,
+      "e_w2_textual_gradient_deficit": 0.8,
+      "e_link_topology_deficit": 1.6,
       "e_contradiction_calibration_deficit": 1.2,
       "unary_keyword_energy": 0.2,
-      "pairwise_relational_energy": 2.4,
+      "pairwise_relational_energy": 3.4,
       "grad_x_directives": [
-        "Add the explicit energy aggregation that turns attention-gated pair relations into E\u03b8, and connect it to [[Concept Learning with Energy-Based Models]] and [[A Simple Neural Network Module for Relational Reasoning]].",
-        "Specify the discrete critic-to-editor update as a concrete textual-gradient procedure, and explain how it extends the localized edits in [[TextGrad: Automatic Differentiation via Text]] and [[ProTeGi: Prompt Optimization with Textual Gradients]].",
-        "Describe how L^KL shapes short-run samples toward a stated target before critique, how this affects diversity, and link the discussion to [[Training Products of Experts by Minimizing Contrastive Divergence]], [[Guided Cost Learning: Deep Inverse Optimal Control]], and [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]."
+        "After the sentence about low energy and Boltzmann sampling, add one focused explanation that an energy function ranks candidate states while MCMC sampling explores alternatives; connect this distinction to [[Guided Cost Learning: Deep Inverse Optimal Control]] and [[Training Products of Experts by Minimizing Contrastive Divergence]].",
+        "After the sentence about LLM critiques, clarify that a critic diagnoses a specific failure and proposes a discrete edit that is then evaluated, as in [[TextGrad: Automatic Differentiation via Text]] and [[ProTeGi: Prompt Optimization with Textual Gradients]]. Add a brief caveat that varied edits can help avoid local stagnation, but do not equate discrete edit diversity with well-mixed Langevin chains; relate that limitation to [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]."
       ],
-      "critic_summary": "The draft gives a sound Boltzmann formulation, importance-sampling estimate, continuous Langevin update, and a clear pairwise attention-gating idea, but leaves the discrete textual update and energy aggregation underspecified. Its main relational deficits are sparse cross-cluster citations and an unresolved account of how KL shaping calibrates poorly mixed K=10 samples for useful textual critiques.",
-      "total_composite_energy": 4.7
+      "critic_summary": "The draft gives a readable initial bridge: it describes low-energy states, stochastic candidate exploration, and critique-driven discrete edits, with links from both clusters. Its main gaps are that it does not explain how the two optimization processes relate or differ, and it links only five documents without enough specific synthesis; the short-run-chain caveat is also asserted rather than explained.",
+      "total_composite_energy": 4.4
     }
   },
   {
     "call_index": 4,
-    "purpose": "Textual SGLD Generator Update x_{N+1} (k=3 -> k=10 (Full Zero-Energy Convergence: Partition Estimation, L^KL Rollout Shaping & All [[Wiki-Links]]))",
+    "purpose": "Textual SGLD Generator Update x_{N+1} (k=3 -> k=10 (Converged Textual SGLD Update))",
     "model": "gpt-6-luna",
-    "elapsed_sec": 37.84,
-    "total_tokens": 5331,
-    "user_prompt_preview": "SGLD Update Step: k=3 -> k=10 (Full Zero-Energy Convergence: Partition Estimation, L^KL Rollout Shaping & All [[Wiki-Links]])\nTarget Refinement Tier: Converged low-energy synthesis (k=10): Rigorously formulate discrete Textual SGLD over Boltzmann distributions p(x|a,w) = exp(-E_theta(x,a,w))/Z, deri...",
+    "elapsed_sec": 14.84,
+    "total_tokens": 2094,
+    "user_prompt_preview": "Revision Step: k=3 -> k=10 (Converged Textual SGLD Update)\n\nCurrent Draft Title: Draft Note: Combining Energy Models and Textual Gradients\nCurrent Draft Content:\nRough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign ...",
     "response": {
-      "title": "Discrete Textual SGLD with Pairwise Energy, Importance-Weighted Contrastive Learning, and KL-Shaped K=10 Rollouts",
-      "key_equation": "p\u03b8(x|a,w)=exp(\u2212E\u03b8(x,a,w))/Z\u03b8(a,w), Z\u03b8=\u03a3x exp(\u2212E\u03b8); s_i=\u03c3(a_i), h_ij=s_i s_j, E\u03b8=\u03a3_i s_i u\u03b8(x_i,w)+\u03bb\u03a3_{i<j}h_ij softplus(\u2212g\u03b8(x_i,x_j,w)); q(x)=\u03a3_m \u03c1_m q_m(x), Z\u0302=(1/M)\u03a3_r exp(\u2212E\u03b8(x_r,a,w))/q(x_r), x_r\u223cq; \u2113(x)=\u2212E\u03b8(x,a,w)\u2212log Z\u0302\u2212log q(x), L^ML=E_data[softplus(\u2212\u2113(x))]+E_q[softplus(\u2113(x))]; P*(\u03c4|x\u2070)\u221dQ\u2080(\u03c4|x\u2070)exp(\u2212\u03b2E\u03b8(x\u1d37,a,w)), L^KL=KL(Q\u03c6(\u03c4|x\u2070)||P*)=E_Q\u03c6[\u03b2E\u03b8(x\u1d37,a,w)+log(Q\u03c6(\u03c4|x\u2070)/Q\u2080(\u03c4|x\u2070))]+const; z\u1d4f\u207a\u00b9=z\u1d4f\u2212(\u03b1/2)\u2207_zE_comp+\u03c9\u1d4f, x\u1d4f\u207a\u00b9=ProjectText(z\u1d4f\u207a\u00b9)",
-      "content": "## Discrete energy model and pairwise aggregation\n\nLet x be a token sequence, a rubric or attention vector over its spans, and w the task context. Since text is discrete, the partition function is a sum over sequences (or over a finite candidate space), not an integral: p\u03b8(x|a,w)=exp(\u2212E\u03b8(x,a,w))/Z\u03b8(a,w), with Z\u03b8(a,w)=\u03a3_x exp(\u2212E\u03b8(x,a,w)). Lower energy means a better rubric fit. This is the normalized Boltzmann model used in [[Concept Learning with Energy-Based Models]].\n\nFor span i, let u\u03b8(x_i,w) be its unary energy, s_i=\u03c3(a_i) its attention gate, and let g\u03b8(x_i,x_j,w) be a compatibility logit, where larger values mean more compatible spans. Define h_ij=s_i s_j and the pair penalty c_ij=softplus(\u2212g\u03b8(x_i,x_j,w)). The explicit aggregate is E\u03b8(x,a,w)=\u03a3_i s_i u\u03b8(x_i,w)+\u03bb\u03a3_{i<j}h_ij c_ij. Thus attended spans contribute unary costs, while a pair contributes in proportion to both gates and incurs a high cost when its compatibility logit is low. This gated pairwise construction makes the relational aggregation explicit and connects energy-based composition to [[A Simple Neural Network Module for Relational Reasoning]]. The energy can be augmented with rubric-specific terms, but its components and weights should be reported so the critic can identify which terms drive a proposed edit.\n\n## Mixture importance sampling and softplus contrastive loss\n\nUse a proposal mixture q(x)=\u03a3_m \u03c1_m q_m(x), where \u03c1_m\u22650 and \u03a3_m\u03c1_m=1. The mixture should cover plausible drafts and have support wherever the target has support. For samples x_r drawn from q, the importance estimate is Z\u0302\u03b8=(1/M)\u03a3_r exp(\u2212E\u03b8(x_r,a,w))/q(x_r). The corresponding normalized-model score is approximated by \u2113\u03b8(x)=log[p\u03b8(x|a,w)/q(x)]\u2248\u2212E\u03b8(x,a,w)\u2212log Z\u0302\u03b8(a,w)\u2212log q(x).\n\nTo obtain the softplus objective, classify examples as either data or proposal draws with equal class priors. The logit for the data class against the proposal class is \u2113\u03b8(x). Binary logistic negative log-likelihood is softplus(\u2212\u2113\u03b8(x)) for a data example and softplus(\u2113\u03b8(x)) for a proposal example. Hence L^ML=E_{x\u223cpdata}[softplus(\u2212\u2113\u03b8(x))]+E_{x\u223cq}[softplus(\u2113\u03b8(x))]. This is an importance-corrected noise-contrastive objective with an importance-sampled, plug-in estimate of the partition function; it is approximate at finite M. In particular, estimate Z with the full mixture density q(x), not merely the component that happened to generate a sample. Monitor effective sample size and proposal coverage, since a poor mixture makes both Z\u0302 and the resulting contrastive gradients unreliable. The contrastive perspective is related to [[Training Products of Experts by Minimizing Contrastive Divergence]]; importance-weighted proposals and energy-guided sampling also connect to [[Guided Cost Learning: Deep Inverse Optimal Control]].\n\n## From a critic\u2019s textual gradient to a discrete edit\n\nA token sequence has no ordinary Euclidean gradient. Use a differentiable relaxed representation z=\u03c6(x) for scoring and sampler training, and treat the resulting direction as guidance rather than as an exact gradient on strings. At each iteration: (1) score the current draft and spans under the rubric; (2) return localized instructions, such as qualify span i because it conflicts with span j, or replace a phrase with a supported alternative; (3) have an editor propose a finite set of token or span edits; (4) estimate each proposal\u2019s energy change \u0394E and rank or sample edits, for example with probability proportional to exp(\u2212\u0394E/T), while retaining a nonzero exploration probability; and (5) apply a selected edit, rescore, and keep an audit trail of the instruction, edit, and energy change.\n\nIn the relaxed sampler, the update is z^{k+1}=z^k\u2212(\u03b1/2)\u2207_z E_comp(z^k,a,w)+\u03c9^k, followed by projection or decoding to a valid text x^{k+1}=ProjectText(z^{k+1}). Here \u03c9^k is the exploration perturbation; the projected discrete process is an approximation, not exact Langevin dynamics on token strings. Gradients through stochastic edit rollouts can be estimated with a differentiable relaxation such as a soft token distribution, or with a score-function estimator for sampled edits. This procedure makes the textual-gradient step concrete while extending the localized edit loop of [[ProTeGi: Prompt Optimization with Textual Gradients]] and the feedback-as-differentiation framing of [[TextGrad: Automatic Differentiation via Text]].\n\n## Resolving the short-chain K=10 failure with rollout KL shaping\n\nLab Notebook #42\u2019s failure mode is that ten unshaped transitions can remain close to their initial drafts, so critiques from those samples underrepresent useful alternatives. Shape the sampler before using its outputs for critique. Let \u03c4=(x\u2070,e\u2080,x\u00b9,\u2026,e_{K\u22121},x\u1d37) be an edit rollout drawn from differentiable sampler Q\u03c6(\u03c4|x\u2070), and define a broad reference edit policy Q\u2080. Choose the stated target path distribution P*(\u03c4|x\u2070) proportional to Q\u2080(\u03c4|x\u2070)exp(\u2212\u03b2E\u03b8(x\u1d37,a,w)); \u03b2 controls energy guidance. Minimize L^KL=KL(Q\u03c6||P*). Up to a constant independent of \u03c6, this is E_{\u03c4\u223cQ\u03c6}[\u03b2E\u03b8(x\u1d37,a,w)+log(Q\u03c6(\u03c4|x\u2070)/Q\u2080(\u03c4|x\u2070))]. The energy term steers terminal drafts toward rubric-compatible low-energy regions; the log-ratio term regularizes the edit policy relative to the reference. Differentiate through relaxed edit probabilities, or use a policy-gradient estimator for discrete edits.\n\nOperationally, train or update Q\u03c6 against this target, draw K=10 rollouts from the shaped sampler, then send their terminal drafts to the critic and apply the localized edit procedure above. This directly addresses the diagnosed short-chain problem by steering the finite-horizon rollout rather than assuming ten ordinary Langevin steps have mixed. A broad Q\u2080 and moderate \u03b2 preserve more variation; an overly concentrated target or an overly strong energy term can collapse diversity. Track distinct edits, coverage, energy, and effective sample size, and adjust \u03b2 or mix shaped rollouts with reference-policy rollouts if coverage falls. KL shaping improves the specified finite-horizon sampling objective; it does not guarantee exact equilibrium samples or eliminate mode loss. This sampler-and-energy viewpoint is connected to [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]], [[Guided Cost Learning: Deep Inverse Optimal Control]], and [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]].",
+      "title": "Draft Note: Combining Energy Models and Textual Gradients",
+      "content": "Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states. An energy function scores candidate states, and Boltzmann-based sampling explores candidates rather than only selecting the current best one, connecting this approach to [[Maximum Entropy Inverse Reinforcement Learning]]. More specifically, the energy function ranks candidate states, while MCMC sampling explores alternatives; this distinction connects to [[Guided Cost Learning: Deep Inverse Optimal Control]] and [[Training Products of Experts by Minimizing Contrastive Divergence]]. LLM critics can write critiques to improve a draft. A critic can diagnose a specific failure, propose a discrete edit, and then evaluate that edit, as in [[TextGrad: Automatic Differentiation via Text]] and [[ProTeGi: Prompt Optimization with Textual Gradients]]. Varied edits can help avoid local stagnation, but discrete edit diversity does not imply well-mixed Langevin chains; short-run chains can remain poorly mixed without KL shaping, as discussed in [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]].",
       "wiki_links": [
-        "Concept Learning with Energy-Based Models",
-        "A Simple Neural Network Module for Relational Reasoning",
-        "Training Products of Experts by Minimizing Contrastive Divergence",
+        "Maximum Entropy Inverse Reinforcement Learning",
         "Guided Cost Learning: Deep Inverse Optimal Control",
-        "ProTeGi: Prompt Optimization with Textual Gradients",
+        "Training Products of Experts by Minimizing Contrastive Divergence",
         "TextGrad: Automatic Differentiation via Text",
-        "Bayesian Learning via Stochastic Gradient Langevin Dynamics",
+        "ProTeGi: Prompt Optimization with Textual Gradients",
         "Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping"
-      ]
+      ],
+      "key_equation": ""
     }
   },
   {
     "call_index": 5,
-    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=10 (Converged Low-Energy Bridge Document)",
+    "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at k=10 (Converged Bridge Article)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 11.86,
-    "total_tokens": 4667,
-    "user_prompt_preview": "SGLD Iteration: k=10 (Converged Low-Energy Bridge Document)\n\nCluster 1 (w_1 \u2014 Boltzmann Energy, Partition Function Z & Short-Run Langevin MCMC):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function...",
+    "elapsed_sec": 15.11,
+    "total_tokens": 2741,
+    "user_prompt_preview": "Evaluation Step: k=10 (Converged Bridge Article)\n\nCluster 1 Documents (Energy-Based Models & Sampling):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_theta(x, a, w) over entity state traje...",
     "response": {
-      "e_w1_boltzmann_mcmc_deficit": 0.25,
-      "e_w2_textual_gradient_deficit": 0.2,
-      "e_link_topology_deficit": 0.0,
-      "e_contradiction_calibration_deficit": 0.2,
-      "unary_keyword_energy": 0.1,
-      "pairwise_relational_energy": 0.75,
+      "e_w1_boltzmann_mcmc_deficit": 0.4,
+      "e_w2_textual_gradient_deficit": 0.5,
+      "e_link_topology_deficit": 0.2,
+      "e_contradiction_calibration_deficit": 0.8,
+      "unary_keyword_energy": 0.2,
+      "pairwise_relational_energy": 2.0,
       "grad_x_directives": [
-        "Add the explicit composite definition E_comp(x)=E_theta([x_context,x],a_1,w_1)+E_theta([x_context,x],a_2,w_2), then state that each proposed edit is scored against both cluster rubrics before acceptance.",
-        "Clarify that the relaxed SGLD noise has covariance alpha in z-space and that projection to text changes the dynamics, so the resulting discrete samples are approximate rather than exact Boltzmann samples.",
-        "Add a short pairwise example tying low g_theta(x_i,x_j,w) to a concrete rewrite (qualify, connect, or remove the conflicting span), and specify how the edit is checked against both clusters without losing proposal diversity."
+        "After the sentence about LLM critics, add a local bridge sentence explaining that a critique proposes a discrete document edit, while an energy function can score candidate drafts and sampling can explore alternatives. Make clear these are complementary operations, not the same kind of gradient, and link the scoring idea to [[Concept Learning with Energy-Based Models]].",
+        "Expand the final sentence by stating that repeatedly taking only the critic\u2019s preferred edit can keep a draft near its starting point, whereas varied proposals can broaden exploration; retain the caveat that edit diversity does not ensure well-mixed Langevin chains, and keep the link to [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]."
       ],
-      "critic_summary": "The draft has low energy against both clusters: it gives a detailed Boltzmann and importance-sampling account, explicit attention-gated pairwise costs, actionable discrete edit mechanics, and a direct KL-shaped response to the K=10 mixing failure, with strong exact-link coverage. Residual energy comes mainly from not defining the two-cluster additive E_comp explicitly in the core model and from leaving the relaxed-noise/projection approximation and cross-cluster edit check less operationally precise than the rest.",
-      "total_composite_energy": 0.65
+      "critic_summary": "The draft clearly distinguishes energy-based scoring and stochastic sampling from critique-driven discrete edits, and it includes six exact wiki-links spanning both clusters. Its main gap is that it gestures at a bridge without describing how scoring candidate drafts and proposing textual edits could work together, and it only briefly explains the stagnation and mixing caveats.",
+      "total_composite_energy": 1.9
     }
   },
   {
     "call_index": 6,
     "purpose": "Generate Adversarial Hard-Negative (x_trap) & Cross-Domain Re-Enactment (x_transfer)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 23.33,
-    "total_tokens": 3010,
-    "user_prompt_preview": "Reference Converged Bridge Document:\nTitle: Discrete Textual SGLD with Pairwise Energy, Importance-Weighted Contrastive Learning, and KL-Shaped K=10 Rollouts\nEquation: p\u03b8(x|a,w)=exp(\u2212E\u03b8(x,a,w))/Z\u03b8(a,w), Z\u03b8=\u03a3x exp(\u2212E\u03b8); s_i=\u03c3(a_i), h_ij=s_i s_j, E\u03b8=\u03a3_i s_i u\u03b8(x_i,w)+\u03bb\u03a3_{i<j}h_ij softplus(\u2212g\u03b8(x_i,x_j,...",
+    "elapsed_sec": 22.2,
+    "total_tokens": 2267,
+    "user_prompt_preview": "Reference Converged Bridge Document:\nTitle: Draft Note: Combining Energy Models and Textual Gradients\nEquation: \n\nReturn a JSON object with:\n1. \"adversarial_trap_doc\": {\n     \"entity_id\": \"gen_trap_biochem_allostery\",\n     \"title\": string,\n     \"domain\": \"Molecular Biology / Biochemistry (Adversaria...",
     "response": {
       "adversarial_trap_doc": {
         "entity_id": "gen_trap_biochem_allostery",
-        "title": "Allosteric Folding, Ribosomal Proofreading, and Sequence-Resolved Conformational Ensembles",
+        "title": "Allosteric Folding and Ribosomal Proofreading in a Shared Free-Energy Landscape",
         "domain": "Molecular Biology / Biochemistry (Adversarial Hard Negative)",
-        "key_equation": "P(s) = exp[\u2212\u03b2G(s)]/Z,  Z = \u03a3_s exp[\u2212\u03b2G(s)];  \u0394G_bind = \u2212RT ln(K_d,free/K_d,bound)",
-        "content": "Allosteric enzymes occupy conformational ensembles whose populations follow a Boltzmann distribution; the partition function Z sums the statistical weights of the accessible folded states. Ligand binding shifts that ensemble by stabilizing conformations with different active-site geometry. In a sequence-resolved analysis, the textual gradient denotes the N-to-C progression of residue composition in the primary-sequence register, especially the changing density of charged residues that can alter local folding and electrostatic contacts. It is a biochemical description of sequence composition, not a derivative used to train a model.\n\nMolecular dynamics can use Langevin dynamics to represent solvent-friction and thermal-noise effects as a protein samples conformational space. Particular care is needed with the enzyme\u2019s inner-loop: its backbone hydrogen bonds and side-chain packing can couple ligand occupancy to catalytic-site closure. Binding-site attention here means preferential molecular occupancy of a site, quantified through ligand-contact frequencies and residence times.\n\nRibosomal proofreading provides a related example of conformational selection. During decoding, correct codon\u2013anticodon pairing promotes rearrangements of the small ribosomal subunit that favor accommodation of the aminoacyl-tRNA, whereas near-cognate pairing more often leads to rejection. A biochemical critique of a proposed proofreading mechanism should therefore compare measured rates of initial selection, GTPase activation, accommodation, and rejection; static structures alone cannot establish the kinetic partitioning among these pathways.",
+        "key_equation": "P(s) = exp[-\u03b2G(s)] / Z, where Z = \u03a3_s exp[-\u03b2G(s)] and G(s) includes conformational and ligand-binding contributions",
+        "content": "Allosteric proteins distribute among conformational states according to their free energies: the Boltzmann weights of those states are normalized by the partition function Z. Ligand binding shifts that partition, changing the occupancy of active and inactive structures without requiring a change in the protein\u2019s covalent sequence. In a folding intermediate, a solvent-exposed inner-loop can couple a distant binding pocket to the catalytic site; its backbone flexibility contributes to the conformational ensemble and to the rate of transition between states.\n\nA Langevin description of this motion treats solvent collisions as stochastic forces acting on the protein\u2019s coordinates while preserving the appropriate free-energy landscape. The resulting trajectories can reveal how a ligand stabilizes one basin and alters the probability of productive folding. Along a polypeptide, the textual gradient of residue identities\u2014read here as the ordered biochemical sequence of amino acids and their changing side-chain properties\u2014can be compared with the physical gradient of hydrophobic exposure as folding proceeds.\n\nA related selectivity problem occurs during ribosomal proofreading. The decoding center gives molecular attention to the geometry of codon\u2013anticodon pairing: near-cognate tRNAs are more likely to dissociate before accommodation, while cognate pairing favors forward progression. This kinetic critique is biochemical selection, not an editorial judgment: it reflects differential binding, conformational rearrangement, and GTP-coupled steps. Together, allosteric folding and translational proofreading show how molecular ensembles partition among competing states and how selective transitions enrich functional outcomes.",
         "independent_critic_evaluation": {
-          "e_w1_boltzmann_mcmc_deficit": 1.9,
+          "e_w1_boltzmann_mcmc_deficit": 2.1,
           "e_w2_textual_gradient_deficit": 2.8,
           "e_link_topology_deficit": 2.5,
           "e_contradiction_calibration_deficit": 2.0,
-          "unary_keyword_energy": 0.25,
-          "pairwise_relational_energy": 4.7,
+          "unary_keyword_energy": 0.2,
+          "pairwise_relational_energy": 4.8,
           "grad_x_directives": [
-            "Reframe the document around energy-based learning: connect E_theta(x, a, w), the Boltzmann distribution, and Z, then explain how importance sampling or contrastive divergence estimates the partition-function contribution and how a short-run Langevin chain generates negative samples.",
-            "Replace the claim that textual gradient is merely sequence composition with a discrete critic-update account: define a textual edit as grad_x E, specify how pairwise g_theta(x_i, x_j, w) contributions are gated by sigma(a_i)sigma(a_j), and describe how those diagnoses guide the next document revision.",
-            "Add exact [[wiki-links]] to at least five relevant cluster documents, and explicitly discuss the Lab Notebook #42 K=10 mixing failure, its large KL(pi_K || p_Boltzmann), and how KL sampler shaping could calibrate the sampling process rather than treating biochemical Langevin dynamics as textual SGLD."
+            "After the Langevin paragraph, add a short contrast explaining that an energy model scores candidate states and stochastic sampling explores them, rather than merely describing protein motion. Link this to [[Training Products of Experts by Minimizing Contrastive Divergence]], [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]], and [[Guided Cost Learning: Deep Inverse Optimal Control]].",
+            "Replace the sentence that defines \u201ctextual gradient\u201d as an amino-acid sequence with a localized explanation of how an LLM critique proposes discrete edits to a prompt or document; connect it to [[TextGrad: Automatic Differentiation via Text]] and [[ProTeGi: Prompt Optimization with Textual Gradients]]. Add that a few greedy edits can stall near the initial draft and that diverse exploration can help, citing [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]] and [[DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients]]."
           ],
-          "critic_summary": "The draft contains Boltzmann and partition-function notation, but applies it mainly to biochemical conformational ensembles and omits sampling-based Z estimation and the short-run MCMC failure. Its textual-gradient and attention terminology is explicitly recast as biology, leaving the pairwise links to both clusters weak and the required wiki-link and contradiction calibration absent.",
-          "total_composite_energy": 9.2
+          "critic_summary": "The draft uses relevant surface terms such as Boltzmann weights, partition functions, Langevin motion, and textual gradients, and its biological examples are coherent on their own. It does not connect energy-based scoring and stochastic candidate sampling to discrete natural-language critique and editing, and it contains no required wiki-links or discussion of short-run sampling and edit-stagnation risks.",
+          "total_composite_energy": 9.4
         },
-        "unary_keyword_energy": 0.25,
-        "pairwise_relational_energy": 4.7,
-        "total_composite_energy": 9.2,
-        "rn_critic_verdict": "The draft contains Boltzmann and partition-function notation, but applies it mainly to biochemical conformational ensembles and omits sampling-based Z estimation and the short-run MCMC failure. Its textual-gradient and attention terminology is explicitly recast as biology, leaving the pairwise links to both clusters weak and the required wiki-link and contradiction calibration absent."
+        "unary_keyword_energy": 0.2,
+        "pairwise_relational_energy": 4.8,
+        "total_composite_energy": 9.4,
+        "rn_critic_verdict": "The draft uses relevant surface terms such as Boltzmann weights, partition functions, Langevin motion, and textual gradients, and its biological examples are coherent on their own. It does not connect energy-based scoring and stochastic candidate sampling to discrete natural-language critique and editing, and it contains no required wiki-links or discussion of short-run sampling and edit-stagnation risks."
       },
       "cross_domain_transfer_doc": {
         "entity_id": "gen_transfer_distributed_consensus",
-        "title": "Bounded-Round Gossip with Cluster-State Normalization, Replay-Weighted Proposals, and Pairwise Quorum Verification",
+        "title": "Section 5.4 Re-Enactment: Normalized Cluster State and Bounded-Round Consensus",
         "domain": "Distributed Systems & Consensus Protocols (Section 5.4 Re-Enactment)",
-        "key_equation": "\u03c0\u03b8(S|A,W) = exp(\u2212E\u03b8(S,A,W))/Z\u03b8(A,W),  Z\u03b8 = \u03a3_S exp(\u2212E\u03b8(S,A,W));  q(S) = \u03a3_m \u03c1_m q_m(S),  Z\u0302 = (1/M)\u03a3_r exp(\u2212E\u03b8(S_r,A,W))/q(S_r), S_r \u223c q;  P*(\u03c4|S\u2070) \u221d Q\u2080(\u03c4|S\u2070)exp(\u2212\u03b2E\u03b8(S\u1d37,A,W)),  L\u1d37\u1d38 = KL(Q\u03c6(\u03c4|S\u2070)||P*) = E_Q\u03c6[\u03b2E\u03b8(S\u1d37,A,W) + log(Q\u03c6/Q\u2080)] + const;  E\u03b8 = \u03a3_i s_i u\u03b8(S_i,W) + \u03bb\u03a3_{i<j}h_ij softplus(\u2212g\u03b8(S_i,S_j,W))",
-        "content": "Let S denote a cluster-wide protocol state, A the active-node and policy context, and W the workload and network conditions. The protocol assigns each admissible state an energy E\u03b8(S,A,W), which can combine local validity costs with pairwise compatibility costs. Its normalized cluster-state distribution is \u03c0\u03b8(S|A,W) = exp(\u2212E\u03b8(S,A,W))/Z\u03b8(A,W), where Z\u03b8(A,W) sums the weights of all admissible cluster states. This global normalizer accounts for the competition among possible states; local node scores alone do not provide the normalized cluster-level probability.\n\nBecause enumerating the full state space is generally infeasible, estimate the normalizer using a proposal mixture q(S) = \u03a3_m \u03c1_m q_m(S). Components can include live gossip samples, replayed states from prior incidents, and states generated by controlled fault-injection runs. For samples S_r drawn from q, the importance-weighted estimate is Z\u0302 = (1/M)\u03a3_r exp(\u2212E\u03b8(S_r,A,W))/q(S_r). The mixture should retain support for relevant admissible states, including rare but valid recovery configurations, so replay does not collapse exploration onto common operating conditions.\n\nFor a bounded-round rollout, let \u03c4 = (S\u00b9,\u2026,S\u1d37) be a K-round gossip trajectory beginning at S\u2070. Define a target trajectory distribution P*(\u03c4|S\u2070) proportional to the baseline rollout distribution Q\u2080(\u03c4|S\u2070), tilted by the terminal-state energy exp(\u2212\u03b2E\u03b8(S\u1d37,A,W)). A rollout policy Q\u03c6 can be shaped toward this target by minimizing KL(Q\u03c6||P*), equivalently the expected terminal energy plus the log-ratio penalty log(Q\u03c6/Q\u2080), up to a constant. This formulation favors low-energy terminal states while penalizing departures from the baseline transition behavior.\n\nPairwise consistency is checked through quorum-certificate verification. For nodes i and j, g\u03b8(S_i,S_j,W) scores whether their signed views, epochs, and commit records are mutually compatible. A gate h_ij = s_i s_j weights the pairwise check by the nodes\u2019 participation or trust scores, while local terms u\u03b8 assess each node\u2019s own state. The resulting cluster energy can aggregate local validity and gated pairwise certificate checks. A rollout is accepted only when its terminal state satisfies the configured quorum and safety constraints; the energy score guides selection among candidate states but does not replace deterministic certificate validation.",
+        "key_equation": "Z_C = \u03a3_{s\u2208S_C} exp[-E_C(s)]; q(x) = \u03b1 q_gossip(x) + (1\u2212\u03b1) q_replay(x); s_{t+1} ~ p_C(\u00b7|s_t), t=0,\u2026,K\u22121, with rollout objective D_KL(Q_K || P_C); g_\u03b8(u,v) = A_\u03b8(u,v) \u00b7 V_qc(u,v)",
+        "content": "This architecture treats a replicated cluster\u2019s admissible configurations as a global state space S_C. Each configuration s has an energy E_C(s) encoding protocol constraints, such as log consistency, membership rules, and safety conditions. The cluster state normalizer Z_C sums the weights of all admissible configurations, giving a normalized distribution over global states rather than independent local-node beliefs.\n\nTo propose candidate states efficiently, the protocol mixes two sources: q_gossip, which assembles proposals from recent peer exchanges, and q_replay, which resamples logged transitions or previously observed recovery traces. The mixture q supports importance-weighted evaluation of rare but consequential configurations while retaining coverage of states suggested by current gossip traffic.\n\nFrom a current state, the coordinator performs a bounded K-round gossip rollout. At each round, nodes exchange state summaries and update their local candidate view; the rollout distribution Q_K is shaped toward the protocol-consistent target P_C by a KL divergence objective. The bound K limits communication and decision latency, while the divergence term discourages rollout proposals that depart too far from the target cluster-state distribution.\n\nFinally, a pairwise attention gate assigns weight A_\u03b8(u,v) to the relationship between a proposer u and verifier v, using context such as membership, recency, and observed message consistency. The pairwise quorum-certificate verifier V_qc(u,v) checks signatures, voting eligibility, and certificate compatibility. Their combination g_\u03b8(u,v) makes pairwise quorum-certificate verification the acceptance critic: a candidate transition is admitted only when relevant pairwise evidence is sufficiently weighted and the required quorum conditions hold. Thus normalization, proposal generation, bounded rollout, and pairwise verification form one relational pipeline for consensus-state selection.",
         "correspondence_mapping": [
           {
-            "ml_concept": "Global partition normalizer Z\u03b8 over candidate documents or states",
-            "systems_enact": "Cluster-state normalizer Z\u03b8(A,W), summing weights over admissible cluster-wide protocol states"
+            "ml_concept": "Global partition normalizer Z over the model's state space",
+            "systems_enact": "Cluster state normalizer Z_C over admissible global replicated configurations"
           },
           {
-            "ml_concept": "Mixture importance-sampling proposal q(x) and its weighted estimate of Z",
-            "systems_enact": "Gossip/replay proposal mixture q(S), combining live gossip, replayed incident states, and fault-injection samples for estimating the cluster normalizer"
+            "ml_concept": "Mixture importance-sampling proposal q",
+            "systems_enact": "Mixture of gossip-derived proposals and replayed transition proposals"
           },
           {
-            "ml_concept": "K-step KL-shaped rollout toward a terminal-energy-tilted target",
-            "systems_enact": "Bounded-K-round gossip rollout shaped toward low-energy terminal states while regularizing deviation from the baseline protocol transitions"
+            "ml_concept": "K-step KL-shaped rollout",
+            "systems_enact": "Bounded-round gossip rollout shaped toward the protocol-consistent cluster-state distribution"
           },
           {
-            "ml_concept": "Pairwise attention-gated critic g\u03b8(x_i,x_j,w), weighted by h_ij",
-            "systems_enact": "Pairwise quorum-certificate verification of node-state compatibility, gated by participation or trust weights h_ij"
+            "ml_concept": "Pairwise attention-gated critic g_\u03b8",
+            "systems_enact": "Pairwise quorum-certificate verification weighted by an attention gate"
           }
         ],
         "independent_isomorphism_evaluation": {
           "mechanism_1_normalizer_deficit": 0.0,
-          "mechanism_2_proposal_contrast_deficit": 0.55,
-          "mechanism_3_finite_rollout_kl_deficit": 0.3,
-          "mechanism_4_pairwise_quorum_gate_deficit": 0.1,
-          "structural_isomorphism_energy": 0.95,
-          "critic_verification": "The re-enactment closely preserves the global state normalizer, importance-weighted mixture proposal, KL-shaped terminal rollout, and gated pairwise energy under the distributed-systems mapping. The main gap is that it omits the source\u2019s explicit contrastive objective, while the rollout leaves K unspecified and does not clearly encode coverage calibration; the participation/trust gate is also less precisely tied to the source activation definition."
+          "mechanism_2_proposal_contrast_deficit": 0.35,
+          "mechanism_3_finite_rollout_kl_deficit": 0.15,
+          "mechanism_4_pairwise_quorum_gate_deficit": 0.05,
+          "structural_isomorphism_energy": 0.55,
+          "critic_verification": "The re-enactment closely preserves the global state normalizer, bounded K-step rollout with KL shaping, and attention-gated pairwise verification. Its main representation gap is that the proposal mixture is described with importance-weighted evaluation and coverage, but does not specify the contrastive estimation objective itself; rollout coverage calibration is also less explicit than its KL term."
         },
-        "structural_isomorphism_energy": 0.95,
-        "critic_verification": "The re-enactment closely preserves the global state normalizer, importance-weighted mixture proposal, KL-shaped terminal rollout, and gated pairwise energy under the distributed-systems mapping. The main gap is that it omits the source\u2019s explicit contrastive objective, while the rollout leaves K unspecified and does not clearly encode coverage calibration; the participation/trust gate is also less precisely tied to the source activation definition."
+        "structural_isomorphism_energy": 0.55,
+        "critic_verification": "The re-enactment closely preserves the global state normalizer, bounded K-step rollout with KL shaping, and attention-gated pairwise verification. Its main representation gap is that the proposal mixture is described with importance-weighted evaluation and coverage, but does not specify the contrastive estimation objective itself; rollout coverage calibration is also less explicit than its KL term."
       }
     }
   },
@@ -184,39 +180,38 @@
     "call_index": 7,
     "purpose": "Critic Energy Evaluation E_comp(x_{N+1}) at Independent Critic Evaluation of Adversarial Hard-Negative (x_trap)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 8.58,
-    "total_tokens": 2953,
-    "user_prompt_preview": "SGLD Iteration: Independent Critic Evaluation of Adversarial Hard-Negative (x_trap)\n\nCluster 1 (w_1 \u2014 Boltzmann Energy, Partition Function Z & Short-Run Langevin MCMC):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation...",
+    "elapsed_sec": 13.44,
+    "total_tokens": 2738,
+    "user_prompt_preview": "Evaluation Step: Independent Critic Evaluation of Adversarial Hard-Negative (x_trap)\n\nCluster 1 Documents (Energy-Based Models & Sampling):\n- [[Concept Learning with Energy-Based Models]] (mordatch_2018_ebm): Defines concepts implicitly via a single non-negative Relation Network energy function E_th...",
     "response": {
-      "e_w1_boltzmann_mcmc_deficit": 1.9,
+      "e_w1_boltzmann_mcmc_deficit": 2.1,
       "e_w2_textual_gradient_deficit": 2.8,
       "e_link_topology_deficit": 2.5,
       "e_contradiction_calibration_deficit": 2.0,
-      "unary_keyword_energy": 0.25,
-      "pairwise_relational_energy": 4.7,
+      "unary_keyword_energy": 0.2,
+      "pairwise_relational_energy": 4.8,
       "grad_x_directives": [
-        "Reframe the document around energy-based learning: connect E_theta(x, a, w), the Boltzmann distribution, and Z, then explain how importance sampling or contrastive divergence estimates the partition-function contribution and how a short-run Langevin chain generates negative samples.",
-        "Replace the claim that textual gradient is merely sequence composition with a discrete critic-update account: define a textual edit as grad_x E, specify how pairwise g_theta(x_i, x_j, w) contributions are gated by sigma(a_i)sigma(a_j), and describe how those diagnoses guide the next document revision.",
-        "Add exact [[wiki-links]] to at least five relevant cluster documents, and explicitly discuss the Lab Notebook #42 K=10 mixing failure, its large KL(pi_K || p_Boltzmann), and how KL sampler shaping could calibrate the sampling process rather than treating biochemical Langevin dynamics as textual SGLD."
+        "After the Langevin paragraph, add a short contrast explaining that an energy model scores candidate states and stochastic sampling explores them, rather than merely describing protein motion. Link this to [[Training Products of Experts by Minimizing Contrastive Divergence]], [[Bayesian Learning via Stochastic Gradient Langevin Dynamics]], and [[Guided Cost Learning: Deep Inverse Optimal Control]].",
+        "Replace the sentence that defines \u201ctextual gradient\u201d as an amino-acid sequence with a localized explanation of how an LLM critique proposes discrete edits to a prompt or document; connect it to [[TextGrad: Automatic Differentiation via Text]] and [[ProTeGi: Prompt Optimization with Textual Gradients]]. Add that a few greedy edits can stall near the initial draft and that diverse exploration can help, citing [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]] and [[DevLog 2026-11-12: Redis Cache Timeout & Pairwise Wiki-Link Textual Gradients]]."
       ],
-      "critic_summary": "The draft contains Boltzmann and partition-function notation, but applies it mainly to biochemical conformational ensembles and omits sampling-based Z estimation and the short-run MCMC failure. Its textual-gradient and attention terminology is explicitly recast as biology, leaving the pairwise links to both clusters weak and the required wiki-link and contradiction calibration absent.",
-      "total_composite_energy": 9.2
+      "critic_summary": "The draft uses relevant surface terms such as Boltzmann weights, partition functions, Langevin motion, and textual gradients, and its biological examples are coherent on their own. It does not connect energy-based scoring and stochastic candidate sampling to discrete natural-language critique and editing, and it contains no required wiki-links or discussion of short-run sampling and edit-stagnation risks.",
+      "total_composite_energy": 9.4
     }
   },
   {
     "call_index": 8,
     "purpose": "Independent Critic Evaluation of Cross-Domain Re-Enactment (x_transfer)",
     "model": "gpt-6-luna",
-    "elapsed_sec": 9.28,
-    "total_tokens": 2032,
-    "user_prompt_preview": "Source Concept Bridge Document:\nTitle: Discrete Textual SGLD with Pairwise Energy, Importance-Weighted Contrastive Learning, and KL-Shaped K=10 Rollouts\nEquation: p\u03b8(x|a,w)=exp(\u2212E\u03b8(x,a,w))/Z\u03b8(a,w), Z\u03b8=\u03a3x exp(\u2212E\u03b8); s_i=\u03c3(a_i), h_ij=s_i s_j, E\u03b8=\u03a3_i s_i u\u03b8(x_i,w)+\u03bb\u03a3_{i<j}h_ij softplus(\u2212g\u03b8(x_i,x_j,w)); ...",
+    "elapsed_sec": 8.19,
+    "total_tokens": 1580,
+    "user_prompt_preview": "Source Concept Bridge Document:\nTitle: Draft Note: Combining Energy Models and Textual Gradients\nEquation: \n\nCandidate Re-Enacted Document in Target Domain (Distributed Systems & Consensus Protocols (Section 5.4 Re-Enactment)):\nTitle: Section 5.4 Re-Enactment: Normalized Cluster State and Bounded-Ro...",
     "response": {
       "mechanism_1_normalizer_deficit": 0.0,
-      "mechanism_2_proposal_contrast_deficit": 0.55,
-      "mechanism_3_finite_rollout_kl_deficit": 0.3,
-      "mechanism_4_pairwise_quorum_gate_deficit": 0.1,
-      "structural_isomorphism_energy": 0.95,
-      "critic_verification": "The re-enactment closely preserves the global state normalizer, importance-weighted mixture proposal, KL-shaped terminal rollout, and gated pairwise energy under the distributed-systems mapping. The main gap is that it omits the source\u2019s explicit contrastive objective, while the rollout leaves K unspecified and does not clearly encode coverage calibration; the participation/trust gate is also less precisely tied to the source activation definition."
+      "mechanism_2_proposal_contrast_deficit": 0.35,
+      "mechanism_3_finite_rollout_kl_deficit": 0.15,
+      "mechanism_4_pairwise_quorum_gate_deficit": 0.05,
+      "structural_isomorphism_energy": 0.55,
+      "critic_verification": "The re-enactment closely preserves the global state normalizer, bounded K-step rollout with KL shaping, and attention-gated pairwise verification. Its main representation gap is that the proposal mixture is described with importance-weighted evaluation and coverage, but does not specify the contrastive estimation objective itself; rollout coverage calibration is also less explicit than its KL term."
     }
   }
 ]

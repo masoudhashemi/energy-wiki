@@ -84,7 +84,7 @@ class LiveLunaGenerator:
             "user_prompt_preview": user_prompt[:300] + ("..." if len(user_prompt) > 300 else ""),
             "response": parsed,
         })
-        print(f"  [Luna Call #{len(self.calls):02d} | {elapsed:.2f}s | {toks} toks] {purpose}")
+        print(f"  [Luna Call #{len(self.calls):02d} | {elapsed:.2f}s | {toks} toks] {purpose}", flush=True)
         return parsed
 
 
@@ -100,45 +100,47 @@ def evaluate_draft_energy_with_luna(
     cluster2_docs: List[energy_wiki.KBEntity],
 ) -> Dict:
     c1_digest = "\n".join(
-        f"- [[{e.title}]] ({e.entity_id}): {e.content[:220]} | Eq: {e.key_equation}"
+        f"- [[{e.title}]] ({e.entity_id}): {e.content[:220]}"
         for e in cluster1_docs
     )
     c2_digest = "\n".join(
-        f"- [[{e.title}]] ({e.entity_id}): {e.content[:220]} | Eq: {e.key_equation}"
+        f"- [[{e.title}]] ({e.entity_id}): {e.content[:220]}"
         for e in cluster2_docs
     )
 
     sys_prompt = (
-        "You are the Relational Energy Critic E_theta(x, a, w) evaluating a newly generated "
-        "candidate document x_{N+1} that is being optimized via Textual SGLD to minimize the "
-        "additive composite energy E_comp(x_{N+1}) = E_theta([x, x_{N+1}], a_1, w_1) + "
-        "E_theta([x, x_{N+1}], a_2, w_2). Evaluate pairwise coherence g_theta(x_{N+1}, x_j, w) "
-        "against both clusters, score the energy components strictly and quantitatively, and "
-        "emit actionable textual gradient directives grad_{x_{N+1}} E_comp. Return valid JSON."
+        "You are a Relational Wiki Energy Critic evaluating a candidate wiki bridge article "
+        "that aims to connect two topic clusters in a knowledge base:\n"
+        "- Cluster 1: Energy-Based Models and Stochastic Sampling\n"
+        "- Cluster 2: Iterative Text and Prompt Optimization via Natural-Language Critiques\n\n"
+        "IMPORTANT: Evaluate the article for clarity, conceptual synthesis across both clusters, "
+        "and explicit [[Document Title]] wiki-links. Do NOT ask for heavy mathematical derivations "
+        "or meta-learning loss formulas (such as L^ML, L^KL, or softplus). Emit localized, incremental "
+        "textual gradient critiques for the highest-priority missing links or concepts in the current draft. "
+        "Return valid JSON."
     )
-    user_prompt = f"""SGLD Iteration: {step_label}
+    user_prompt = f"""Evaluation Step: {step_label}
 
-Cluster 1 (w_1 — Boltzmann Energy, Partition Function Z & Short-Run Langevin MCMC):
+Cluster 1 Documents (Energy-Based Models & Sampling):
 {c1_digest}
 
-Cluster 2 (w_2 — Critic-Guided Textual Gradients & Pairwise Wiki Optimization):
+Cluster 2 Documents (Textual Gradients & Prompt Optimization):
 {c2_digest}
 
-Current Candidate Document x_{{N+1}} Draft:
+Current Candidate Bridge Article Draft:
 Title: {draft_doc['title']}
-Equation: {draft_doc['key_equation']}
 Content:
 {draft_doc['content']}
 
-Evaluate x_{{N+1}} and return a JSON object with:
-- "e_w1_boltzmann_mcmc_deficit": float in [0.0, 3.0] (0.0 = rigorously formulates Boltzmann distribution, partition function Z estimation via importance/contrastive sampling, and short-run Langevin dynamics; >1.5 = vague or missing)
-- "e_w2_textual_gradient_deficit": float in [0.0, 3.0] (0.0 = rigorously formulates discrete textual gradient critic updates and pairwise attention gating; >1.5 = vague or missing)
-- "e_link_topology_deficit": float in [0.0, 2.5] (0.0 = explicitly cites and bridges at least 5 attended documents across both clusters using exact [[Document Title]] wiki-links; >1.5 = missing [[wiki-links]])
-- "e_contradiction_calibration_deficit": float in [0.0, 2.0] (0.0 = explicitly addresses the short-run K=10 mixing failure from Lab Notebook #42 and shows how L^KL sampler shaping calibrates discrete textual SGLD; >1.0 = unaddressed)
-- "unary_keyword_energy": float in [0.0, 2.0] (low if surface keywords appear, regardless of depth)
-- "pairwise_relational_energy": float in [0.0, 5.0] (sum of pairwise deficits with Cluster 1 & Cluster 2 neighbors)
-- "grad_x_directives": list of 3 concrete textual gradient edit instructions (grad_{{x_{{N+1}}}} E_comp) telling the generator how to rewrite x_{{N+1}} to lower energy in the next step.
-- "critic_summary": 2-sentence diagnosis of the current draft's energy state.
+Evaluate the candidate article and return a JSON object with:
+- "e_w1_boltzmann_mcmc_deficit": float in [0.0, 3.0] (0.0 = clearly explains how energy models score states and how stochastic sampling explores candidates, connecting Cluster 1 papers; >1.5 = vague or missing)
+- "e_w2_textual_gradient_deficit": float in [0.0, 3.0] (0.0 = clearly explains how natural-language critiques act as discrete edits to improve prompts/documents, connecting Cluster 2 papers; >1.5 = vague or missing)
+- "e_link_topology_deficit": float in [0.0, 2.5] (0.0 = explicitly cites and integrates at least 6 documents across both clusters using exact [[Document Title]] wiki-links; >1.5 = missing or sparse [[wiki-links]])
+- "e_contradiction_calibration_deficit": float in [0.0, 2.0] (0.0 = explains why a small number of greedy edit steps can get stuck near the initial draft and how exploration diversity avoids this pitfall, referencing [[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]; >1.0 = unaddressed)
+- "unary_keyword_energy": float in [0.0, 2.0] (low if surface keywords appear, regardless of whether the domain and connections are genuine)
+- "pairwise_relational_energy": float in [0.0, 5.0] (sum of pairwise synthesis deficits with Cluster 1 & Cluster 2 documents)
+- "grad_x_directives": list of 2 localized, incremental edit instructions addressing the most important immediate gap in the current draft (so each step makes a focused local edit rather than rewriting everything at once, and without asking for dense equations).
+- "critic_summary": 2-sentence plain-English diagnosis of the current draft's strengths and remaining gaps.
 """
     res = luna.call_json(
         f"Critic Energy Evaluation E_comp(x_{{N+1}}) at {step_label}",
@@ -162,42 +164,43 @@ def update_draft_via_textual_sgld_luna(
     eval_res: Dict,
     cluster1_docs: List[energy_wiki.KBEntity],
     cluster2_docs: List[energy_wiki.KBEntity],
-    target_tier: str,
 ) -> Dict[str, str]:
     c1_titles = [f"[[{e.title}]]" for e in cluster1_docs]
     c2_titles = [f"[[{e.title}]]" for e in cluster2_docs]
     directives_str = "\n".join(f"- {d}" for d in eval_res.get("grad_x_directives", []))
 
     sys_prompt = (
-        "You are the Textual SGLD Generator executing "
-        "x_{N+1}^{(k)} = x_{N+1}^{(k-1)} - (alpha / 2) grad_{x_{N+1}} E_comp + omega^k. "
-        "Apply the Critic's textual gradient directives to rewrite and improve the candidate "
-        "document x_{N+1}. Return valid JSON with keys 'title', 'key_equation', 'content', and 'wiki_links' (list of exact linked titles)."
+        "You are an LLM Wiki Editor revising a candidate bridge article based strictly on the "
+        "Critic's textual gradient directives. Apply ONLY the localized edits requested in the "
+        "directives (do not add extra unrequested links or sections ahead of time). Write in clear, "
+        "accessible English prose without equation dumps, and weave any requested [[Document Title]] "
+        "wiki-links naturally into the text. Return valid JSON with keys 'title', 'content' (Markdown text), "
+        "and 'wiki_links' (list of exact linked titles)."
     )
-    user_prompt = f"""SGLD Update Step: {step_label}
-Target Refinement Tier: {target_tier}
+    user_prompt = f"""Revision Step: {step_label}
 
 Current Draft Title: {current_draft['title']}
-Current Draft Equation: {current_draft['key_equation']}
 Current Draft Content:
 {current_draft['content']}
 
 Critic Energy Diagnosis (Current E_comp = {eval_res['total_composite_energy']}):
 {eval_res.get('critic_summary', '')}
 
-Textual Gradient Directives (grad_{{x_{{N+1}}}} E_comp) to apply:
+Textual Gradient Directives to apply in this step:
 {directives_str}
 
 Available Cluster 1 Titles for [[wiki-links]]: {', '.join(c1_titles)}
 Available Cluster 2 Titles for [[wiki-links]]: {', '.join(c2_titles)}
 
-Return JSON with updated 'title', 'key_equation', 'content' (Markdown text), and 'wiki_links' (list of exact linked document titles).
+Return JSON with updated 'title', 'content' (clear, concise Markdown prose), and 'wiki_links' (list of exact linked document titles).
 """
-    return luna.call_json(
+    res = luna.call_json(
         f"Textual SGLD Generator Update x_{{N+1}} ({step_label})",
         sys_prompt,
         user_prompt,
     )
+    res.setdefault("key_equation", "")
+    return res
 
 
 # ---------------------------------------------------------------------------
@@ -335,12 +338,12 @@ def main():
     cluster2_docs = [by_id[i] for i in cluster2_ids if i in by_id]
 
     luna = LiveLunaGenerator(model="gpt-6-luna")
-    print("[Exp 4] Running Multi-Step Generative Data Synthesis with live 'gpt-6-luna'...")
+    print("[Exp 4] Running Multi-Step Generative Data Synthesis with live 'gpt-6-luna'...", flush=True)
 
     # Initial rough seed draft at s=0 (k=0)
     draft_s0 = {
         "title": "Draft Note: Combining Energy Models and Textual Gradients",
-        "key_equation": "x_new = update(x_old, critique)",
+        "key_equation": "",
         "content": (
             "Rough initial idea: Maybe we can use energy-based models together with textual "
             "gradients to optimize text documents. Energy models assign low energy to good states, "
@@ -352,44 +355,31 @@ def main():
     sgld_trajectory = []
 
     # Step k=0 evaluation
-    eval_s0 = evaluate_draft_energy_with_luna(luna, "k=0 (Initial Uncalibrated Seed Draft)", draft_s0, cluster1_docs, cluster2_docs)
+    eval_s0 = evaluate_draft_energy_with_luna(luna, "k=0 (Initial Seed Draft)", draft_s0, cluster1_docs, cluster2_docs)
     sgld_trajectory.append({"step": 0, "draft": draft_s0, "evaluation": eval_s0})
 
-    # Step k=0 -> k=3 (Intermediate Rewrite: add Boltzmann + Textual SGLD math, still partial links/calibration)
+    # Step k=0 -> k=3 (First revision pass driven purely by Critic textual gradient)
     draft_s1 = update_draft_via_textual_sgld_luna(
         luna,
-        "k=0 -> k=3 (Incorporate Boltzmann Partition Formulation & Pairwise Gating)",
+        "k=0 -> k=3 (First Textual SGLD Update)",
         draft_s0,
         eval_s0,
         cluster1_docs,
         cluster2_docs,
-        target_tier=(
-            "Intermediate draft (k=3): Introduce the Boltzmann distribution exp(-E_theta)/Z and "
-            "pairwise relation network gating sigma(a_i)sigma(a_j)g_theta, link 3 papers using "
-            "[[Exact Title]], but leave the short-run K=10 MCMC mixing contradiction from Lab Notebook #42 "
-            "and importance-sampled partition estimation partially unresolved so the next critic pass can refine them."
-        ),
     )
-    eval_s1 = evaluate_draft_energy_with_luna(luna, "k=3 (Intermediate SGLD Draft)", draft_s1, cluster1_docs, cluster2_docs)
+    eval_s1 = evaluate_draft_energy_with_luna(luna, "k=3 (Intermediate Draft)", draft_s1, cluster1_docs, cluster2_docs)
     sgld_trajectory.append({"step": 3, "draft": draft_s1, "evaluation": eval_s1})
 
-    # Step k=3 -> k=10 (Converged Zero-Energy Rewrite: full reconciliation, importance sampling + L^KL shaping + all links)
+    # Step k=3 -> k=10 (Second revision pass driven purely by Critic textual gradient)
     draft_s2 = update_draft_via_textual_sgld_luna(
         luna,
-        "k=3 -> k=10 (Full Zero-Energy Convergence: Partition Estimation, L^KL Rollout Shaping & All [[Wiki-Links]])",
+        "k=3 -> k=10 (Converged Textual SGLD Update)",
         draft_s1,
         eval_s1,
         cluster1_docs,
         cluster2_docs,
-        target_tier=(
-            "Converged low-energy synthesis (k=10): Rigorously formulate discrete Textual SGLD over "
-            "Boltzmann distributions p(x|a,w) = exp(-E_theta(x,a,w))/Z, derive the softplus contrastive "
-            "loss L^ML via mixture importance sampling q(x), explicitly resolve Lab Notebook #42's K=10 "
-            "short-chain failure via differentiable sampler-KL shaping L^KL over textual edit rollouts, "
-            "and explicitly integrate and link at least 6 papers across both clusters using exact [[Document Title]] wiki-links."
-        ),
     )
-    eval_s2 = evaluate_draft_energy_with_luna(luna, "k=10 (Converged Low-Energy Bridge Document)", draft_s2, cluster1_docs, cluster2_docs)
+    eval_s2 = evaluate_draft_energy_with_luna(luna, "k=10 (Converged Bridge Article)", draft_s2, cluster1_docs, cluster2_docs)
     sgld_trajectory.append({"step": 10, "draft": draft_s2, "evaluation": eval_s2})
 
     # Task 2 & Task 3: Adversarial Hard-Negative Generation & Cross-Domain Re-Enactment
@@ -409,7 +399,6 @@ def main():
             f"**Initial Energy ($k=0$):** `{eval_s0['total_composite_energy']}` $\\rightarrow$ "
             f"**Intermediate ($k=3$):** `{eval_s1['total_composite_energy']}` $\\rightarrow$ "
             f"**Converged ($k=10$):** `{eval_s2['total_composite_energy']}`\n\n"
-            f"$$\n{draft_s2['key_equation']}\n$$\n\n"
             f"{draft_s2['content']}\n"
         )
 
