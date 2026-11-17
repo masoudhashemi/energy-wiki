@@ -1,0 +1,19 @@
+{
+  "protocol": "conditional-synthesis-v1",
+  "complete": true,
+  "fixed_conditions_sha256": "682a307ec99973968168b08c629f08a5bc75a5089d2bc3d5f57acadf8e524354",
+  "revision_slots": 10,
+  "valid_edits": 10,
+  "total_calls": 32,
+  "total_tokens": 144168,
+  "initial_energy": {
+    "E1": 8.0,
+    "E2": 9.0,
+    "total": 17.0
+  },
+  "final_energy": {
+    "E1": 0,
+    "E2": 0,
+    "total": 0
+  }
+}

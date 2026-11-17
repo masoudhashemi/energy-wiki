@@ -1,6 +1,10 @@
 """
 Experimental Suite for Energy-Based LLM Wiki with Textual Gradients (Messy KB)
 ==============================================================================
+Interpretation: these are configured symbolic demonstrations. Historical result
+keys mentioning training or KL retain compatibility with saved viewers: weights
+are manually chosen and the KL-labeled conditions change step size and noise.
+The unary generation condition also disables link and contradiction directives.
 Runs all experiments mirroring Section 5 of Mordatch (2018) on the realistic
 18-document messy, multi-topic Knowledge Base in `raw/` (containing unstructured
 research notes, entangled dev logs, contradictory notes, polysemous keyword traps,

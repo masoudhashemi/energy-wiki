@@ -1,6 +1,9 @@
 """
 Domain-Agnostic Energy-Based LLM Wiki Compiler (Live LiteLLM + Textual SGLD)
 ============================================================================
+Execution note: the live calls return membership endpoints and compiled pages.
+Intermediate gates and energy traces are constructed in Python, not evaluated
+at each displayed step. See exp5_measured_live_loop for actual revision logging.
 Works on ANY arbitrary folder of raw documents (`--raw-dir`) without domain-specific
 prompts, hardcoded document IDs, or pre-labeled concepts.
 

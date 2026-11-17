@@ -1,0 +1,1108 @@
+[
+  {
+    "iteration": 0,
+    "state": {
+      "concepts": [
+        "Energy and sampling",
+        "Text and gradient optimization"
+      ],
+      "membership": {
+        "D01": [
+          0.5,
+          0.5
+        ],
+        "D02": [
+          0.5,
+          0.5
+        ],
+        "D03": [
+          0.5,
+          0.5
+        ],
+        "D04": [
+          0.5,
+          0.5
+        ],
+        "D05": [
+          0.5,
+          0.5
+        ],
+        "D06": [
+          0.5,
+          0.5
+        ],
+        "D07": [
+          0.5,
+          0.5
+        ],
+        "D08": [
+          0.5,
+          0.5
+        ],
+        "D09": [
+          0.5,
+          0.5
+        ],
+        "D10": [
+          0.5,
+          0.5
+        ],
+        "D11": [
+          0.5,
+          0.5
+        ],
+        "D12": [
+          0.5,
+          0.5
+        ],
+        "D13": [
+          0.5,
+          0.5
+        ],
+        "D14": [
+          0.5,
+          0.5
+        ],
+        "D15": [
+          0.5,
+          0.5
+        ],
+        "D16": [
+          0.5,
+          0.5
+        ],
+        "D17": [
+          0.5,
+          0.5
+        ],
+        "D18": [
+          0.5,
+          0.5
+        ]
+      },
+      "page": "Energy models score candidate states. Textual critiques suggest edits. How might these ideas help compile a wiki?"
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 4,
+        "topic2": 4,
+        "relevance": 4,
+        "coverage": 4,
+        "support": 3,
+        "links": 4,
+        "relations": 4
+      },
+      "feedback": "The page offers only two generic statements and does not explain either required process: how energy-based scoring relates to sampling, or how critique-driven textual gradients produce iterative edits. The concept names are broad, and assigning every source an identical 0.5 membership makes the concepts non-discriminating; many sources are unrelated to either topic. Ground the page in relevant sources, distinguish scoring from drawing samples and critique from the resulting edits, and use specific citations. Preserve the important qualifications about short-run sampler failures and asymptotic sampling rather than implying they conflict.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes short-chain contrastive divergence as a way to obtain negative samples, while D03 reports that K=10 chains trained with L^ML alone fail in its experiments and require the sampler KL objective. The page omits this distinction, so it does not explain how energy learning and sampling interact or retain the reported limitation."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D16 claims exact Boltzmann sampling in the limit as step size approaches zero and iterations tend to infinity; D03 reports a failure for a particular short-run K=10 setup without KL shaping. These claims concern different regimes and need not contradict. Omitting both leaves the page without the relevant assumptions or uncertainty."
+        },
+        {
+          "sources": [
+            "D10",
+            "D17"
+          ],
+          "reason": "D10 describes critics diagnosing failures and producing natural-language edit critiques for instruction optimization; D17 generalizes textual gradients to iterative refinement of prompts, code, or wiki pages. Together they support a concrete account of critique-driven editing, but the page neither explains those steps nor cites either source."
+        }
+      ]
+    },
+    "energy": 5.9,
+    "accepted": true
+  },
+  {
+    "iteration": 1,
+    "candidate": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, while Boltzmann and Langevin methods use those energies to define or draw samples; training objectives and sampler settings determine whether sampling succeeds.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language gradient-like guidance, which is then used to make iterative edits to prompts, code, or wiki pages; the critique is guidance, not the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.02
+        ],
+        "D04": [
+          0.02,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.55
+        ],
+        "D07": [
+          0.75,
+          0.15
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.45
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.05,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy scoring and sampling\n\nAn energy function assigns a score to a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. The energy scores states, whereas a sampler draws candidate states from that distribution—these are related but distinct roles [[D05]] [[D18]]. Contrastive divergence approximates likelihood learning by running a short MCMC or Langevin chain and contrasting data energy with the resulting negative-sample energy [[D08]]. Guided cost learning likewise uses importance sampling to approximate the partition function and seeks a sampling policy that produces low-energy negative samples [[D05]].\n\nShort-run results depend on training and sampler details. In its experiments, [[D03]] reports that K=10 Langevin steps trained with L^ML alone failed to reach low-energy modes, and says differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field. This qualifies, rather than contradicts, [[D08]]'s description of short-chain negative sampling. Separately, [[D16]] describes SGLD sampling converging to the Boltzmann posterior in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not guarantee success for a short, unshaped run. The concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives while using SGLD for execution-time generation and identification [[D09]].\n\n## Critique-driven textual edits\n\nTextual optimization also separates diagnosis from change: a critic examines failure examples and emits natural-language critiques, which guide iterative edits to instructions [[D10]]. TextGrad generalizes this idea to prompts, code, and wiki pages, using textual gradients as edit guidance over repeated refinement steps [[D17]]. For wiki compilation, pairwise relation critiques can identify missing links; attention-gated critiques in [[D04]] specifically emit link-deficit guidance to add bidirectional wiki links. These are textual editing procedures, unlike the energy-based sampling methods above."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 2,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "Both topic explanations are clear, source-grounded, and appropriately distinguish short-run findings from asymptotic sampling claims. The main weakness is membership calibration: generic parameter adaptation and energy-based sampling are given substantial membership in critique-driven textual editing without evidence that they involve textual critiques or edits. Consider lowering those assignments. The page could also preserve the useful distinction between pairwise relational reasoning and unary processing; attribute fixture-note claims to their sources, as the current page does, rather than presenting them as independently verified results.",
+      "pairs": [
+        {
+          "sources": [
+            "D06",
+            "D17"
+          ],
+          "reason": "D06 describes inner-loop adaptation of model parameters, while D17 explicitly extends gradient-like adaptation to natural-language variables. This is a useful conceptual lineage, but D06 alone does not support a strong membership in critique-driven textual editing."
+        },
+        {
+          "sources": [
+            "D09",
+            "D10"
+          ],
+          "reason": "D09 uses energy objectives and SGLD for execution-time concept generation and identification; D10 uses critic-generated textual critiques to edit instructions. Their shared iterative execution-time framing does not make D09 evidence for textual optimization, so its second membership is too high."
+        },
+        {
+          "sources": [
+            "D11",
+            "D04"
+          ],
+          "reason": "D11 explains why pairwise relational interactions can capture structure that independent unary encoders miss; D04 applies pairwise relation critiques to wiki-link editing. The page cites D04 but could use D11 to clarify the relational motivation, while keeping clear that D11 itself is not a textual-editing method."
+        }
+      ]
+    },
+    "candidate_energy": 0.3,
+    "previous_energy": 5.9,
+    "accepted": true,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {
+      "D01": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D02": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D03": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          1.0,
+          0.02
+        ]
+      },
+      "D04": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.02,
+          1.0
+        ]
+      },
+      "D05": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          1.0,
+          0.01
+        ]
+      },
+      "D06": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.02,
+          0.55
+        ]
+      },
+      "D07": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.75,
+          0.15
+        ]
+      },
+      "D08": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          1.0,
+          0.01
+        ]
+      },
+      "D09": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          1.0,
+          0.45
+        ]
+      },
+      "D10": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          1.0
+        ]
+      },
+      "D11": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.05,
+          0.12
+        ]
+      },
+      "D12": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D13": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D14": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.03
+        ]
+      },
+      "D15": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D16": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          1.0,
+          0.01
+        ]
+      },
+      "D17": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.02,
+          1.0
+        ]
+      },
+      "D18": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.95,
+          0.01
+        ]
+      }
+    },
+    "concepts_before": [
+      "Energy and sampling",
+      "Text and gradient optimization"
+    ],
+    "concepts_proposed": [
+      "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, while Boltzmann and Langevin methods use those energies to define or draw samples; training objectives and sampler settings determine whether sampling succeeds.",
+      "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language gradient-like guidance, which is then used to make iterative edits to prompts, code, or wiki pages; the critique is guidance, not the edit itself."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, while Boltzmann and Langevin methods use those energies to define or draw samples; training objectives and sampler settings determine whether sampling succeeds.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language gradient-like guidance, which is then used to make iterative edits to prompts, code, or wiki pages; the critique is guidance, not the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.02
+        ],
+        "D04": [
+          0.02,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.55
+        ],
+        "D07": [
+          0.75,
+          0.15
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.45
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.05,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy scoring and sampling\n\nAn energy function assigns a score to a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. The energy scores states, whereas a sampler draws candidate states from that distribution—these are related but distinct roles [[D05]] [[D18]]. Contrastive divergence approximates likelihood learning by running a short MCMC or Langevin chain and contrasting data energy with the resulting negative-sample energy [[D08]]. Guided cost learning likewise uses importance sampling to approximate the partition function and seeks a sampling policy that produces low-energy negative samples [[D05]].\n\nShort-run results depend on training and sampler details. In its experiments, [[D03]] reports that K=10 Langevin steps trained with L^ML alone failed to reach low-energy modes, and says differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field. This qualifies, rather than contradicts, [[D08]]'s description of short-chain negative sampling. Separately, [[D16]] describes SGLD sampling converging to the Boltzmann posterior in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not guarantee success for a short, unshaped run. The concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives while using SGLD for execution-time generation and identification [[D09]].\n\n## Critique-driven textual edits\n\nTextual optimization also separates diagnosis from change: a critic examines failure examples and emits natural-language critiques, which guide iterative edits to instructions [[D10]]. TextGrad generalizes this idea to prompts, code, and wiki pages, using textual gradients as edit guidance over repeated refinement steps [[D17]]. For wiki compilation, pairwise relation critiques can identify missing links; attention-gated critiques in [[D04]] specifically emit link-deficit guidance to add bidirectional wiki links. These are textual editing procedures, unlike the energy-based sampling methods above."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 2,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "Both topic explanations are clear, source-grounded, and appropriately distinguish short-run findings from asymptotic sampling claims. The main weakness is membership calibration: generic parameter adaptation and energy-based sampling are given substantial membership in critique-driven textual editing without evidence that they involve textual critiques or edits. Consider lowering those assignments. The page could also preserve the useful distinction between pairwise relational reasoning and unary processing; attribute fixture-note claims to their sources, as the current page does, rather than presenting them as independently verified results.",
+      "pairs": [
+        {
+          "sources": [
+            "D06",
+            "D17"
+          ],
+          "reason": "D06 describes inner-loop adaptation of model parameters, while D17 explicitly extends gradient-like adaptation to natural-language variables. This is a useful conceptual lineage, but D06 alone does not support a strong membership in critique-driven textual editing."
+        },
+        {
+          "sources": [
+            "D09",
+            "D10"
+          ],
+          "reason": "D09 uses energy objectives and SGLD for execution-time concept generation and identification; D10 uses critic-generated textual critiques to edit instructions. Their shared iterative execution-time framing does not make D09 evidence for textual optimization, so its second membership is too high."
+        },
+        {
+          "sources": [
+            "D11",
+            "D04"
+          ],
+          "reason": "D11 explains why pairwise relational interactions can capture structure that independent unary encoders miss; D04 applies pairwise relation critiques to wiki-link editing. The page cites D04 but could use D11 to clarify the relational motivation, while keeping clear that D11 itself is not a textual-editing method."
+        }
+      ]
+    },
+    "energy": 0.3
+  },
+  {
+    "iteration": 2,
+    "candidate": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, and Boltzmann distributions turn those scores into probabilities. MCMC and Langevin methods draw samples, while training objectives and sampler settings shape whether those samples reach relevant low-energy regions.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance that a person or system uses to iteratively edit prompts, code, or wiki pages. This differs from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.01
+        ],
+        "D04": [
+          0.01,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.08
+        ],
+        "D07": [
+          0.82,
+          0.02
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.08,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.02
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy-based scoring and sampling\n\nAn energy function scores a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. Energy scoring and sampling are related but distinct: the energy defines the distribution, while a sampler proposes states from it [[D05]] [[D18]]. Contrastive divergence uses short MCMC or Langevin chains to obtain negative samples and contrasts their energy with data energy [[D08]]. Guided cost learning uses importance sampling to approximate the partition function and seeks a policy that generates low-energy samples [[D05]].\n\nShort-run sampling can fail even when the intended distribution is clear. The lab notebook reports that, in its experiments, K=10 Langevin steps trained with L^ML alone did not reach low-energy modes; it says differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field [[D03]]. This finding qualifies, rather than contradicts, the account of short-chain negative sampling in [[D08]]. In contrast, [[D16]] describes SGLD sampling from the Boltzmann posterior in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not ensure success in a short run. The concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives with execution-time SGLD for generation and identification [[D09]]. Energy minimization also supports few-shot concept acquisition in [[D07]].\n\n## Critique-driven textual optimization\n\nA textual critic diagnoses failures and provides edit guidance: ProTeGi uses critiques of failure minibatches to guide instruction edits [[D10]], and TextGrad applies textual gradients to prompts, code, and wiki pages over iterative refinement steps [[D17]]. Generic parameter adaptation through an inner loop, as in MAML, is not by itself textual critique or editing [[D06]].\n\nPairwise relational reasoning can motivate link-focused critiques, but is not itself textual optimization. A neural relational module computes pairwise interactions and contrasts their capacity with independent unary encoders [[D11]]. Separately, the DevLog reports that attention-gated pairwise relation critiques identified missing wiki links and emitted link-deficit guidance for adding bidirectional links [[D04]]."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 0,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 1
+      },
+      "feedback": "The page is well grounded and covers both required topics, with useful distinctions between energy scores and sampling, and between textual editing and generic parameter adaptation. Improve the treatment of the short-chain evidence by stating the specific classical contrastive-divergence assumption reported in D03 and distinguishing that stated contradiction from what D08 actually establishes: D08 describes short-chain negative sampling, but does not itself claim those chains mix successfully. The asymptotic result in D16 is appropriately kept separate from short-run performance.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D03 says classical contrastive divergence assumes truncated chains mix sufficiently, then reports experiments where uncalibrated K=10 chains fail without sampler-KL shaping. D08 describes short-chain negative sampling but does not state that such chains reliably mix. The page’s qualification is directionally sensible, but should make this difference in claims explicit."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports a short-run failure at K=10, while D16 claims exact Boltzmann sampling only as step size vanishes and iteration count tends to infinity. The page correctly treats these as different regimes, not incompatible results."
+        }
+      ]
+    },
+    "candidate_energy": 0.2,
+    "previous_energy": 0.3,
+    "accepted": true,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {
+      "D03": {
+        "before": [
+          1.0,
+          0.02
+        ],
+        "proposed": [
+          1.0,
+          0.01
+        ]
+      },
+      "D04": {
+        "before": [
+          0.02,
+          1.0
+        ],
+        "proposed": [
+          0.01,
+          1.0
+        ]
+      },
+      "D06": {
+        "before": [
+          0.02,
+          0.55
+        ],
+        "proposed": [
+          0.02,
+          0.08
+        ]
+      },
+      "D07": {
+        "before": [
+          0.75,
+          0.15
+        ],
+        "proposed": [
+          0.82,
+          0.02
+        ]
+      },
+      "D09": {
+        "before": [
+          1.0,
+          0.45
+        ],
+        "proposed": [
+          1.0,
+          0.01
+        ]
+      },
+      "D11": {
+        "before": [
+          0.05,
+          0.12
+        ],
+        "proposed": [
+          0.08,
+          0.12
+        ]
+      },
+      "D14": {
+        "before": [
+          0.01,
+          0.03
+        ],
+        "proposed": [
+          0.01,
+          0.02
+        ]
+      }
+    },
+    "concepts_before": [
+      "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, while Boltzmann and Langevin methods use those energies to define or draw samples; training objectives and sampler settings determine whether sampling succeeds.",
+      "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language gradient-like guidance, which is then used to make iterative edits to prompts, code, or wiki pages; the critique is guidance, not the edit itself."
+    ],
+    "concepts_proposed": [
+      "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, and Boltzmann distributions turn those scores into probabilities. MCMC and Langevin methods draw samples, while training objectives and sampler settings shape whether those samples reach relevant low-energy regions.",
+      "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance that a person or system uses to iteratively edit prompts, code, or wiki pages. This differs from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, and Boltzmann distributions turn those scores into probabilities. MCMC and Langevin methods draw samples, while training objectives and sampler settings shape whether those samples reach relevant low-energy regions.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance that a person or system uses to iteratively edit prompts, code, or wiki pages. This differs from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.01
+        ],
+        "D04": [
+          0.01,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.08
+        ],
+        "D07": [
+          0.82,
+          0.02
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.08,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.02
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy-based scoring and sampling\n\nAn energy function scores a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. Energy scoring and sampling are related but distinct: the energy defines the distribution, while a sampler proposes states from it [[D05]] [[D18]]. Contrastive divergence uses short MCMC or Langevin chains to obtain negative samples and contrasts their energy with data energy [[D08]]. Guided cost learning uses importance sampling to approximate the partition function and seeks a policy that generates low-energy samples [[D05]].\n\nShort-run sampling can fail even when the intended distribution is clear. The lab notebook reports that, in its experiments, K=10 Langevin steps trained with L^ML alone did not reach low-energy modes; it says differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field [[D03]]. This finding qualifies, rather than contradicts, the account of short-chain negative sampling in [[D08]]. In contrast, [[D16]] describes SGLD sampling from the Boltzmann posterior in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not ensure success in a short run. The concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives with execution-time SGLD for generation and identification [[D09]]. Energy minimization also supports few-shot concept acquisition in [[D07]].\n\n## Critique-driven textual optimization\n\nA textual critic diagnoses failures and provides edit guidance: ProTeGi uses critiques of failure minibatches to guide instruction edits [[D10]], and TextGrad applies textual gradients to prompts, code, and wiki pages over iterative refinement steps [[D17]]. Generic parameter adaptation through an inner loop, as in MAML, is not by itself textual critique or editing [[D06]].\n\nPairwise relational reasoning can motivate link-focused critiques, but is not itself textual optimization. A neural relational module computes pairwise interactions and contrasts their capacity with independent unary encoders [[D11]]. Separately, the DevLog reports that attention-gated pairwise relation critiques identified missing wiki links and emitted link-deficit guidance for adding bidirectional links [[D04]]."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 0,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 1
+      },
+      "feedback": "The page is well grounded and covers both required topics, with useful distinctions between energy scores and sampling, and between textual editing and generic parameter adaptation. Improve the treatment of the short-chain evidence by stating the specific classical contrastive-divergence assumption reported in D03 and distinguishing that stated contradiction from what D08 actually establishes: D08 describes short-chain negative sampling, but does not itself claim those chains mix successfully. The asymptotic result in D16 is appropriately kept separate from short-run performance.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D03 says classical contrastive divergence assumes truncated chains mix sufficiently, then reports experiments where uncalibrated K=10 chains fail without sampler-KL shaping. D08 describes short-chain negative sampling but does not state that such chains reliably mix. The page’s qualification is directionally sensible, but should make this difference in claims explicit."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports a short-run failure at K=10, while D16 claims exact Boltzmann sampling only as step size vanishes and iteration count tends to infinity. The page correctly treats these as different regimes, not incompatible results."
+        }
+      ]
+    },
+    "energy": 0.2
+  },
+  {
+    "iteration": 3,
+    "candidate": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions score states or trajectories, and Boltzmann distributions convert those scores into probabilities. Sampling methods such as MCMC and Langevin dynamics attempt to draw from these distributions; training objectives and sampler settings can determine whether finite-run samples reach relevant low-energy regions.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance for iteratively editing prompts, code, or wiki pages. This is distinct from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.01
+        ],
+        "D04": [
+          0.01,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.08
+        ],
+        "D07": [
+          0.82,
+          0.02
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.08,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.02
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy-based scoring and sampling\n\nAn energy function scores a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. The energy defines the distribution, while a sampler attempts to draw from it [[D05]] [[D18]]. Contrastive divergence uses short MCMC or Langevin chains to obtain negative samples and contrasts their energy with data energy [[D08]]. This describes a sampling procedure; D08 does not claim those short chains mix successfully.\n\nD03 reports the classical contrastive-divergence assumption that truncated K-step Langevin chains mix sufficiently without differentiating through the sampler. It then reports a contrasting experimental result: uncalibrated K=10 chains trained with L^ML alone failed to reach low-energy modes, and differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field [[D03]]. Thus the reported failure challenges that stated assumption, rather than a success claim made by D08. Guided cost learning uses importance sampling to approximate the partition function and seeks a policy that generates low-energy samples [[D05]]. A concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives with execution-time SGLD for generation and identification [[D09]].\n\nThese short-run results differ from D16’s asymptotic claim: SGLD samples from the Boltzmann posterior as step size tends to zero and iteration count tends to infinity, which does not establish short-run performance [[D16]]. Energy minimization also supports few-shot concept acquisition [[D07]].\n\n## Critique-driven textual optimization\n\nProTeGi uses critiques of failure minibatches to guide instruction edits [[D10]], while TextGrad applies textual gradients to prompts, code, or wiki pages through iterative refinement [[D17]]. Generic inner-loop parameter adaptation, as in MAML, is not by itself textual critique or editing [[D06]]. Pairwise relational reasoning is also distinct: a neural module computes pairwise interactions [[D11]], whereas the DevLog describes attention-gated relation critiques that identify missing wiki links and emit link-deficit guidance [[D04]]."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 0,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "The two concepts, memberships, and source-grounded explanations are strong. The short-run failure is clearly attributed to D03, and the page correctly distinguishes it from D16’s asymptotic claim. A minor coverage improvement would be to include D18’s point that multiple constraints or concepts can compose additively through their energy functions.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes using short MCMC or Langevin chains for negative samples but does not claim they mix successfully; D03 reports a classical mixing assumption and experiments that challenge it. The page preserves this distinction rather than treating D08 as evidence of successful mixing."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports failures for uncalibrated K=10 chains under its stated training setup, while D16 claims exact posterior sampling in the limiting regime as step size tends to zero and iterations tend to infinity. These claims concern different regimes, as the page correctly explains."
+        },
+        {
+          "sources": [
+            "D10",
+            "D17"
+          ],
+          "reason": "D10 describes failure-driven critiques for instruction edits, while D17 generalizes textual gradients to iterative editing of prompts, code, and wiki pages. Together they support the textual-optimization concept without conflating it with ordinary parameter adaptation."
+        }
+      ]
+    },
+    "candidate_energy": 0.1,
+    "previous_energy": 0.2,
+    "accepted": true,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {},
+    "concepts_before": [
+      "Energy-based scoring and sampling: energy functions assign scores to states or trajectories, and Boltzmann distributions turn those scores into probabilities. MCMC and Langevin methods draw samples, while training objectives and sampler settings shape whether those samples reach relevant low-energy regions.",
+      "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance that a person or system uses to iteratively edit prompts, code, or wiki pages. This differs from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+    ],
+    "concepts_proposed": [
+      "Energy-based scoring and sampling: energy functions score states or trajectories, and Boltzmann distributions convert those scores into probabilities. Sampling methods such as MCMC and Langevin dynamics attempt to draw from these distributions; training objectives and sampler settings can determine whether finite-run samples reach relevant low-energy regions.",
+      "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance for iteratively editing prompts, code, or wiki pages. This is distinct from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based scoring and sampling: energy functions score states or trajectories, and Boltzmann distributions convert those scores into probabilities. Sampling methods such as MCMC and Langevin dynamics attempt to draw from these distributions; training objectives and sampler settings can determine whether finite-run samples reach relevant low-energy regions.",
+        "Critique-driven textual optimization: a critic diagnoses failures and emits natural-language, gradient-like guidance for iteratively editing prompts, code, or wiki pages. This is distinct from generic parameter adaptation and from pairwise reasoning that does not itself produce textual edits."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          1.0,
+          0.01
+        ],
+        "D04": [
+          0.01,
+          1.0
+        ],
+        "D05": [
+          1.0,
+          0.01
+        ],
+        "D06": [
+          0.02,
+          0.08
+        ],
+        "D07": [
+          0.82,
+          0.02
+        ],
+        "D08": [
+          1.0,
+          0.01
+        ],
+        "D09": [
+          1.0,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          1.0
+        ],
+        "D11": [
+          0.08,
+          0.12
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.02
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          1.0,
+          0.01
+        ],
+        "D17": [
+          0.02,
+          1.0
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy-based scoring and sampling\n\nAn energy function scores a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. The energy defines the distribution, while a sampler attempts to draw from it [[D05]] [[D18]]. Contrastive divergence uses short MCMC or Langevin chains to obtain negative samples and contrasts their energy with data energy [[D08]]. This describes a sampling procedure; D08 does not claim those short chains mix successfully.\n\nD03 reports the classical contrastive-divergence assumption that truncated K-step Langevin chains mix sufficiently without differentiating through the sampler. It then reports a contrasting experimental result: uncalibrated K=10 chains trained with L^ML alone failed to reach low-energy modes, and differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field [[D03]]. Thus the reported failure challenges that stated assumption, rather than a success claim made by D08. Guided cost learning uses importance sampling to approximate the partition function and seeks a policy that generates low-energy samples [[D05]]. A concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives with execution-time SGLD for generation and identification [[D09]].\n\nThese short-run results differ from D16’s asymptotic claim: SGLD samples from the Boltzmann posterior as step size tends to zero and iteration count tends to infinity, which does not establish short-run performance [[D16]]. Energy minimization also supports few-shot concept acquisition [[D07]].\n\n## Critique-driven textual optimization\n\nProTeGi uses critiques of failure minibatches to guide instruction edits [[D10]], while TextGrad applies textual gradients to prompts, code, or wiki pages through iterative refinement [[D17]]. Generic inner-loop parameter adaptation, as in MAML, is not by itself textual critique or editing [[D06]]. Pairwise relational reasoning is also distinct: a neural module computes pairwise interactions [[D11]], whereas the DevLog describes attention-gated relation critiques that identify missing wiki links and emit link-deficit guidance [[D04]]."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 0,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "The two concepts, memberships, and source-grounded explanations are strong. The short-run failure is clearly attributed to D03, and the page correctly distinguishes it from D16’s asymptotic claim. A minor coverage improvement would be to include D18’s point that multiple constraints or concepts can compose additively through their energy functions.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes using short MCMC or Langevin chains for negative samples but does not claim they mix successfully; D03 reports a classical mixing assumption and experiments that challenge it. The page preserves this distinction rather than treating D08 as evidence of successful mixing."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports failures for uncalibrated K=10 chains under its stated training setup, while D16 claims exact posterior sampling in the limiting regime as step size tends to zero and iterations tend to infinity. These claims concern different regimes, as the page correctly explains."
+        },
+        {
+          "sources": [
+            "D10",
+            "D17"
+          ],
+          "reason": "D10 describes failure-driven critiques for instruction edits, while D17 generalizes textual gradients to iterative editing of prompts, code, and wiki pages. Together they support the textual-optimization concept without conflating it with ordinary parameter adaptation."
+        }
+      ]
+    },
+    "energy": 0.1
+  }
+]

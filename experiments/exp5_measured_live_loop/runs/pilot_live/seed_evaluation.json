@@ -1,0 +1,35 @@
+{
+  "deficits": {
+    "topic1": 4,
+    "topic2": 4,
+    "relevance": 4,
+    "coverage": 4,
+    "support": 3,
+    "links": 4,
+    "relations": 4
+  },
+  "feedback": "The page offers only two generic statements and does not explain either required process: how energy-based scoring relates to sampling, or how critique-driven textual gradients produce iterative edits. The concept names are broad, and assigning every source an identical 0.5 membership makes the concepts non-discriminating; many sources are unrelated to either topic. Ground the page in relevant sources, distinguish scoring from drawing samples and critique from the resulting edits, and use specific citations. Preserve the important qualifications about short-run sampler failures and asymptotic sampling rather than implying they conflict.",
+  "pairs": [
+    {
+      "sources": [
+        "D03",
+        "D08"
+      ],
+      "reason": "D08 describes short-chain contrastive divergence as a way to obtain negative samples, while D03 reports that K=10 chains trained with L^ML alone fail in its experiments and require the sampler KL objective. The page omits this distinction, so it does not explain how energy learning and sampling interact or retain the reported limitation."
+    },
+    {
+      "sources": [
+        "D03",
+        "D16"
+      ],
+      "reason": "D16 claims exact Boltzmann sampling in the limit as step size approaches zero and iterations tend to infinity; D03 reports a failure for a particular short-run K=10 setup without KL shaping. These claims concern different regimes and need not contradict. Omitting both leaves the page without the relevant assumptions or uncertainty."
+    },
+    {
+      "sources": [
+        "D10",
+        "D17"
+      ],
+      "reason": "D10 describes critics diagnosing failures and producing natural-language edit critiques for instruction optimization; D17 generalizes textual gradients to iterative refinement of prompts, code, or wiki pages. Together they support a concrete account of critique-driven editing, but the page neither explains those steps nor cites either source."
+    }
+  ]
+}

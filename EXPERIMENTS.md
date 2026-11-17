@@ -1,5 +1,21 @@
 # Experimental Design, Three Experiment Suites & Empirical Results
 
+## Interpreting the demonstrations
+
+The original suites below explore the energy formulation through symbolic rules and live LLM outputs. The [conditional synthesis suite](experiments/exp5_measured_live_loop/README.md) extends Exp4 by fixing the corpus, concepts and membership masks while executing real updates to the generated document only. Each state is evaluated separately under the two fixed concept–mask pairs using the same critic; the composite score is their sum. One corrected ten-revision run is complete; its [report](experiments/exp5_measured_live_loop/runs/conditional_prepared/REPORT.md) records actual scores, including increases, with unchanged source hashes and fixed conditions. The earlier joint-update pilot tested a different procedure and must not be used to support or challenge conditional synthesis.
+
+| Existing result or label | Precise interpretation |
+| --- | --- |
+| Symbolic trajectories | Scores evaluated during actual heuristic updates, using hand-designed parameters |
+| Original live wiki trajectories | LLM membership endpoints with prescribed high/low ranges; Python constructs intermediate gates and decreasing energy curves |
+| `With_KL_Objective` / `No_KL_Objective` | Same model, different step sizes and noise scales; an optimizer-configuration comparison |
+| `Trained_on_*` / `Untrained_Critic` | Manually selected weights; the last condition also uses a smaller step size |
+| Relational versus unary generation | Unary also loses link and contradiction edit directives; this cannot isolate scoring alone |
+| Bridge labels `0 → 3 → 10` | Seed plus two actual revisions, scored by the optimizing critic |
+| Cross-domain example | Prompted correspondence, evaluated by a separate isomorphism critic |
+
+These distinctions qualify the original interpretation below. Parameter learning, Langevin sampling guarantees, and independent transfer remain research objectives. Corpus fixtures are not independent evidence for the scientific claims they contain. Critic ratings are internal diagnostics; held-out data and independent quality assessment remain necessary.
+
 This document defines the experimental protocol, explains the three self-contained experiment folders in `experiments/`, and reports the empirical results from both the **Unsupervised Contextual Symbolic Critic** and **Live LLM Calls (`gpt-6-luna` via LiteLLM)** over clean and messy Knowledge Bases, directly mirroring Section 5 of [Mordatch (2018), *Concept Learning with Energy-Based Models*](1811.02486v1.pdf).
 
 ---

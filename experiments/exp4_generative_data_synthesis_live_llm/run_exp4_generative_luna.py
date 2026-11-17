@@ -5,9 +5,9 @@ Demonstrates and evaluates how the Relational Energy Function E_theta(x, a, w)
 is used as a GENERATIVE MODEL via K-step Textual SGLD with live `gpt-6-luna` calls:
 
 1. Task 1 — Multi-Step Compositional Bridge Document Generation:
-   Generates a brand-new KB research document x_{N+1} over 3 iterative Textual SGLD
-   epochs (s=0 -> 1 -> 2 -> 3, mapping to k=0, 3, 6, 10) to minimize the additive
-   composite energy:
+   Generates a bridge document x_{N+1} through two actual critic-guided revisions.
+   Labels k=0,3,10 denote the seed and two revisions, not ten updates.
+   The composition motivating the critic rubric is:
        E_comp(x_{N+1}) = E_theta([x, x_{N+1}], a_1, w_1) + E_theta([x, x_{N+1}], a_2, w_2)
    bridging Cluster 1 (Boltzmann Partition Estimation & Short-Run Langevin MCMC)
    and Cluster 2 (Discrete Critic-Guided Textual Gradient Optimization).

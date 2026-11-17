@@ -309,7 +309,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
         <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-lg p-3.5 space-y-2.5">
           <div class="flex items-center justify-between border-b border-[var(--border,#334155)] pb-2">
-            <span class="font-bold">Exp 3: Zero-Shot Context Transfer (Identification $\leftrightarrow$ Generation)</span>
+            <span class="font-bold">Exp 3: Configured Weights (Identification $\leftrightarrow$ Generation)</span>
             <span class="font-mono text-[var(--muted-foreground,#94a3b8)]">Sec. 5.2 / Table p. 11</span>
           </div>
           <div id="exp3-table-wrap"></div>
@@ -317,7 +317,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
         <div class="bg-[var(--card,#1e293b)] border border-[var(--border,#334155)] rounded-lg p-3.5 space-y-2.5">
           <div class="flex items-center justify-between border-b border-[var(--border,#334155)] pb-2">
-            <span class="font-bold">Exp 4 &amp; 5: Code Interchangeability ($\mathbf{w}_a \leftrightarrow \mathbf{w}_x$) &amp; $\mathcal{L}_\pi^{\text{KL}}$ Ablation</span>
+            <span class="font-bold">Exp 4 &amp; 5: Code Interchangeability ($\mathbf{w}_a \leftrightarrow \mathbf{w}_x$) &amp; Optimizer Settings</span>
             <span class="font-mono text-[var(--muted-foreground,#94a3b8)]">Fig. 6 &amp; Fig. 8</span>
           </div>
           <div id="exp5-table-wrap"></div>
@@ -1012,7 +1012,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (exps.exp3_context_transfer) {
         const rows = Object.entries(exps.exp3_context_transfer).map(([cond, m]) => `
           <tr class="border-b border-[var(--border,#334155)]">
-            <td class="py-1 font-medium">${cond.replace(/_/g, ' ')}</td>
+            <td class="py-1 font-medium">${configurationLabel(cond)}</td>
             <td class="py-1 font-mono">${m.Generation_Error.toFixed(3)}</td>
             <td class="py-1 font-mono">${m.Attention_Error.toFixed(3)}</td>
           </tr>
@@ -1020,7 +1020,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         document.getElementById('exp3-table-wrap').innerHTML = `
           <table class="w-full text-left border-collapse">
             <thead><tr class="border-b border-[var(--border,#334155)] text-[var(--muted-foreground,#94a3b8)]">
-              <th class="py-1">Condition (Table p. 11)</th><th class="py-1">Generation Error ↓</th><th class="py-1">Attention BCE ↓</th>
+              <th class="py-1">Hand-configured weights</th><th class="py-1">Generation Error ↓</th><th class="py-1">Attention BCE ↓</th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
@@ -1030,7 +1030,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (exps.exp5_kl_objective_ablation) {
         const rows = Object.entries(exps.exp5_kl_objective_ablation).map(([mode, m]) => `
           <tr class="border-b border-[var(--border,#334155)]">
-            <td class="py-1.5 font-medium">${mode.replace(/_/g, ' ')}</td>
+            <td class="py-1.5 font-medium">${configurationLabel(mode)}</td>
             <td class="py-1.5 font-mono text-emerald-400">${m.gold_energy.toFixed(4)}</td>
             <td class="py-1.5 font-mono ${m.sampled_energy < 0.15 ? 'text-emerald-400 font-bold' : 'text-amber-400'}">${m.sampled_energy.toFixed(4)}</td>
             <td class="py-1.5 font-mono text-rose-400">${m.random_energy.toFixed(4)}</td>
@@ -1039,7 +1039,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         document.getElementById('exp5-table-wrap').innerHTML = `
           <table class="w-full text-left border-collapse">
             <thead><tr class="border-b border-[var(--border,#334155)] text-[var(--muted-foreground,#94a3b8)]">
-              <th class="py-1">Training Objective</th><th class="py-1">Gold Energy</th><th class="py-1">K=10 Sampled Energy</th><th class="py-1">Random Energy</th>
+              <th class="py-1">Optimizer configuration</th><th class="py-1">Gold Energy</th><th class="py-1">K=10 Sampled Energy</th><th class="py-1">Random Energy</th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
@@ -1088,6 +1088,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <pre class="text-[11px] font-mono overflow-x-auto max-h-56 bg-slate-950 p-2.5 rounded text-slate-300">${escapeHtml(JSON.stringify(c.response, null, 2))}</pre>
         </div>
       `).join('');
+    }
+
+    function configurationLabel(key) {
+      const labels = {
+        Untrained_Critic: 'Small weights / small step',
+        Trained_on_Generation: 'Generation-emphasized weights',
+        Trained_on_Identification: 'Identification-emphasized weights',
+        Trained_on_Both: 'Combined weights',
+        With_KL_Objective: 'Step 1.25 / noise 0.02',
+        No_KL_Objective: 'Step 0.08 / noise 0.25'
+      };
+      return labels[key] || escapeHtml(key.replace(/_/g, ' '));
     }
 
     function escapeHtml(str) {

@@ -1,0 +1,1092 @@
+[
+  {
+    "iteration": 0,
+    "state": {
+      "concepts": [
+        "Energy and sampling",
+        "Text and gradient optimization"
+      ],
+      "membership": {
+        "D01": [
+          0.5,
+          0.5
+        ],
+        "D02": [
+          0.5,
+          0.5
+        ],
+        "D03": [
+          0.5,
+          0.5
+        ],
+        "D04": [
+          0.5,
+          0.5
+        ],
+        "D05": [
+          0.5,
+          0.5
+        ],
+        "D06": [
+          0.5,
+          0.5
+        ],
+        "D07": [
+          0.5,
+          0.5
+        ],
+        "D08": [
+          0.5,
+          0.5
+        ],
+        "D09": [
+          0.5,
+          0.5
+        ],
+        "D10": [
+          0.5,
+          0.5
+        ],
+        "D11": [
+          0.5,
+          0.5
+        ],
+        "D12": [
+          0.5,
+          0.5
+        ],
+        "D13": [
+          0.5,
+          0.5
+        ],
+        "D14": [
+          0.5,
+          0.5
+        ],
+        "D15": [
+          0.5,
+          0.5
+        ],
+        "D16": [
+          0.5,
+          0.5
+        ],
+        "D17": [
+          0.5,
+          0.5
+        ],
+        "D18": [
+          0.5,
+          0.5
+        ]
+      },
+      "page": "Energy models score candidate states. Textual critiques suggest edits. How might these ideas help compile a wiki?"
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 4,
+        "topic2": 4,
+        "relevance": 4,
+        "coverage": 4,
+        "support": 3,
+        "links": 4,
+        "relations": 4
+      },
+      "feedback": "The page offers only two generic statements and does not explain either required process: how energy-based scoring relates to sampling, or how critique-driven textual gradients produce iterative edits. The concept names are broad, and assigning every source an identical 0.5 membership makes the concepts non-discriminating; many sources are unrelated to either topic. Ground the page in relevant sources, distinguish scoring from drawing samples and critique from the resulting edits, and use specific citations. Preserve the important qualifications about short-run sampler failures and asymptotic sampling rather than implying they conflict.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes short-chain contrastive divergence as a way to obtain negative samples, while D03 reports that K=10 chains trained with L^ML alone fail in its experiments and require the sampler KL objective. The page omits this distinction, so it does not explain how energy learning and sampling interact or retain the reported limitation."
+        },
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D16 claims exact Boltzmann sampling in the limit as step size approaches zero and iterations tend to infinity; D03 reports a failure for a particular short-run K=10 setup without KL shaping. These claims concern different regimes and need not contradict. Omitting both leaves the page without the relevant assumptions or uncertainty."
+        },
+        {
+          "sources": [
+            "D10",
+            "D17"
+          ],
+          "reason": "D10 describes critics diagnosing failures and producing natural-language edit critiques for instruction optimization; D17 generalizes textual gradients to iterative refinement of prompts, code, or wiki pages. Together they support a concrete account of critique-driven editing, but the page neither explains those steps nor cites either source."
+        }
+      ]
+    },
+    "energy": 5.9,
+    "accepted": true
+  },
+  {
+    "iteration": 1,
+    "candidate": {
+      "concepts": [
+        "Energy-based modeling and sampling: learn or specify an energy that scores states, relate it to a Boltzmann distribution, and use methods such as MCMC or Langevin dynamics to draw approximate samples. Energy scoring and sampling are distinct; sampling quality depends on the method and regime.",
+        "Critique-driven textual gradient editing: use a critic to diagnose failures in text, produce natural-language edit guidance, and iteratively revise prompts, code, or wiki pages. Pairwise critique can additionally identify missing relations and links; the critique guides the edit rather than being the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.97
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.03,
+          0.12
+        ],
+        "D07": [
+          0.03,
+          0.08
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.04
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.02,
+          0.08
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy scores and sampling\n\nAn energy function scores candidate states; under a Boltzmann model, lower energy corresponds to greater probability, with the distribution normalized by a partition function. That score does not itself generate samples. Sampling methods approximate the distribution or provide negative examples for learning: contrastive divergence uses a short MCMC or Langevin chain for this purpose [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\nShort-run and asymptotic claims apply in different regimes. [[D03]] reports that, in its experiments, K=10 Langevin steps trained with the maximum-likelihood loss alone failed to reach low-energy modes, and that differentiating through the rollout with a sampler-KL objective was necessary. By contrast, [[D16]] describes exact Boltzmann sampling in the limit of step size approaching zero and iteration count tending to infinity. A finite, unshaped K=10 run is not that limiting regime, so these claims need not conflict. [[D09]] illustrates a model combining contrastive learning and a sampler-KL loss while using SGLD at execution time.\n\n## Critique-driven textual editing\n\nTextual-gradient editing is an iterative process: a critic evaluates failures, expresses what should change in natural language, and those critiques guide the next version. [[D10]] describes this for instructions; [[D17]] generalizes the approach to prompts, code, and wiki pages. The critique is guidance for an edit, not the revised text itself.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document relations. Its proposed pairwise critique identifies link deficits and guides adding bidirectional wiki links between related entities. Thus critique quality affects not only local wording but also which relationships the page makes explicit. Related contrasts: [[D03]]–[[D08]] concern short-run sampling; [[D10]]–[[D17]] concern iterative textual edits."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 1
+      },
+      "feedback": "Both topic explanations are clear, source-grounded, and appropriately distinguish energy scoring from sampling and critique from editing. Memberships mostly track the two concepts; keep unrelated material and general parameter-adaptation sources from becoming members merely because they share terminology. Coverage and relations would improve by making the stated short-run contrast with classical contrastive divergence explicit and, if explaining why pairwise critique helps, retaining the source on pairwise relational reasoning. The page otherwise attributes experimental claims cautiously and uses specific citations effectively.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes short-chain MCMC/Langevin sampling for contrastive divergence, while D03 explicitly says its K=10 experiments challenge the assumption that such chains mix sufficiently without sampler-KL shaping. The page reports D03's failure and D08's method but does not make this particular tension explicit; clarify that the D03 result is an experimental claim about its stated regime, not a refutation of every use of short-chain contrastive divergence."
+        },
+        {
+          "sources": [
+            "D04",
+            "D11"
+          ],
+          "reason": "D04 reports that unary critiques miss cross-document links and proposes attention-gated pairwise relation critiques; D11 independently describes pairwise interactions as capturing relations that unary encoders miss. The page explains D04's proposal but omits D11, so it loses a relevant source connection for the rationale behind pairwise critique."
+        }
+      ]
+    },
+    "candidate_energy": 0.3,
+    "previous_energy": 5.9,
+    "accepted": true,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {
+      "D01": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D02": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D03": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.99,
+          0.01
+        ]
+      },
+      "D04": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.03,
+          0.97
+        ]
+      },
+      "D05": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.99,
+          0.01
+        ]
+      },
+      "D06": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.03,
+          0.12
+        ]
+      },
+      "D07": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.03,
+          0.08
+        ]
+      },
+      "D08": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.99,
+          0.01
+        ]
+      },
+      "D09": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.99,
+          0.04
+        ]
+      },
+      "D10": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.99
+        ]
+      },
+      "D11": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.02,
+          0.08
+        ]
+      },
+      "D12": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D13": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D14": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.03
+        ]
+      },
+      "D15": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D16": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.99,
+          0.01
+        ]
+      },
+      "D17": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.01,
+          0.99
+        ]
+      },
+      "D18": {
+        "before": [
+          0.5,
+          0.5
+        ],
+        "proposed": [
+          0.95,
+          0.01
+        ]
+      }
+    },
+    "concepts_before": [
+      "Energy and sampling",
+      "Text and gradient optimization"
+    ],
+    "concepts_proposed": [
+      "Energy-based modeling and sampling: learn or specify an energy that scores states, relate it to a Boltzmann distribution, and use methods such as MCMC or Langevin dynamics to draw approximate samples. Energy scoring and sampling are distinct; sampling quality depends on the method and regime.",
+      "Critique-driven textual gradient editing: use a critic to diagnose failures in text, produce natural-language edit guidance, and iteratively revise prompts, code, or wiki pages. Pairwise critique can additionally identify missing relations and links; the critique guides the edit rather than being the edit itself."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based modeling and sampling: learn or specify an energy that scores states, relate it to a Boltzmann distribution, and use methods such as MCMC or Langevin dynamics to draw approximate samples. Energy scoring and sampling are distinct; sampling quality depends on the method and regime.",
+        "Critique-driven textual gradient editing: use a critic to diagnose failures in text, produce natural-language edit guidance, and iteratively revise prompts, code, or wiki pages. Pairwise critique can additionally identify missing relations and links; the critique guides the edit rather than being the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.97
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.03,
+          0.12
+        ],
+        "D07": [
+          0.03,
+          0.08
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.04
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.02,
+          0.08
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Energy scores and sampling\n\nAn energy function scores candidate states; under a Boltzmann model, lower energy corresponds to greater probability, with the distribution normalized by a partition function. That score does not itself generate samples. Sampling methods approximate the distribution or provide negative examples for learning: contrastive divergence uses a short MCMC or Langevin chain for this purpose [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\nShort-run and asymptotic claims apply in different regimes. [[D03]] reports that, in its experiments, K=10 Langevin steps trained with the maximum-likelihood loss alone failed to reach low-energy modes, and that differentiating through the rollout with a sampler-KL objective was necessary. By contrast, [[D16]] describes exact Boltzmann sampling in the limit of step size approaching zero and iteration count tending to infinity. A finite, unshaped K=10 run is not that limiting regime, so these claims need not conflict. [[D09]] illustrates a model combining contrastive learning and a sampler-KL loss while using SGLD at execution time.\n\n## Critique-driven textual editing\n\nTextual-gradient editing is an iterative process: a critic evaluates failures, expresses what should change in natural language, and those critiques guide the next version. [[D10]] describes this for instructions; [[D17]] generalizes the approach to prompts, code, and wiki pages. The critique is guidance for an edit, not the revised text itself.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document relations. Its proposed pairwise critique identifies link deficits and guides adding bidirectional wiki links between related entities. Thus critique quality affects not only local wording but also which relationships the page makes explicit. Related contrasts: [[D03]]–[[D08]] concern short-run sampling; [[D10]]–[[D17]] concern iterative textual edits."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 1
+      },
+      "feedback": "Both topic explanations are clear, source-grounded, and appropriately distinguish energy scoring from sampling and critique from editing. Memberships mostly track the two concepts; keep unrelated material and general parameter-adaptation sources from becoming members merely because they share terminology. Coverage and relations would improve by making the stated short-run contrast with classical contrastive divergence explicit and, if explaining why pairwise critique helps, retaining the source on pairwise relational reasoning. The page otherwise attributes experimental claims cautiously and uses specific citations effectively.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D08 describes short-chain MCMC/Langevin sampling for contrastive divergence, while D03 explicitly says its K=10 experiments challenge the assumption that such chains mix sufficiently without sampler-KL shaping. The page reports D03's failure and D08's method but does not make this particular tension explicit; clarify that the D03 result is an experimental claim about its stated regime, not a refutation of every use of short-chain contrastive divergence."
+        },
+        {
+          "sources": [
+            "D04",
+            "D11"
+          ],
+          "reason": "D04 reports that unary critiques miss cross-document links and proposes attention-gated pairwise relation critiques; D11 independently describes pairwise interactions as capturing relations that unary encoders miss. The page explains D04's proposal but omits D11, so it loses a relevant source connection for the rationale behind pairwise critique."
+        }
+      ]
+    },
+    "energy": 0.3
+  },
+  {
+    "iteration": 2,
+    "candidate": {
+      "concepts": [
+        "Energy-based modeling and sampling: define or learn an energy over states, relate it to a Boltzmann distribution, and use sampling methods such as MCMC or Langevin dynamics to approximate that distribution. Energy scoring and sampling are distinct, and finite-run sampling quality depends on the method and regime.",
+        "Critique-driven textual gradient editing: have a critic diagnose failures in text and express natural-language guidance, then iteratively edit prompts, code, or wiki pages. Pairwise critiques can identify missing relations and links; relational reasoning can motivate them, but the critique guides the edit rather than being the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.99
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.01,
+          0.01
+        ],
+        "D07": [
+          0.01,
+          0.01
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.01,
+          0.35
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Critique-driven textual editing\n\nTextual-gradient editing is an iterative process: a critic evaluates failures, expresses what should change in natural language, and guides an edit to produce the next version. [[D10]] describes this for instructions; [[D17]] extends the approach to prompts, code, and wiki pages. The critique is guidance, not the revised text itself.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document links. It proposes attention-gated pairwise relation critiques that identify link deficits and guide adding bidirectional wiki links. [[D11]] provides related rationale: pairwise interactions can capture multi-entity relations that independent unary encoders miss. It concerns relational reasoning, not textual critique directly, but helps explain why considering pairs can reveal what a unary assessment overlooks.\n\n## Energy scores and sampling\n\nAn energy scores candidate states; under a Boltzmann model, lower energy corresponds to greater probability. Sampling is a separate process: contrastive divergence uses short MCMC or Langevin chains to draw negative examples [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\n[[D03]] characterizes classical contrastive divergence as assuming K-step chains mix sufficiently without differentiating through the sampler, then reports that its own K=10 experiments failed to reach low-energy modes when trained with the maximum-likelihood loss alone. It says differentiating through the rollout with a sampler-KL objective was necessary. This is a reported result for its stated regime, not a refutation of every use of short-chain contrastive divergence. In contrast, [[D16]] describes exact Boltzmann sampling in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not establish that finite, unshaped K=10 runs mix well. [[D09]] combines contrastive learning with a sampler-KL loss."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 1,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "The page clearly explains both topics, uses specific citations, and distinguishes the reported short-run failure from an asymptotic sampling guarantee. To strengthen coverage, explain more of D09’s contribution: execution-time SGLD for concept generation and identification, and how its contrastive maximum-likelihood and sampler-KL losses work together. Membership is mostly sensible, though D11’s relation to critique-driven editing is indirect and should remain clearly secondary.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports poor mixing for its unshaped K=10 experiment, while D16’s exact-sampling claim is asymptotic in step size and iteration count. The page correctly treats these as different regimes, not incompatible results."
+        },
+        {
+          "sources": [
+            "D08",
+            "D03"
+          ],
+          "reason": "D08 describes short-chain contrastive divergence as a way to draw negative samples; D03 reports that its K=10 chains failed under maximum-likelihood-only training and required a sampler-KL objective. Together they motivate qualifying short-chain performance by training regime rather than treating the method as universally effective or ineffective."
+        },
+        {
+          "sources": [
+            "D04",
+            "D11"
+          ],
+          "reason": "D04 proposes pairwise relation critiques for finding missing wiki links, whereas D11 supports the narrower rationale that pairwise interactions capture relations missed by unary encoders. The page accurately uses D11 as related rationale, not as direct evidence about textual critique."
+        }
+      ]
+    },
+    "candidate_energy": 0.2,
+    "previous_energy": 0.3,
+    "accepted": true,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {
+      "D04": {
+        "before": [
+          0.03,
+          0.97
+        ],
+        "proposed": [
+          0.03,
+          0.99
+        ]
+      },
+      "D06": {
+        "before": [
+          0.03,
+          0.12
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D07": {
+        "before": [
+          0.03,
+          0.08
+        ],
+        "proposed": [
+          0.01,
+          0.01
+        ]
+      },
+      "D09": {
+        "before": [
+          0.99,
+          0.04
+        ],
+        "proposed": [
+          0.99,
+          0.01
+        ]
+      },
+      "D11": {
+        "before": [
+          0.02,
+          0.08
+        ],
+        "proposed": [
+          0.01,
+          0.35
+        ]
+      }
+    },
+    "concepts_before": [
+      "Energy-based modeling and sampling: learn or specify an energy that scores states, relate it to a Boltzmann distribution, and use methods such as MCMC or Langevin dynamics to draw approximate samples. Energy scoring and sampling are distinct; sampling quality depends on the method and regime.",
+      "Critique-driven textual gradient editing: use a critic to diagnose failures in text, produce natural-language edit guidance, and iteratively revise prompts, code, or wiki pages. Pairwise critique can additionally identify missing relations and links; the critique guides the edit rather than being the edit itself."
+    ],
+    "concepts_proposed": [
+      "Energy-based modeling and sampling: define or learn an energy over states, relate it to a Boltzmann distribution, and use sampling methods such as MCMC or Langevin dynamics to approximate that distribution. Energy scoring and sampling are distinct, and finite-run sampling quality depends on the method and regime.",
+      "Critique-driven textual gradient editing: have a critic diagnose failures in text and express natural-language guidance, then iteratively edit prompts, code, or wiki pages. Pairwise critiques can identify missing relations and links; relational reasoning can motivate them, but the critique guides the edit rather than being the edit itself."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based modeling and sampling: define or learn an energy over states, relate it to a Boltzmann distribution, and use sampling methods such as MCMC or Langevin dynamics to approximate that distribution. Energy scoring and sampling are distinct, and finite-run sampling quality depends on the method and regime.",
+        "Critique-driven textual gradient editing: have a critic diagnose failures in text and express natural-language guidance, then iteratively edit prompts, code, or wiki pages. Pairwise critiques can identify missing relations and links; relational reasoning can motivate them, but the critique guides the edit rather than being the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.99
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.01,
+          0.01
+        ],
+        "D07": [
+          0.01,
+          0.01
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.01,
+          0.35
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Critique-driven textual editing\n\nTextual-gradient editing is an iterative process: a critic evaluates failures, expresses what should change in natural language, and guides an edit to produce the next version. [[D10]] describes this for instructions; [[D17]] extends the approach to prompts, code, and wiki pages. The critique is guidance, not the revised text itself.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document links. It proposes attention-gated pairwise relation critiques that identify link deficits and guide adding bidirectional wiki links. [[D11]] provides related rationale: pairwise interactions can capture multi-entity relations that independent unary encoders miss. It concerns relational reasoning, not textual critique directly, but helps explain why considering pairs can reveal what a unary assessment overlooks.\n\n## Energy scores and sampling\n\nAn energy scores candidate states; under a Boltzmann model, lower energy corresponds to greater probability. Sampling is a separate process: contrastive divergence uses short MCMC or Langevin chains to draw negative examples [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\n[[D03]] characterizes classical contrastive divergence as assuming K-step chains mix sufficiently without differentiating through the sampler, then reports that its own K=10 experiments failed to reach low-energy modes when trained with the maximum-likelihood loss alone. It says differentiating through the rollout with a sampler-KL objective was necessary. This is a reported result for its stated regime, not a refutation of every use of short-chain contrastive divergence. In contrast, [[D16]] describes exact Boltzmann sampling in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not establish that finite, unshaped K=10 runs mix well. [[D09]] combines contrastive learning with a sampler-KL loss."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 1,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "The page clearly explains both topics, uses specific citations, and distinguishes the reported short-run failure from an asymptotic sampling guarantee. To strengthen coverage, explain more of D09’s contribution: execution-time SGLD for concept generation and identification, and how its contrastive maximum-likelihood and sampler-KL losses work together. Membership is mostly sensible, though D11’s relation to critique-driven editing is indirect and should remain clearly secondary.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports poor mixing for its unshaped K=10 experiment, while D16’s exact-sampling claim is asymptotic in step size and iteration count. The page correctly treats these as different regimes, not incompatible results."
+        },
+        {
+          "sources": [
+            "D08",
+            "D03"
+          ],
+          "reason": "D08 describes short-chain contrastive divergence as a way to draw negative samples; D03 reports that its K=10 chains failed under maximum-likelihood-only training and required a sampler-KL objective. Together they motivate qualifying short-chain performance by training regime rather than treating the method as universally effective or ineffective."
+        },
+        {
+          "sources": [
+            "D04",
+            "D11"
+          ],
+          "reason": "D04 proposes pairwise relation critiques for finding missing wiki links, whereas D11 supports the narrower rationale that pairwise interactions capture relations missed by unary encoders. The page accurately uses D11 as related rationale, not as direct evidence about textual critique."
+        }
+      ]
+    },
+    "energy": 0.2
+  },
+  {
+    "iteration": 3,
+    "candidate": {
+      "concepts": [
+        "Energy-based modeling and sampling: define or learn an energy function that scores states and relates them to a Boltzmann distribution. Sampling methods such as MCMC and Langevin dynamics approximate that distribution; their finite-run behavior depends on the sampler, training objective, and regime.",
+        "Critique-driven textual gradient editing: a critic diagnoses failures in text and provides natural-language directions that guide iterative edits to prompts, code, or wiki pages. Pairwise critiques can reveal missing relations or links; relational reasoning may motivate this approach, but is indirect evidence and is not itself textual editing."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.99
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.01,
+          0.01
+        ],
+        "D07": [
+          0.01,
+          0.01
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.01,
+          0.2
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Critique-driven textual editing\n\nTextual-gradient editing uses a critic to diagnose failures and express natural-language directions for changing text; the directions guide an edit rather than constitute the revised text. [[D10]] applies this to instructions, while [[D17]] describes iterative refinement of prompts, code, and wiki pages.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document links. Its proposed pairwise, attention-gated critiques identify link deficits and guide adding bidirectional wiki links. [[D11]] offers only related rationale: pairwise interactions can capture relations that independent unary encoders miss. It is about relational reasoning, not textual critique or editing directly.\n\n## Energy scores and sampling\n\nAn energy scores candidate states; in a Boltzmann model, lower energy means greater probability. Sampling is a separate process. Contrastive divergence uses short MCMC or Langevin chains for negative samples [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\n[[D09]] brings these ideas together for concept learning: execution-time SGLD over a learned energy supports both concept generation (optimizing entity trajectories) and entity identification (optimizing attention). Its meta-training combines a contrastive maximum-likelihood loss, which estimates the partition function using importance sampling, with a sampler-KL loss that differentiates through the K-step rollout. The losses therefore address energy learning and the behavior of the sampler, respectively.\n\n[[D03]] reports that its K=10 chains failed to reach low-energy modes when trained with the maximum-likelihood loss alone, and that differentiating through the rollout with sampler-KL was necessary in its experiments. This qualifies short-chain performance for that regime; it does not show that contrastive divergence always fails. [[D16]] describes exact Boltzmann sampling in the limit of vanishing step size and infinitely many iterations, which does not guarantee good mixing in finite K=10 runs."
+    },
+    "candidate_evaluation": {
+      "deficits": {
+        "topic1": 0,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 1
+      },
+      "feedback": "The page is well-supported, clearly distinguishes energy scores from sampling, and explains critique-guided editing without overstating the indirect role of relational reasoning. Consider including D07’s energy-based concept-acquisition contribution in the first concept and membership, and make the relationship between D03’s short-run result and the contrastive-divergence account more explicit while preserving the distinction between the reported experiment and a general claim about the method.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D08"
+          ],
+          "reason": "D03 explicitly reports short-run failures and challenges an assumption it attributes to classical contrastive divergence; D08 describes contrastive divergence’s short-chain negative-sampling procedure but does not itself establish that those chains mix sufficiently. Making this distinction explicit would clarify what the reported result qualifies without turning it into a universal failure claim."
+        },
+        {
+          "sources": [
+            "D07",
+            "D09"
+          ],
+          "reason": "Both sources concern energy-based concept learning: D07 describes minimizing energy over positive demonstrations with a meta-learned prior, while D09 describes execution-time concept generation and entity identification using a learned energy. D07 is therefore relevant to the energy concept and its exclusion from that membership leaves a pertinent contribution uncovered."
+        }
+      ]
+    },
+    "candidate_energy": 0.3,
+    "previous_energy": 0.2,
+    "accepted": false,
+    "acceptance_rule": "candidate energy <= incumbent energy",
+    "membership_changes": {
+      "D11": {
+        "before": [
+          0.01,
+          0.35
+        ],
+        "proposed": [
+          0.01,
+          0.2
+        ]
+      }
+    },
+    "concepts_before": [
+      "Energy-based modeling and sampling: define or learn an energy over states, relate it to a Boltzmann distribution, and use sampling methods such as MCMC or Langevin dynamics to approximate that distribution. Energy scoring and sampling are distinct, and finite-run sampling quality depends on the method and regime.",
+      "Critique-driven textual gradient editing: have a critic diagnose failures in text and express natural-language guidance, then iteratively edit prompts, code, or wiki pages. Pairwise critiques can identify missing relations and links; relational reasoning can motivate them, but the critique guides the edit rather than being the edit itself."
+    ],
+    "concepts_proposed": [
+      "Energy-based modeling and sampling: define or learn an energy function that scores states and relates them to a Boltzmann distribution. Sampling methods such as MCMC and Langevin dynamics approximate that distribution; their finite-run behavior depends on the sampler, training objective, and regime.",
+      "Critique-driven textual gradient editing: a critic diagnoses failures in text and provides natural-language directions that guide iterative edits to prompts, code, or wiki pages. Pairwise critiques can reveal missing relations or links; relational reasoning may motivate this approach, but is indirect evidence and is not itself textual editing."
+    ],
+    "state": {
+      "concepts": [
+        "Energy-based modeling and sampling: define or learn an energy over states, relate it to a Boltzmann distribution, and use sampling methods such as MCMC or Langevin dynamics to approximate that distribution. Energy scoring and sampling are distinct, and finite-run sampling quality depends on the method and regime.",
+        "Critique-driven textual gradient editing: have a critic diagnose failures in text and express natural-language guidance, then iteratively edit prompts, code, or wiki pages. Pairwise critiques can identify missing relations and links; relational reasoning can motivate them, but the critique guides the edit rather than being the edit itself."
+      ],
+      "membership": {
+        "D01": [
+          0.01,
+          0.01
+        ],
+        "D02": [
+          0.01,
+          0.01
+        ],
+        "D03": [
+          0.99,
+          0.01
+        ],
+        "D04": [
+          0.03,
+          0.99
+        ],
+        "D05": [
+          0.99,
+          0.01
+        ],
+        "D06": [
+          0.01,
+          0.01
+        ],
+        "D07": [
+          0.01,
+          0.01
+        ],
+        "D08": [
+          0.99,
+          0.01
+        ],
+        "D09": [
+          0.99,
+          0.01
+        ],
+        "D10": [
+          0.01,
+          0.99
+        ],
+        "D11": [
+          0.01,
+          0.35
+        ],
+        "D12": [
+          0.01,
+          0.01
+        ],
+        "D13": [
+          0.01,
+          0.01
+        ],
+        "D14": [
+          0.01,
+          0.03
+        ],
+        "D15": [
+          0.01,
+          0.01
+        ],
+        "D16": [
+          0.99,
+          0.01
+        ],
+        "D17": [
+          0.01,
+          0.99
+        ],
+        "D18": [
+          0.95,
+          0.01
+        ]
+      },
+      "page": "## Critique-driven textual editing\n\nTextual-gradient editing is an iterative process: a critic evaluates failures, expresses what should change in natural language, and guides an edit to produce the next version. [[D10]] describes this for instructions; [[D17]] extends the approach to prompts, code, and wiki pages. The critique is guidance, not the revised text itself.\n\nFor wiki compilation, [[D04]] reports that unary critiques can miss cross-document links. It proposes attention-gated pairwise relation critiques that identify link deficits and guide adding bidirectional wiki links. [[D11]] provides related rationale: pairwise interactions can capture multi-entity relations that independent unary encoders miss. It concerns relational reasoning, not textual critique directly, but helps explain why considering pairs can reveal what a unary assessment overlooks.\n\n## Energy scores and sampling\n\nAn energy scores candidate states; under a Boltzmann model, lower energy corresponds to greater probability. Sampling is a separate process: contrastive divergence uses short MCMC or Langevin chains to draw negative examples [[D08]], while guided cost learning uses importance sampling to approximate the partition function [[D05]].\n\n[[D03]] characterizes classical contrastive divergence as assuming K-step chains mix sufficiently without differentiating through the sampler, then reports that its own K=10 experiments failed to reach low-energy modes when trained with the maximum-likelihood loss alone. It says differentiating through the rollout with a sampler-KL objective was necessary. This is a reported result for its stated regime, not a refutation of every use of short-chain contrastive divergence. In contrast, [[D16]] describes exact Boltzmann sampling in the limit of vanishing step size and infinitely many iterations; that asymptotic claim does not establish that finite, unshaped K=10 runs mix well. [[D09]] combines contrastive learning with a sampler-KL loss."
+    },
+    "evaluation": {
+      "deficits": {
+        "topic1": 1,
+        "topic2": 0,
+        "relevance": 1,
+        "coverage": 1,
+        "support": 0,
+        "links": 0,
+        "relations": 0
+      },
+      "feedback": "The page clearly explains both topics, uses specific citations, and distinguishes the reported short-run failure from an asymptotic sampling guarantee. To strengthen coverage, explain more of D09’s contribution: execution-time SGLD for concept generation and identification, and how its contrastive maximum-likelihood and sampler-KL losses work together. Membership is mostly sensible, though D11’s relation to critique-driven editing is indirect and should remain clearly secondary.",
+      "pairs": [
+        {
+          "sources": [
+            "D03",
+            "D16"
+          ],
+          "reason": "D03 reports poor mixing for its unshaped K=10 experiment, while D16’s exact-sampling claim is asymptotic in step size and iteration count. The page correctly treats these as different regimes, not incompatible results."
+        },
+        {
+          "sources": [
+            "D08",
+            "D03"
+          ],
+          "reason": "D08 describes short-chain contrastive divergence as a way to draw negative samples; D03 reports that its K=10 chains failed under maximum-likelihood-only training and required a sampler-KL objective. Together they motivate qualifying short-chain performance by training regime rather than treating the method as universally effective or ineffective."
+        },
+        {
+          "sources": [
+            "D04",
+            "D11"
+          ],
+          "reason": "D04 proposes pairwise relation critiques for finding missing wiki links, whereas D11 supports the narrower rationale that pairwise interactions capture relations missed by unary encoders. The page accurately uses D11 as related rationale, not as direct evidence about textual critique."
+        }
+      ]
+    },
+    "energy": 0.2
+  }
+]

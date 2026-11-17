@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420">
+<rect width="800" height="420" fill="white"/>
+<text x="50" y="25" font-family="sans-serif" font-size="16">Measured candidate scores (dashed) and accepted scores (solid)</text>
+<path d="M 60 325 H 750" stroke="#ddd"/><text x="10" y="329" font-family="sans-serif" font-size="12">0.0</text>
+<path d="M 60 260 H 750" stroke="#ddd"/><text x="10" y="264" font-family="sans-serif" font-size="12">3.0</text>
+<path d="M 60 195 H 750" stroke="#ddd"/><text x="10" y="199" font-family="sans-serif" font-size="12">5.9</text>
+<path d="M 60 130 H 750" stroke="#ddd"/><text x="10" y="134" font-family="sans-serif" font-size="12">8.9</text>
+<path d="M 60 65 H 750" stroke="#ddd"/><text x="10" y="69" font-family="sans-serif" font-size="12">11.8</text>
+<circle cx="60.0" cy="65.0" r="3" fill="#2563eb"/>
+<circle cx="290.0" cy="311.8" r="3" fill="#2563eb"/>
+<circle cx="520.0" cy="325.0" r="3" fill="#2563eb"/>
+<circle cx="750.0" cy="320.6" r="3" fill="#2563eb"/>
+<polyline points="60.0,65.0 290.0,311.8 520.0,325.0 750.0,320.6" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="60.0" cy="65.0" r="3" fill="#2563eb"/>
+<circle cx="290.0" cy="311.8" r="3" fill="#2563eb"/>
+<circle cx="520.0" cy="325.0" r="3" fill="#2563eb"/>
+<circle cx="750.0" cy="325.0" r="3" fill="#2563eb"/>
+<polyline points="60.0,65.0 290.0,311.8 520.0,325.0 750.0,325.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+<circle cx="60.0" cy="65.0" r="3" fill="#059669"/>
+<polyline points="60.0,65.0" fill="none" stroke="#059669" stroke-dasharray="5 4"/>
+<circle cx="520.0" cy="303.0" r="3" fill="#059669"/>
+<circle cx="750.0" cy="316.2" r="3" fill="#059669"/>
+<polyline points="520.0,303.0 750.0,316.2" fill="none" stroke="#059669" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="60.0" cy="65.0" r="3" fill="#059669"/>
+<circle cx="290.0" cy="65.0" r="3" fill="#059669"/>
+<circle cx="520.0" cy="303.0" r="3" fill="#059669"/>
+<circle cx="750.0" cy="316.2" r="3" fill="#059669"/>
+<polyline points="60.0,65.0 290.0,65.0 520.0,303.0 750.0,316.2" fill="none" stroke="#059669" stroke-width="2"/>
+<circle cx="60.0" cy="195.0" r="3" fill="#9333ea"/>
+<circle cx="290.0" cy="318.4" r="3" fill="#9333ea"/>
+<circle cx="520.0" cy="320.6" r="3" fill="#9333ea"/>
+<circle cx="750.0" cy="322.8" r="3" fill="#9333ea"/>
+<polyline points="60.0,195.0 290.0,318.4 520.0,320.6 750.0,322.8" fill="none" stroke="#9333ea" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="60.0" cy="195.0" r="3" fill="#9333ea"/>
+<circle cx="290.0" cy="318.4" r="3" fill="#9333ea"/>
+<circle cx="520.0" cy="320.6" r="3" fill="#9333ea"/>
+<circle cx="750.0" cy="322.8" r="3" fill="#9333ea"/>
+<polyline points="60.0,195.0 290.0,318.4 520.0,320.6 750.0,322.8" fill="none" stroke="#9333ea" stroke-width="2"/>
+<circle cx="60.0" cy="195.0" r="3" fill="#d97706"/>
+<circle cx="290.0" cy="318.4" r="3" fill="#d97706"/>
+<circle cx="520.0" cy="320.6" r="3" fill="#d97706"/>
+<circle cx="750.0" cy="318.4" r="3" fill="#d97706"/>
+<polyline points="60.0,195.0 290.0,318.4 520.0,320.6 750.0,318.4" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="60.0" cy="195.0" r="3" fill="#d97706"/>
+<circle cx="290.0" cy="318.4" r="3" fill="#d97706"/>
+<circle cx="520.0" cy="320.6" r="3" fill="#d97706"/>
+<circle cx="750.0" cy="320.6" r="3" fill="#d97706"/>
+<polyline points="60.0,195.0 290.0,318.4 520.0,320.6 750.0,320.6" fill="none" stroke="#d97706" stroke-width="2"/>
+<text x="60.0" y="347" text-anchor="middle" font-family="sans-serif" font-size="12">0</text>
+<text x="290.0" y="347" text-anchor="middle" font-family="sans-serif" font-size="12">1</text>
+<text x="520.0" y="347" text-anchor="middle" font-family="sans-serif" font-size="12">2</text>
+<text x="750.0" y="347" text-anchor="middle" font-family="sans-serif" font-size="12">3</text>
+<text x="310" y="370" font-family="sans-serif" font-size="13">Actual revision number</text>
+<text x="30" y="400" fill="#2563eb" font-family="sans-serif" font-size="13">ordinary</text>
+<text x="220" y="400" fill="#059669" font-family="sans-serif" font-size="13">relational</text>
+<text x="410" y="400" fill="#9333ea" font-family="sans-serif" font-size="13">topic1</text>
+<text x="600" y="400" fill="#d97706" font-family="sans-serif" font-size="13">topic2</text></svg>

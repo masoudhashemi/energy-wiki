@@ -1,0 +1,11 @@
+## Energy-based scoring and sampling
+
+An energy function scores a state or trajectory; in a Boltzmann model, lower energy corresponds to greater probability under a distribution proportional to exp(-E)/Z. The energy defines the distribution, while a sampler attempts to draw from it [[D05]] [[D18]]. Contrastive divergence uses short MCMC or Langevin chains to obtain negative samples and contrasts their energy with data energy [[D08]]. This describes a sampling procedure; D08 does not claim those short chains mix successfully.
+
+D03 reports the classical contrastive-divergence assumption that truncated K-step Langevin chains mix sufficiently without differentiating through the sampler. It then reports a contrasting experimental result: uncalibrated K=10 chains trained with L^ML alone failed to reach low-energy modes, and differentiating through the rollout with sampler-KL loss L^KL was necessary to shape the gradient field [[D03]]. Thus the reported failure challenges that stated assumption, rather than a success claim made by D08. Guided cost learning uses importance sampling to approximate the partition function and seeks a policy that generates low-energy samples [[D05]]. A concept-learning method combines contrastive maximum-likelihood and sampler-KL objectives with execution-time SGLD for generation and identification [[D09]].
+
+These short-run results differ from D16’s asymptotic claim: SGLD samples from the Boltzmann posterior as step size tends to zero and iteration count tends to infinity, which does not establish short-run performance [[D16]]. Energy minimization also supports few-shot concept acquisition [[D07]].
+
+## Critique-driven textual optimization
+
+ProTeGi uses critiques of failure minibatches to guide instruction edits [[D10]], while TextGrad applies textual gradients to prompts, code, or wiki pages through iterative refinement [[D17]]. Generic inner-loop parameter adaptation, as in MAML, is not by itself textual critique or editing [[D06]]. Pairwise relational reasoning is also distinct: a neural module computes pairwise interactions [[D11]], whereas the DevLog describes attention-gated relation critiques that identify missing wiki links and emit link-deficit guidance [[D04]].
