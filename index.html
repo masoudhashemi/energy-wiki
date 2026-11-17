@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Learning and LLM Wikis with Energy-Based Models</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #111827;
+      --muted: #4b5563;
+      --border: #e5e7eb;
+      --card: #f9fafb;
+      --accent: #2563eb;
+      --code-bg: #f3f4f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --fg: #f8fafc;
+        --muted: #94a3b8;
+        --border: #1e293b;
+        --card: #1e293b;
+        --accent: #60a5fa;
+        --code-bg: #0f172a;
+      }
+    }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.68;
+      margin: 0;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    main {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2rem;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.35rem;
+      margin-top: 2.25rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+    p, li {
+      font-size: 1rem;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 1.25rem 0 2rem;
+      padding: 0.85rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .nav-bar a {
+      font-weight: 600;
+      margin-right: 0.75rem;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88em;
+      background: var(--code-bg);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.7rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--card);
+      font-weight: 600;
+    }
+    .callout {
+      background: var(--card);
+      border-left: 4px solid var(--accent);
+      padding: 0.85rem 1.1rem;
+      margin: 1.25rem 0;
+      border-radius: 0 6px 6px 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Concept Learning and LLM Wikis with Energy-Based Models</h1>
+    <div class="subtitle">
+      Applying energy-based concept models (<a href="https://arxiv.org/abs/1811.02486">Mordatch, 2018</a>) and textual gradients to knowledge discovery, wiki compilation, and synthetic data generation.
+    </div>
+
+    <div class="nav-bar">
+      <a href="wiki_viewer.html">Interactive Multi-Experiment Wiki Explorer</a>
+      <a href="https://github.com/masoudhashemi/energy-wiki">GitHub Repository</a>
+      <a href="PROBLEM_AND_FORMULATION.md">Full Formulation</a>
+      <a href="EXPERIMENTS.md">Experiments</a>
+      <a href="GENERATIVE_ENERGY_SYNTHESIS.md">Generative Data Synthesis</a>
+    </div>
+
+    <p>
+      I like to have a mathematical formulation for agentic tasks and iterative improvement loops. A clear math formulation helps us define the loops accurately, separate the tasks, and set clear boundaries for how different parts of the system interact. Instead of treating agentic workflows as ad-hoc heuristics, we can pose them as well-defined optimizations performed during the execution lifetime of the agent.
+    </p>
+    <p>
+      In this post, we apply <a href="https://arxiv.org/abs/1811.02486"><strong>Concept Learning with Energy-Based Models</strong></a> (Mordatch, 2018) to the problem of building an <strong>LLM Wiki</strong> from a messy knowledge base.
+    </p>
+    <p>
+      Following Mordatch's framework, a <em>concept</em> is defined by a single <strong>energy function</strong> $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ over entities $\mathbf{x}$ (raw documents $\mathbf{x}^0$ and compiled wiki pages $\mathbf{x}^1$), an attention mask $\mathbf{a}$ over participating entities, and a concept code $\mathbf{w}$. Zero-energy configurations imply that the entities selected by the attention mask satisfy the concept.
+    </p>
+    <div class="callout">
+      <strong>Unified Formulation for Discovery, Linking, and Data Generation:</strong> By using an energy-based formulation and replacing numerical gradients with <strong>textual gradients</strong> (natural-language critiques), concept discovery (optimizing over $\mathbf{w}$), entity identification (optimizing over $\mathbf{a}$), wiki compilation (optimizing over $\mathbf{x}^1$), and <strong>new data generation</strong> (optimizing over new synthetic documents $x_{N+1}$) are all formulated with the exact same energy function and optimization loop, without needing a separate generator network or policy.
+    </div>
+
+    <h2>1. Energy-Based Concept Models for Knowledge Bases</h2>
+    <p>
+      Concepts operate over events in the knowledge base, represented as a trajectory from initial raw documents $\mathbf{x}^0 = [\mathbf{x}_1^0, \dots, \mathbf{x}_N^0]$ to compiled wiki pages $\mathbf{x}^1 = [\mathbf{x}_1^1, \dots, \mathbf{x}_N^1]$. Attention over the $N$ entities is specified by a continuous mask $\mathbf{a} \in \mathbb{R}^N$ gated via sigmoid $\sigma(\mathbf{a}_i) \in (0, 1)$.
+    </p>
+    <p>
+      Existence of a concept is given by a non-negative energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) \in \mathbb{R}^+$, where parameter vector $\mathbf{w}$ specifies a particular concept from a family. When the state $\mathbf{x}$ under attention mask $\mathbf{a}$ satisfies concept $\mathbf{w}$, $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = 0$; otherwise $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) > 0$. The conditional probabilities follow Boltzmann distributions:
+    </p>
+    $$p(\mathbf{x} \mid \mathbf{a}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}, \qquad p(\mathbf{a} \mid \mathbf{x}, \mathbf{w}) \propto \exp\{-E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})\}$$
+    <p>
+      Given concept code $\mathbf{w}$, the energy function is used for both <strong>generation</strong> (compiling wiki pages, wiring <code>[[wiki-links]]</code>, or generating new synthetic documents) and <strong>identification</strong> (finding which documents belong to the concept) implicitly via optimization:
+    </p>
+    $$\mathbf{x}(\mathbf{a}) = \arg\min_{\mathbf{x}} E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}), \qquad \mathbf{a}(\mathbf{x}) = \arg\min_{\mathbf{a}} E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$$
+    <p>
+      At execution time, we generate samples via $K$ steps ($K = 10$) of Stochastic Gradient Langevin Dynamics (SGLD) using textual gradients $\nabla^{\text{text}} E_\theta$:
+    </p>
+    $$\mathbf{x}^k = \mathbf{x}^{k-1} - \frac{\alpha}{2} \nabla_{\mathbf{x}}^{\text{text}} E_\theta(\mathbf{x}^{k-1}, \mathbf{a}, \mathbf{w}) + \omega^k, \qquad \mathbf{a}^k = \mathbf{a}^{k-1} - \frac{\alpha}{2} \nabla_{\mathbf{a}}^{\text{text}} E_\theta(\mathbf{x}, \mathbf{a}^{k-1}, \mathbf{w}) + \omega^k$$
+    <p>
+      To capture interactions between pairs of documents, the energy function uses a <strong>Relation Network</strong> architecture:
+    </p>
+    $$E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w}) = f_\theta\left( \sum_{t, i, j} \sigma(\mathbf{a}_i)\sigma(\mathbf{a}_j) \cdot g_\theta(\mathbf{x}_i^t, \mathbf{x}_j^t, \mathbf{w}), \, \mathbf{w} \right)^2$$
+    <p>
+      Here $g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$ is a pairwise relational critic that checks whether documents $i$ and $j$ share deep mechanisms under $\mathbf{w}$, whether they contradict each other, and whether their compiled wiki pages in $\mathbf{x}^1$ are connected by bidirectional <code>[[wiki-links]]</code>.
+    </p>
+
+    <h2>2. Concept Inference, Composition, and Data Generation</h2>
+    <p>
+      An event in the knowledge base involves two interchangeable concept codes $\mathbf{w} = [\mathbf{w}_x, \mathbf{w}_a]$:
+    </p>
+    $$\log p(\mathbf{x}^1, \mathbf{a} \mid \mathbf{x}^0, \mathbf{w}) = \log p(\mathbf{x}^1 \mid \mathbf{a}, \mathbf{w}_x) + \log p(\mathbf{a} \mid \mathbf{x}^0, \mathbf{w}_a)$$
+    <ul>
+      <li><strong>Argument Code ($\mathbf{w}_a$):</strong> Specifies the selection criteria over initial documents $\mathbf{x}^0$ (which entities participate in the concept).</li>
+      <li><strong>Action Code ($\mathbf{w}_x$):</strong> Specifies the relational synthesis action over $\mathbf{x}^1$ (how the selected entities are linked and compiled into wiki articles).</li>
+    </ul>
+
+    <h3>Execution-Time Concept Inference and Unsupervised Discovery</h3>
+    <p>
+      When demonstration clusters $X^{\text{demo}}$ are given, concept codes are inferred at execution time by minimizing energy over $\mathbf{w}$:
+    </p>
+    $$\mathbf{w}^*_\theta(X^{\text{demo}}) = \arg\min_{\mathbf{w}} \mathbb{E}_{(\mathbf{x}, \mathbf{a}) \sim X^{\text{demo}}} \big[ E_\theta(\mathbf{x}^1, \mathbf{a}, \mathbf{w}_x) + E_\theta(\mathbf{x}^0, \mathbf{a}, \mathbf{w}_a) \big]$$
+    <p>
+      When neither concepts $\mathbf{w}$ nor attention masks $\mathbf{a}$ are known in advance (as in a messy knowledge base), we parse the corpus into an arrangement of concepts by jointly minimizing over $(\{\mathbf{w}^{(m)}\}, \{\mathbf{a}^{(m)}\})$ via alternating Textual SGLD:
+    </p>
+    $$\min_{\{\mathbf{w}^{(m)}, \mathbf{a}^{(m)}\}_{m=1}^M} \sum_{m=1}^M E_\theta\big(\mathbf{x}^0, \mathbf{a}^{(m)}, \mathbf{w}^{(m)}\big)$$
+
+    <h3>Data Generation with the Same Energy Formulation</h3>
+    <p>
+      Because the model is defined by an energy function $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ rather than a feed-forward classifier, <strong>generating new data uses the exact same formulation</strong>:
+    </p>
+    <ol>
+      <li><strong>Generating Missing Bridge Documents ($x_{N+1}^*$):</strong> Multiple concepts compose by summing their energy functions:
+        $$E_{\text{comp}}(\mathbf{x}, \mathbf{a}, \{\mathbf{w}^{(1)}, \mathbf{w}^{(2)}\}) = E_\theta(\mathbf{x}, \mathbf{a}_1, \mathbf{w}^{(1)}) + E_\theta(\mathbf{x}, \mathbf{a}_2, \mathbf{w}^{(2)})$$
+        By holding existing KB documents $x_1, \dots, x_N$ fixed, spawning a new candidate document $x_{N+1}^{(0)}$ with $\sigma(a_{N+1}) = 1$, and running $K$-step Textual SGLD over $x_{N+1}$, the energy function generates a brand-new document $x_{N+1}^*$ that bridges the two concept clusters.
+      </li>
+      <li><strong>Generating Adversarial Hard Negatives ($\tilde{x}_{\text{trap}}$):</strong> Optimizing a candidate document to minimize unary keyword energy $E_{\text{unary}}(\tilde{x}, \mathbf{w})$ while maximizing pairwise relational energy $\sum_j \sigma(a_j)g_\theta(\tilde{x}, x_j, \mathbf{w})$ generates realistic polysemous distractors for stress-testing retrieval and verification systems.</li>
+      <li><strong>Cross-Domain Concept Re-Enactment ($x_{\text{transfer}}^*$):</strong> Just as Mordatch (2018) reuses an energy function learned in a 2D particle environment to control a 3D robotic arm, a concept code $\mathbf{w}^*$ inferred in one domain KB can drive $E_\theta(\tilde{x}_{\text{target}}, \mathbf{a}, \mathbf{w}^*)$ to generate structurally isomorphic architectures in a new domain.</li>
+    </ol>
+
+    <h3>Meta-Level Parameter Optimization</h3>
+    <p>
+      At the meta level, the critic schema $\theta$ is calibrated by jointly minimizing a softplus contrastive maximum-likelihood loss $\mathcal{L}_p^{\text{ML}}$ and a sampler KL divergence loss $\mathcal{L}_\pi^{\text{KL}}$:
+    </p>
+    $$\min_\theta \; \mathcal{L}_{p(\theta)}^{\text{ML}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big) + \mathcal{L}_{\pi(\theta)}^{\text{KL}}\big(X^{\text{train}}, \mathbf{w}^*_\theta(X^{\text{demo}})\big)$$
+
+    <h2>3. Definitions and Entity Relations</h2>
+    <p>
+      Because each concept $\mathbf{w}^{(m)}$ optimizes its own independent sigmoid gate $\sigma(\mathbf{a}_i^{(m)}) \in (0, 1)$, there is <strong>no one-concept-per-document assumption</strong>. A single document can belong to $0$ concepts (filtered noise), $1$ concept (specialized note), or multiple concepts simultaneously (bridge document).
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Object</th>
+          <th>Symbol</th>
+          <th>Definition and Role in the LLM Wiki</th>
+          <th>Cardinality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Raw Source File</strong></td>
+          <td>Input</td>
+          <td>Immutable paper PDF, Markdown note, lab notebook, or dev log in <code>raw/</code>.</td>
+          <td><code>1 : 1</code> or <code>1 : S</code> sections</td>
+        </tr>
+        <tr>
+          <td><strong>KB Entity</strong></td>
+          <td>$\mathbf{x}_i^0$</td>
+          <td>Atomic document or section node in $\mathbf{x}^0 = [\mathbf{x}_1^0, \dots, \mathbf{x}_N^0]$.</td>
+          <td>Participates in <code>0, 1, or k</code> concepts</td>
+        </tr>
+        <tr>
+          <td><strong>Polysemous Trap</strong></td>
+          <td>$\mathbf{x}_{\text{trap}}^0$</td>
+          <td>Distractor document that shares surface words (e.g. <em>energy</em>, <em>sampling</em>, <em>gradient</em>) in an unrelated domain (e.g. HVAC, soil, CSS).</td>
+          <td>Rejected ($\sigma(a_i^K) &lt; 0.1$)</td>
+        </tr>
+        <tr>
+          <td><strong>Attention Mask</strong></td>
+          <td>$\mathbf{a} \in \mathbb{R}^N$</td>
+          <td>Continuous gate $\sigma(\mathbf{a}_i)$ selecting the active subset of entities for concept $\mathbf{w}$.</td>
+          <td>Sparse subset ($K \ll N$)</td>
+        </tr>
+        <tr>
+          <td><strong>Concept Code</strong></td>
+          <td>$\mathbf{w} = [\mathbf{w}_a, \mathbf{w}_x]$</td>
+          <td>Natural-language selection rule ($\mathbf{w}_a$) and synthesis rule ($\mathbf{w}_x$).</td>
+          <td>Interchangeable across contexts</td>
+        </tr>
+        <tr>
+          <td><strong>Pairwise Relation</strong></td>
+          <td>$g_\theta(\mathbf{x}_i, \mathbf{x}_j, \mathbf{w})$</td>
+          <td>Evaluates pairwise synergy, missing <code>[[wiki-links]]</code>, and contradictions between co-attended entities.</td>
+          <td><code>2 : 1</code> per active pair</td>
+        </tr>
+        <tr>
+          <td><strong>Compiled Wiki State</strong></td>
+          <td>$\mathbf{x}^1$</td>
+          <td>Interlinked <code>concepts/*.md</code>, <code>entities/*.md</code>, and <code>index.md</code> in <code>wiki_output/</code>.</td>
+          <td>Zero-energy target ($E_\theta \to 0$)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Experiments and Key Results</h2>
+    <p>
+      We evaluate the framework across four self-contained experiment suites (explore all suites interactively in <a href="wiki_viewer.html"><strong>wiki_viewer.html</strong></a>):
+    </p>
+    <ol>
+      <li>
+        <strong>Multi-Step Textual SGLD vs. One-Shot Synthesis ($K = 1 \dots 20$):</strong>
+        One-shot generation ($K = 1$) leaves <code>0.870</code> link topology error and <code>0.422</code> attention cross-entropy error. Running $K = 10$ Textual SGLD steps drives generation error to <strong><code>0.000</code></strong> through iterative feedback edits.
+      </li>
+      <li>
+        <strong>Effect of Relational Architecture (<code>Relation_Network</code> vs. <code>No_RN_Unary</code>):</strong>
+        On a messy 18-document KB containing 4 polysemous keyword traps (HVAC thermal energy, agricultural soil sampling, CSS gradients, HR adaptation), a unary pointwise critic (<code>No_RN_Unary</code>) is fooled by surface words, attending to <strong><code>2</code> false-positive traps</strong> ($\sigma(a_i^{10}) = 0.933$) and wiring <strong><code>0</code> pairwise links</strong>. Our pairwise Relation Network detects the domain mismatch across pairs, rejecting <strong>all traps (<code>0</code> false positives, $\sigma(a_{\text{trap}}^{10}) \le 0.08$)</strong> and wiring all <strong><code>30</code> bidirectional <code>[[wiki-links]]</code></strong>.
+      </li>
+      <li>
+        <strong>Transfer Between Identification and Generation Contexts:</strong>
+        Calibrating $E_\theta$ on generation alone transfers zero-shot to attention identification (<code>0.051</code> attention BCE vs. <code>0.471</code> untrained), and swapping $\mathbf{w}_a$ into $\mathbf{w}_x$ preserves <code>0.000</code> generation error.
+      </li>
+      <li>
+        <strong>Effect of Training with Sampler Objective $\mathcal{L}_\pi^{\text{KL}}$:</strong>
+        Without $\mathcal{L}_\pi^{\text{KL}}$, $E_\theta$ discriminates gold wikis (<code>0.0782</code>) from random wikis (<code>2.1962</code>), but $K = 10$ sampled wikis remain stuck at high energy (<code>1.3377</code>). With $\mathcal{L}_\pi^{\text{KL}}$, $K = 10$ sampled wikis converge to low energy (<code>0.0796</code>).
+      </li>
+      <li>
+        <strong>Unsupervised Concept Discovery and Generative Data Synthesis (Live <code>gpt-6-luna</code>):</strong>
+        <ul>
+          <li><strong>Suite 3 (Unknown Concepts):</strong> Given 18 untagged messy documents and domain-agnostic prompts, <code>gpt-6-luna</code> autonomously discovers 3 latent concepts, reconciles a short-run MCMC contradiction in Lab Notebook #42, and filters out Redis ops noise from an entangled dev log.</li>
+          <li><strong>Suite 4 (Generating New Data with the Same Energy Formulation):</strong> Minimizing $E_{\text{comp}}(x_{N+1}) = E_\theta(\cdot, \mathbf{w}_1) + E_\theta(\cdot, \mathbf{w}_2)$ over $K = 10$ Textual SGLD steps, <code>gpt-6-luna</code> generates a brand-new bridge paper (reducing total composite energy from <code>10.00</code> at $k=0$ to <code>4.70</code> at $k=3$ to <strong><code>0.65</code></strong> at $k=10$), rejects a newly synthesized biochemical hard negative (<code>Unary E = 0.25</code> vs. <code>Pairwise E = 4.70, Total E = 9.20</code>), and re-enacts the learned concept code $\mathbf{w}^*$ in a Distributed Systems consensus domain (<code>Isomorphism E = 0.95</code>).</li>
+        </ul>
+      </li>
+    </ol>
+  </main>
+</body>
+</html>
