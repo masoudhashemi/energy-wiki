@@ -1,5 +1,7 @@
 # Energy-Based LLM Wiki with Textual Gradients
 
+> **Blog Post & Interactive Walkthrough:** **[https://masoudhashemi.github.io/energy-wiki/](https://masoudhashemi.github.io/energy-wiki/)** ([`docs/index.html`](docs/index.html))
+
 This project adapts **[Concept Learning with Energy-Based Models](1811.02486v1.pdf)** (Igor Mordatch, OpenAI, 2018) to autonomously discover concepts `w`, identify connected document subgraphs `a`, and compile interlinked **LLM Wikis** (`x¹`) over messy, multi-topic Knowledge Bases (`x⁰`) using **Textual Gradient Descent** (ProTeGi / TextGrad).
 
 ---
