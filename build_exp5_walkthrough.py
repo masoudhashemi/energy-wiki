@@ -104,7 +104,7 @@ def main():
     table = '<table><caption>Saved critic scores for every actual revision</caption><thead><tr><th>Revision</th><th>E₁</th><th>E₂</th><th>E₁ + E₂</th></tr></thead><tbody>' + ''.join(f'<tr><th scope="row">{r["iteration"]}</th><td>{r["energy"]["E1"]:g}</td><td>{r["energy"]["E2"]:g}</td><td>{r["energy"]["total"]:g}</td></tr>' for r in records) + '</tbody></table>'
     section = r'''
     <h2 id="measured-loop">4. Generating a Bridge Document with Two Fixed Concepts</h2>
-    <p>Can one new document explain energy-based sampling and critique-guided text editing together? <strong>Experiment 5 turns a two-sentence seed into a source-linked explanation through ten actual revisions.</strong> The final article distinguishes scoring from sampling, explains textual editing, and connects the selected papers while preserving their different assumptions.</p>
+    <p>Experiment 5 studies <strong>energy-based document synthesis under two fixed concepts</strong>. Given a source corpus, two concept definitions, and the documents selected for each concept, the task is to generate a new document compatible with both. These inputs remain fixed; only the generated text is optimized. A critic evaluates the document against each concept, and an editor uses both critiques to revise it. Here, the concepts are energy-based sampling and critique-guided text optimization, and the document is refined over ten iterations.</p>
     <div class="callout"><strong>The starting point</strong><blockquote>SEED_TEXT</blockquote><strong>The generated result:</strong> WORD_COUNT words with CITE_COUNT source citations, organized into “Energy scores and sampling” and “Critique-guided text editing.” <a href="#exp5-walkthrough">Read the final document below</a> or <a href="FINAL_URL">open the saved Markdown</a>.</div>
     <p>The setup keeps $D$, $w_1$, $a_1$, $w_2$, and $a_2$ fixed. Only $x_{\mathrm{new}}$ changes. The first concept selects six energy/sampling sources; the second selects five text-optimization sources. The same critic evaluates the candidate separately under each fixed pair, and the editor receives both critiques:</p>
     $$x_{\mathrm{new}}^*=\arg\min_{x_{\mathrm{new}}}\left[E_\theta([D,x_{\mathrm{new}}],a_1,w_1)+E_\theta([D,x_{\mathrm{new}}],a_2,w_2)\right].$$
@@ -134,30 +134,14 @@ def main():
       <details><summary>Inspect the small score increases (revisions 2–10)</summary>DETAIL_CHART</details>
       <details><summary>View all measured scores as a table</summary>TABLE</details>
     </div>
-    <p><strong>Run record:</strong> TEN_EDITS valid edits, CALL_COUNT model calls, TOKEN_COUNT reported tokens. The hashes of the corpus, concepts and membership masks remained unchanged. The critic uses a fixed rubric for concept satisfaction, source support, relationships and calibration. A zero score means that critic rated its requirements satisfied; this single run does not establish convergence or an advantage over other methods.</p>
     <p class="figure-caption">RUNNER_LINK · <a href="REPORT_URL">Run report</a> · <a href="TRACE_URL">Every draft and score</a> · <a href="MANIFEST_URL">Fixed conditions and rubric</a> · <a href="CALLS_URL">Complete model calls</a></p>
-
-    <h2>5. Other Generative Explorations: Experiment 4</h2>
-    <p>Exp4 explores two further uses of the energy formulation. These remain separate from the conditional-synthesis walkthrough above; their task-specific ratings are not directly comparable with Exp5's per-concept scores.</p>
-    <div class="grid-2">
-      <div class="figure-box"><h3>Generating a hard-negative document</h3><p>The prompt asks for a biochemistry note using familiar technical vocabulary in a different context. Its keyword-rubric score is 0.20, while its composite deficit is 9.40 (including a separate pairwise deficit of 4.80). This is a concrete prompted distractor example, not a benchmark of retrieval systems.</p>TRAP_LINK</div>
-      <div class="figure-box"><h3>Expressing a cross-domain analogy</h3><p>The prompt supplies a correspondence between energy-model mechanisms and distributed-consensus mechanisms. A separate isomorphism critic evaluates the resulting design. The example illustrates generation under a requested structural analogy; it does not show that the mapping was independently discovered.</p>ANALOGY_LINK</div>
-    </div>
-    <p>Exp4 also includes the earlier seed-plus-two-revisions bridge example. It remains available in its saved artifacts: EXP4_RESULTS · EXP4_RUNNER · EXP4_CALLS.</p>
-    <h2>6. What the Current Experiments Establish</h2>
 '''
-    e4 = "experiments/exp4_generative_data_synthesis_live_llm/"
     replacements = {"SEED_TEXT":html.escape(records[0]["document"]["content"]), "WORD_COUNT":str(words), "CITE_COUNT":str(citations),
         "FINAL_URL":RUN_URL+"final_document.md", "BUTTONS":"\n".join(buttons), "PANELS":"\n".join(panels),
         "FULL_CHART":chart(records, "Measured E1, E2 and combined scores for seed and revisions 1 through 10", 18, (0,3,6,9,12,15,18), "full"),
         "DETAIL_CHART":chart(records[2:], "Near-zero measured scores for revisions 2 through 10", 0.6, (0,0.25,0.5), "detail"), "TABLE":table,
-        "TEN_EDITS":str(summary["valid_edits"]), "CALL_COUNT":str(summary["total_calls"]), "TOKEN_COUNT":f'{summary["total_tokens"]:,}',
         "RUNNER_LINK":link("experiments/exp5_measured_live_loop/run_exp5.py", "Exp5 runner"), "REPORT_URL":RUN_URL+"REPORT.md",
-        "TRACE_URL":RUN_URL+"trajectory.json", "MANIFEST_URL":RUN_URL+"manifest.json", "CALLS_URL":RUN_URL+"calls.jsonl",
-        "TRAP_LINK":link(e4+"wiki_output/generated_docs/gen_trap_biochem_allostery.md", "Read the generated hard negative"),
-        "ANALOGY_LINK":link(e4+"wiki_output/generated_docs/gen_transfer_distributed_consensus.md", "Read the generated analogy"),
-        "EXP4_RESULTS":link(e4+"wiki_output/generative_results.json", "Exp4 results"), "EXP4_RUNNER":link(e4+"run_exp4_generative_luna.py", "runner"),
-        "EXP4_CALLS":link(e4+"wiki_output/llm_calls_log.json", "call log")}
+        "TRACE_URL":RUN_URL+"trajectory.json", "MANIFEST_URL":RUN_URL+"manifest.json", "CALLS_URL":RUN_URL+"calls.jsonl"}
     for key,value in replacements.items():
         section = section.replace(key,value)
     page_path = ROOT / "docs/index.html"
