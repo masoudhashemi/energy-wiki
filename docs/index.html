@@ -197,8 +197,15 @@
     <p>
       In this post, we apply <a href="https://arxiv.org/abs/1811.02486"><strong>Concept Learning with Energy-Based Models</strong></a> (Mordatch, 2018) to the problem of building an <strong>LLM Wiki</strong> from a messy knowledge base.
     </p>
+    <h3>What is an LLM Wiki and Why Use It?</h3>
     <p>
-      Following Mordatch's framework, a <em>concept</em> is defined by a single <strong>energy function</strong> $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ over entities $\mathbf{x}$ (raw documents $\mathbf{x}^0$ and compiled wiki pages $\mathbf{x}^1$), an attention mask $\mathbf{a}$ over participating entities, and a concept code $\mathbf{w}$. Zero-energy configurations imply that the entities selected by the attention mask satisfy the concept.
+      Standard retrieval systems treat a knowledge base as a passive pile of isolated text chunks. Every time you ask a question, the system searches for a few fragments and tries to piece together an answer from scratch. Nothing builds up over time, and deeper connections or contradictions across documents are easily missed.
+    </p>
+    <p>
+      An <strong>LLM Wiki</strong> takes the opposite approach. Instead of waiting for a query to read raw files, an agent continuously compiles raw notes, papers, and logs into a structured, interlinked web of wiki pages. Shared ideas are consolidated into concept pages, related documents are connected with bidirectional links, conflicting claims between notes are reconciled in place, and irrelevant clutter is filtered out. The result is a living knowledge graph that compounds understanding over time and can be browsed directly by both humans and agents.
+    </p>
+    <p>
+      Following Mordatch's framework, a <em>concept</em> in this wiki is defined by a single <strong>energy function</strong> $E_\theta(\mathbf{x}, \mathbf{a}, \mathbf{w})$ over entities $\mathbf{x}$ (raw documents $\mathbf{x}^0$ and compiled wiki pages $\mathbf{x}^1$), an attention mask $\mathbf{a}$ over participating entities, and a concept code $\mathbf{w}$. Zero-energy configurations imply that the entities selected by the attention mask satisfy the concept.
     </p>
 
     <div class="callout">
@@ -408,6 +415,89 @@
       <div class="figure-caption">
         <strong>Left:</strong> Starting from a rough two-sentence stub at step $k=0$ (high composite energy of <code>10.0</code>), iterative textual critiques add the missing mathematical bridges and wiki links at $k=3$ (energy <code>4.7</code>) and converge to a complete bridge article at $k=10$ (energy <code>0.65</code>, a 93% reduction).
         <strong>Right:</strong> When we generate a deceptive biochemistry note that uses the exact same keywords, a keyword matcher scores it as a near-perfect match (low energy <code>0.25</code>), whereas our pairwise relational energy critic assigns it high energy (<code>9.20</code>) and rejects it.
+      </div>
+    </div>
+
+    <h3>Step-by-Step Example: How a New Bridge Article Evolves ($k = 0 \to 3 \to 10$)</h3>
+    <p>
+      Suppose our wiki has two separate concept clusters that have not yet been unified: Cluster 1 covers <em>Boltzmann Energy Models and Short-Run Langevin Sampling</em>, and Cluster 2 covers <em>Discrete Textual Gradient Optimization</em>. We want the model to generate a brand-new article $x_{\text{new}}$ that bridges both clusters by minimizing their summed energy $E_{\text{comp}}(x_{\text{new}}) = E_\theta(\cdot, \mathbf{w}^{(1)}) + E_\theta(\cdot, \mathbf{w}^{(2)})$.
+    </p>
+
+    <div class="figure-box">
+      <div class="figure-title">Interactive Walkthrough: Inspect the Generated Draft and Textual Gradient at Each Step</div>
+      <div class="step-controls">
+        <span>Select an optimization step to inspect the evolving draft $x_{\text{new}}^{(k)}$ and critic feedback $\nabla_x^{\text{text}} E_{\text{comp}}$:</span>
+        <div class="btn-group">
+          <button class="step-btn active" id="btn-gen-0" onclick="showGenExample(0)">Step k = 0 (Initial Seed, E = 10.00)</button>
+          <button class="step-btn" id="btn-gen-3" onclick="showGenExample(3)">Step k = 3 (Intermediate, E = 4.70)</button>
+          <button class="step-btn" id="btn-gen-10" onclick="showGenExample(10)">Step k = 10 (Converged, E = 0.65)</button>
+        </div>
+      </div>
+
+      <!-- Step k = 0 Panel -->
+      <div id="gen-panel-0">
+        <p style="margin-top:0.25rem; font-size:0.94rem;">
+          <strong>1. Draft State at Step $k = 0$</strong> (Total Energy $E_{\text{comp}} = 10.00$ | Wiki Links Wired: <code>0</code>)
+        </p>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.9rem 1rem; font-size:0.92rem;">
+          <div style="font-weight:700; margin-bottom:0.35rem;">Draft Note: Combining Energy Models and Textual Gradients</div>
+          <div style="font-family:monospace; font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">Equation: x_new = update(x_old, critique)</div>
+          <div style="color:var(--muted);">
+            "Rough initial idea: Maybe we can use energy-based models together with textual gradients to optimize text documents. Energy models assign low energy to good states, and LLM critics can write critiques to improve a draft."
+          </div>
+        </div>
+        <div style="margin-top:0.75rem; background:var(--rose-soft); border-left:4px solid var(--rose); padding:0.75rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
+          <strong>Textual Gradient Critique $\nabla_x^{\text{text}} E_{\text{comp}}$ at $k = 0$:</strong>
+          <ul style="margin:0.35rem 0 0 1.2rem; padding:0;">
+            <li><strong>Missing Boltzmann &amp; Partition Formulation ($E_{w_1} = 2.80$):</strong> Replace the generic update formula with the Boltzmann distribution $p_\theta(x \mid w) = \exp[-E_\theta(x,w)] / Z_\theta(w)$ and explain how importance sampling or contrastive samples estimate $Z_\theta(w)$.</li>
+            <li><strong>Missing Pairwise Gating &amp; Textual Loop ($E_{w_2} = 2.70$):</strong> Define how attention gates $\sigma(a_i)\sigma(a_j)$ weight pairwise interactions $g_\theta$ and how critic feedback is converted into discrete document edits.</li>
+            <li><strong>Missing Links &amp; Short-Chain Calibration ($E_{\text{links}} = 2.50, E_{\text{contra}} = 2.00$):</strong> Wire explicit wiki links to both clusters and address why short 10-step chains fail to mix without KL shaping.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step k = 3 Panel -->
+      <div id="gen-panel-3" style="display:none;">
+        <p style="margin-top:0.25rem; font-size:0.94rem;">
+          <strong>2. Draft State at Step $k = 3$</strong> (Total Energy $E_{\text{comp}} = 4.70$ | Wiki Links Wired: <code>3</code>)
+        </p>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.9rem 1rem; font-size:0.92rem;">
+          <div style="font-weight:700; margin-bottom:0.35rem;">Draft Note: Boltzmann Energy Models with Pairwise-Gated Textual Gradients</div>
+          <div style="font-family:monospace; font-size:0.85rem; color:var(--accent); margin-bottom:0.5rem;">
+            Equation: p_θ(x|w) = exp[-E_θ(x,w)] / Z_θ(w),   m_ij = σ(a_i)σ(a_j)g_θ(h_i, h_j),   x^{k+1} = Edit(x^k, -α/2 ∇_x E_θ + ω^k)
+          </div>
+          <div style="color:var(--muted);">
+            "An energy model assigns lower energy to preferred documents under the Boltzmann distribution $p_\theta(x \mid w) = \exp[-E_\theta(x,w)] / Z_\theta(w)$ (see <strong>[[Concept Learning with Energy-Based Models]]</strong> and <strong>[[Bayesian Learning via Stochastic Gradient Langevin Dynamics]]</strong>). Document units interact through gated pairwise terms $m_{ij} = \sigma(a_i)\sigma(a_j)g_\theta(h_i, h_j)$. A critic identifies omissions that raise energy and emits natural-language edit directions applied by an editor, as in <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong>. Short 10-step chains can fail to mix, suggesting a KL-based calibration objective, though the exact proposal mixture and coverage criteria remain open."
+          </div>
+        </div>
+        <div style="margin-top:0.75rem; background:var(--accent-soft); border-left:4px solid var(--accent); padding:0.75rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
+          <strong>Textual Gradient Critique $\nabla_x^{\text{text}} E_{\text{comp}}$ at $k = 3$ (Energy cut by 53%, from 10.00 to 4.70):</strong>
+          <ul style="margin:0.35rem 0 0 1.2rem; padding:0;">
+            <li><strong>Refine Partition Estimator ($E_{w_1} = 0.70$):</strong> Formulate the explicit mixture proposal $q(x) = \sum_r \pi_r q_r(x)$ and softplus contrastive objective $\mathcal{L}^{\text{ML}}$ correcting for proposal density $\log q(x)$.</li>
+            <li><strong>Formulate Short-Chain KL Rollout Shaping ($E_{\text{contra}} = 1.20$):</strong> Define the 10-step edit rollout distribution $r_\phi^K(\cdot \mid x^0, w)$ and add the KL + cluster-coverage objective $\mathcal{L}^{\text{KL}}$ to resolve the short-run mixing failure.</li>
+            <li><strong>Complete Cross-Cluster Link Topology ($E_{\text{links}} = 1.80$):</strong> Connect the remaining core notes across both clusters (<em>Guided Cost Learning</em>, <em>Contrastive Divergence</em>, <em>TextGrad</em>, <em>Relation Networks</em>, and the <em>Short-Chain Lab Note</em>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step k = 10 Panel -->
+      <div id="gen-panel-10" style="display:none;">
+        <p style="margin-top:0.25rem; font-size:0.94rem;">
+          <strong>3. Converged Article at Step $k = 10$</strong> (Total Energy $E_{\text{comp}} = 0.65$ | Wiki Links Wired: <code>8</code> | Link Deficit: <code>0.00</code>)
+        </p>
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.9rem 1rem; font-size:0.92rem;">
+          <div style="font-weight:700; margin-bottom:0.35rem;">Textual SGLD: Contrastive Energy Estimation and KL-Shaped Rollouts</div>
+          <div style="font-family:monospace; font-size:0.85rem; color:var(--green); margin-bottom:0.5rem;">
+            Equation: E_θ(x,w) = E_base(x,w) + λ_rel Σ σ(a_i)σ(a_j)g_θ(h_i,h_j; c(w)),   L^KL = D_KL(r_φ^K || p_θ) + β max(0, C_min - C(r_φ^K))²
+          </div>
+          <div style="color:var(--muted);">
+            "Combines a base document score with attention-gated pairwise relations $\sum_{i&lt;j}\sigma(a_i)\sigma(a_j)g_\theta(h_i,h_j;c(w))$ connecting <strong>[[A Simple Neural Network Module for Relational Reasoning]]</strong> and <strong>[[Concept Learning with Energy-Based Models]]</strong>. Intractable normalization $Z_\theta(w)$ is estimated via a mixture proposal $q(x) = \sum_r \pi_r q_r(x)$ using a softplus contrastive objective $\mathcal{L}^{\text{ML}}$ that bridges <strong>[[Training Products of Experts by Minimizing Contrastive Divergence]]</strong>, <strong>[[Guided Cost Learning: Deep Inverse Optimal Control]]</strong>, and <strong>[[Bayesian Learning via Stochastic Gradient Langevin Dynamics]]</strong>. Discrete textual updates $x^{k+1} = \text{Edit}(x^k, -\frac{\alpha}{2}\widehat{\nabla}_x E_\theta + \omega^k)$ generalize <strong>[[ProTeGi: Prompt Optimization with Textual Gradients]]</strong> and <strong>[[TextGrad: Automatic Differentiation via Text]]</strong>, while calibrating the 10-step edit policy $r_\phi^K$ with $\mathcal{L}^{\text{KL}} = D_{\text{KL}}(r_\phi^K \parallel p_\theta) + \beta[\max(0, C_{\min}-C(r_\phi^K))]^2$ directly resolves the short-chain mixing failure in <strong>[[Lab Notebook #42: Why Short-Run K=10 Langevin Chains Fail Without KL Shaping]]</strong>."
+          </div>
+        </div>
+        <div style="margin-top:0.75rem; background:var(--green-soft); border-left:4px solid var(--green); padding:0.75rem 1rem; border-radius:0 6px 6px 0; font-size:0.9rem;">
+          <strong>Converged Low-Energy State ($E_{\text{comp}} = 0.65$, down 93.5% from 10.00):</strong>
+          All 8 cross-cluster wiki links are wired ($E_{\text{links}} = 0.00$), both mathematical frameworks are unified ($E_{w_1} = 0.25, E_{w_2} = 0.20$), and the short-run 10-step mixing tension is resolved ($E_{\text{contra}} = 0.20$).
+        </div>
       </div>
     </div>
 
@@ -753,6 +843,15 @@
         ctx.fillStyle = fg;
         ctx.font = 'bold 11px monospace';
         ctx.fillText('Energy = ' + item.e.toFixed(2), rx + bw + 8, y + 19);
+      });
+    }
+
+    function showGenExample(step) {
+      [0, 3, 10].forEach(s => {
+        const btn = document.getElementById('btn-gen-' + s);
+        const panel = document.getElementById('gen-panel-' + s);
+        if (btn) btn.classList.toggle('active', s === step);
+        if (panel) panel.style.display = (s === step) ? 'block' : 'none';
       });
     }
 
